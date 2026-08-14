@@ -203,8 +203,12 @@ Run the narrowest relevant check first:
 
 A release build must complete with zero errors. Compilation alone does not
 prove in-game behavior, interaction, layout, performance, or compatibility.
-Runtime and presentation changes normally require a focused DSP checkpoint
-and, for visual work, an in-game screenshot.
+Do not run an installed or in-game checkpoint unless the current user prompt
+explicitly authorizes runtime execution and an owner-reviewed procedure
+defines the target environment, isolation, permitted writes, retained
+evidence, cleanup, and stop conditions. Without both, report runtime and
+visual behavior as unvalidated; do not launch DSP, install a plugin, open a
+save, or collect environment-derived logs or screenshots.
 
 If a required tool or game state is unavailable, report the check as skipped
 or blocked rather than passed.
@@ -220,9 +224,7 @@ Documentation must match actual behavior. Update `README.md` and
 Do not commit:
 
 - `bin/` or `obj/`;
-- DLLs, PDBs, or copied dependency assemblies, except the explicitly empty
-  `packaging/DSPRecipeTracker.dll` placeholder while the package skeleton
-  remains active;
+- DLLs, PDBs, or copied dependency assemblies;
 - anything under `artifacts/`, including retained game assemblies and derived
   runtime datasets;
 - save files or diagnostics containing player data;

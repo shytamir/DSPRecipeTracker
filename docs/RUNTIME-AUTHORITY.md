@@ -123,19 +123,11 @@ new authority entry before consuming another Unity module.
 | `DSPGAME_Data\Managed\UnityEngine.UIModule.dll` | `UnityEngine.UIModule, Version=0.0.0.0` | `c37bb3eace97302fb3aa9e17eac4446f8b010307637aa9cc5cb84c59828b0ab2` |
 | `DSPGAME_Data\Managed\UnityEngine.UI.dll` | `UnityEngine.UI, Version=1.0.0.0` | `54953ebd7c9b4b39279876b37109f0f503938847f2a7be4a22d62e9b94c347eb` |
 
-Set `DSP_GAME_DIR` to the supported game root and run the fail-closed preflight
-before every Release build and installed checkpoint:
-
-```powershell
-$env:DSP_GAME_DIR = 'C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program'
-.\scripts\Test-LocalAuthority.ps1
-```
-
-The command has no fallback search path. A missing environment value, missing
-file, hash mismatch, or assembly-identity mismatch stops validation before
-compilation. Repository `Release` builds inherit `Directory.Build.targets`,
-which invokes this preflight before reference resolution. Installed checkpoint
-commands must invoke the same script before copying or launching the plugin.
+The table records the reference set used to establish the Sprint 1 source
+baseline. The build pipeline may reference documented external assemblies
+without copying or redistributing them. This authority record does not
+authorize copying a plugin into the game installation or launching DSP,
+BepInEx, Unity, or a substitute runtime harness.
 
 ## Repository boundary
 

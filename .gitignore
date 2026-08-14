@@ -1,0 +1,37 @@
+# Build output
+**/[Bb]in/
+**/[Oo]bj/
+artifacts/
+dist/
+packages/
+TestResults/
+coverage/
+
+# Compiled and packaged binaries
+*.dll
+*.pdb
+*.mdb
+*.exe
+*.zip
+*.nupkg
+*.snupkg
+
+# Test, runtime, and temporary output
+*.trx
+*.coverage
+*.log
+*.tmp
+*.temp
+*.bak
+
+# IDE and user-local files
+.vs/
+.idea/
+*.suo
+*.user
+*.userprefs
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

@@ -108,9 +108,11 @@ not the project's supported consumption surface.
 - Do not compile against the BepInEx 6 `master` checkout state.
 - Treat an installed BepInEx or relevant dependency hash change as a
   conformance change requiring renewed source and runtime validation.
-- A compile-only result does not establish installed compatibility. Validate
-  plugin discovery, lifecycle, logging, any configuration, patch ownership,
-  shutdown cleanup, and coexistence in the installed game.
+- A compile-only result does not establish installed compatibility. Discovery,
+  lifecycle, logging, configuration, patch ownership, shutdown cleanup, and
+  coexistence remain unvalidated until the owner separately authorizes a
+  controlled runtime procedure. This conformance record does not authorize
+  installing or loading the project plugin in the active game environment.
 
 The version in use is the version supported. If it stops satisfying project
 requirements, that is a new authority and product decision rather than an

@@ -5,9 +5,11 @@ DSP Recipe Tracker is a planned in-game recipe companion for
 It will let players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
-The MVP roadmap is authorized and Sprint 1 implementation may begin. Runtime
-authority, feasibility findings, and UI-extension principles are documented,
-but no installable plugin or supported release exists yet.
+The previous project is being recovered into a safe source-first plan. The
+sanitized Sprint 1 roadmap is a draft with no Active story, so implementation
+and runtime validation are not yet authorized. Runtime authority, historical
+feasibility findings, and UI-extension principles are documented, but no
+installable plugin or supported release exists yet.
 
 ## Planned MVP
 
@@ -53,7 +55,7 @@ separate project ideas.
 The authoritative product scope and acceptance outline are maintained in
 [docs/PROJECT.md](docs/PROJECT.md).
 
-The active Sprint 1 implementation record is [docs/ROADMAP.md](docs/ROADMAP.md).
+The sanitized Sprint 1 draft is [docs/ROADMAP.md](docs/ROADMAP.md).
 The authorized MVP skeleton and original concept foundation remain under
 `docs/planning/`.
 
@@ -110,15 +112,16 @@ binary hashes, retained evidence, and the fixed-version policy.
 Build and installation instructions will be added with the first working
 plugin skeleton. There is currently no functional DLL to build or install.
 
-The repository does contain an automated placeholder package pipeline. Its
-empty DLL and lorem ipsum metadata exist only to validate version generation,
-Thunderstore archive construction, and GitHub artifact publication. The
-resulting ZIP is not a usable mod and must not be installed or published.
+The repository intentionally contains no placeholder DLL or dummy package
+pipeline. Sprint 1 will create the first package pipeline from the real plugin
+build output; it must not emit an installable-looking artifact before real
+source exists.
 
 ## Versioning and packaging
 
-`VERSION` selects the major and minor release line. Each GitHub Actions run on
-`main` supplies the patch number and derives:
+`VERSION` currently reserves the major and minor release line. Sprint 1 will
+define the real package pipeline and make one repository-owned version source
+derive:
 
 ```text
 Package/plugin version: M.m.N
@@ -127,38 +130,33 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current placeholder line is `0.1`. See
-[docs/THUNDERSTORE-PACKAGE.md](docs/THUNDERSTORE-PACKAGE.md) for the package
-layout, generic validation boundary, and replacement requirements.
+The reserved pre-release line is `0.1`. Package layout and validation
+documentation will be created with the real pipeline.
 
 ## Project status
 
-Sprint 1 implementation is authorized. Initial assembly and isolated-runtime
-feasibility work has identified the Replicator input surface, recipe and
-inventory APIs, native HUD host, exact major-interface visibility signals, and
-reusable presentation resources. No functional plugin exists yet; initialized
-gameplay, layout, input, and display-scale validation remains implementation
-work.
+Sprint 1 is awaiting owner review and has no Active story. Historical assembly
+and isolated-runtime feasibility work identified the Replicator input surface,
+recipe and inventory APIs, native HUD host, exact major-interface visibility
+signals, and reusable presentation resources. Those findings do not authorize
+new runtime execution. No functional plugin exists yet; gameplay, layout,
+input, and display-scale behavior remains unvalidated.
 
 ## Repository layout
 
 ```text
 .
 |-- AGENTS.md
-|-- .github/workflows/build.yml
+|-- .gitignore
 |-- docs/
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
 |   |-- planning/
 |   |   |-- MVP-ROADMAP.md
 |   |   `-- PINNED-RECIPE-TRACKER-CONCEPT.md
-|   |-- PROJECT.md
 |   |-- PRODUCT-PRINCIPLES.md
 |   |-- ROADMAP.md
-|   |-- RUNTIME-AUTHORITY.md
-|   `-- THUNDERSTORE-PACKAGE.md
-|-- packaging/
-|-- scripts/
+|   `-- RUNTIME-AUTHORITY.md
 |-- VERSION
 |-- LICENSE
 `-- README.md
