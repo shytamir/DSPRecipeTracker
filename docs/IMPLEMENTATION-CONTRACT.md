@@ -23,6 +23,8 @@ Use these sources for their respective authority:
   runtime unknowns;
 - [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) for runtime evidence identity;
 - [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) for loader conformance;
+- [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) for package layout,
+  versioning, hosted compile references, and package validation;
 - [`VALIDATION-CONTRACT.md`](VALIDATION-CONTRACT.md) for readiness and evidence
   claims; and
 - [`ROADMAP.md`](ROADMAP.md) for active scope and operational authorization.
@@ -191,30 +193,76 @@ These versions identify the recovered source baseline. They do not promise
 compatibility with later game, Unity, BepInEx, Harmony, or third-party mod
 versions.
 
-Game, Unity, and BepInEx assemblies remain external dependencies. Build
+Game, Unity, and BepInEx assemblies remain external dependencies. Local build
 configuration receives them through the explicit maintainer-supplied
 `GameRoot` setting defined by `THUNDERSTORE-PACKAGE.md`; it must not silently
-discover another installation. Source and package construction must not copy,
-commit, or redistribute those assemblies.
+discover another installation. Hosted builds use the contract's minimal
+source-defined game and Unity compile-reference shims and the documented
+BepInEx CI source. Source and package construction must not copy, commit, or
+redistribute installed assemblies. Compile-reference shims contain declaration
+shapes only and are not runtime substitutes.
 
 Use only the BepInEx lifecycle, identity, logging, and explicitly required
 configuration surface documented in `BEPINEX-CONFORMANCE.md`. Do not target
 BepInEx 6, add speculative loader adapters, or consume loader internals.
 
-## 8. Open implementation decisions
+## 8. Adopted repository layout
+
+Implementation stories create files within this structure:
+
+```text
+DSPRecipeTracker.sln
+src/
+  DSPRecipeTracker/
+    DSPRecipeTracker.csproj
+tests/
+  DSPRecipeTracker.Tests/
+    DSPRecipeTracker.Tests.csproj
+ci/
+  compile-references/
+    DSPGame.Reference/
+    Unity.Reference/
+    surface-inventory.json
+scripts/
+  build/
+  validate/
+packaging/
+  manifest.json
+  README.md
+  icon.png
+```
+
+- `src/DSPRecipeTracker` produces the single shipping
+  `DSPRecipeTracker.dll`. Runtime adapters, tracker state, presentation model,
+  and Unity UI remain separate in code without creating additional shipping
+  assemblies for the MVP.
+- `tests/DSPRecipeTracker.Tests` contains deterministic source-level tests and
+  does not load DSP, BepInEx, Unity, or a substitute runtime.
+- `ci/compile-references` contains declaration-only hosted-build shims and the
+  machine-readable consumed-surface inventory. `DSPGame.Reference` emits the
+  required game assembly identity; `Unity.Reference` may contain one internal
+  project per consumed Unity assembly identity.
+- `scripts/build` owns deterministic build and package orchestration.
+  `scripts/validate` owns shim-coverage, assembly, version, and archive checks.
+- `packaging` contains tracked Thunderstore inputs only. Generated binaries,
+  archives, reports, and intermediate output remain under ignored paths.
+
+Do not add empty placeholder projects or directories before their roadmap
+story is Active. The structure is a placement contract, not authorization to
+implement a later story.
+
+## 9. Open implementation decisions
 
 The following require an owner or roadmap decision before the consuming story
 becomes Ready:
 
-- the stable BepInEx plugin GUID and loader display name;
 - exact fixed panel dimensions and calibrated cell-treatment opacity;
-- the icon and tracker-owned fallback text for the global Show/Hide control;
-- source project and test-project layout.
+- the icon and tracker-owned fallback text for the global Show/Hide control.
 
 Do not recover these values from placeholder metadata, installed plugins, or
 historical probe code by inference.
 
-## 9. Implementation change control
+## 10. Implementation change control
 
 An implementation change requires product review when it would change a rule
 in `PROJECT.md`. It requires new feasibility or authority evidence when it

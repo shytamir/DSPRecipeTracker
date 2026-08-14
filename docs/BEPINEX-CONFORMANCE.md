@@ -28,6 +28,10 @@ The source checkout's current `master` is BepInEx 6 development at commit
 supported source contract. The locally available `v5.4.17` tag and its exact
 commit above are authoritative for the installed BepInEx 5 API.
 
+The project-owned loader identity approved in `PROJECT.md` is GUID
+`dsprecipetracker` with display name `DSP-Recipe-Tracker`. This identity is
+independent of the loader-version conformance evidence in this file.
+
 ## Installed runtime identity
 
 The recorded binary identities are:

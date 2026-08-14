@@ -60,8 +60,9 @@ Source readiness requires, for the implemented and active roadmap scope:
   references;
 - focused deterministic tests for product rules that can be exercised without
   DSP or Unity;
-- no incomplete game, Unity, or BepInEx shim used to manufacture a passing
-  result;
+- hosted compile-reference shims contain declarations only, are excluded from
+  package output, and pass the complete consumed-surface coverage validation
+  defined by `THUNDERSTORE-PACKAGE.md`;
 - no dependency binary, save, player diagnostic, secret, or generated runtime
   evidence in tracked changes; and
 - documentation that distinguishes compiled behavior from unvalidated runtime
@@ -77,6 +78,9 @@ As applicable stories are implemented, deterministic coverage includes:
   table.
 
 Source readiness does not establish installed or in-game behavior.
+Compilation against a validated shim establishes only source compatibility
+with its declared surface; it does not establish runtime signature fidelity,
+behavior, or compatibility.
 
 ## 4. Package-inspected contract
 

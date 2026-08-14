@@ -96,8 +96,10 @@ The entry gates required to activate S1-01 are satisfied:
   output, and runtime evidence; and
 - S1-01 and its exact scope are recorded as Active below.
 
-The exact BepInEx plugin GUID and loader display name remain a story-specific
-entry gate for S1-02. They do not block repository-hygiene work in S1-01.
+The owner-approved BepInEx plugin GUID is `dsprecipetracker`, the loader display
+name is `DSP-Recipe-Tracker`, and the source/test/CI/package layout is fixed by
+`IMPLEMENTATION-CONTRACT.md`. These S1-02 decision gates are satisfied, but
+S1-02 remains Proposed until S1-01 is completed and the owner activates it.
 
 No implementation agent may infer these decisions from the concept record,
 the old roadmap, existing installed plugins, or feasibility artifacts.
@@ -113,8 +115,10 @@ the old roadmap, existing installed plugins, or feasibility artifacts.
 - UI-independent panel geometry, clamping, and visibility policy;
 - compile-time Unity UI boundary code only where supported by confirmed API
   evidence;
+- minimal source-defined game and Unity compile-reference shims with complete
+  consumed-surface coverage validation for hosted builds;
 - deterministic repository-local tests; and
-- repository-local package construction and static package inspection.
+- local and hosted package construction and static package inspection.
 
 ### Excluded
 
@@ -127,7 +131,7 @@ the old roadmap, existing installed plugins, or feasibility artifacts.
 - production Hide and global Show/Hide controls;
 - tracker navigation, HarmonyX, configuration, persistence, and compatibility
   adapters; and
-- hosted executable builds that require game or Unity binaries.
+- hosted access to licensed game or Unity binaries.
 
 ## Epic 1 - Repository and build authority
 
@@ -143,8 +147,9 @@ out of Git while source builds use explicit external references.
 - Repository ignore rules cover `bin/`, `obj/`, package output, dependency
   binaries, save data, logs, screenshots, and runtime evidence.
 - Build configuration references required external assemblies from an
-  explicit maintainer-supplied location and does not copy them into source or
-  package output.
+  explicit maintainer-supplied location for local builds and the tracked
+  compile-reference shims for hosted builds; neither source nor package output
+  contains dependency binaries.
 - A missing reference produces an ordinary build failure without fallback
   discovery, installation mutation, network acquisition, or environment
   probing.
@@ -160,7 +165,10 @@ contract before feature code depends on them.
 
 - The owner-approved GUID and display name are recorded in the restored
   product contract before code consumes them.
-- One C# project targets `net472` and uses only the documented BepInEx 5
+- `DSPRecipeTracker.sln` contains the single shipping project at
+  `src/DSPRecipeTracker/DSPRecipeTracker.csproj` and the deterministic test
+  project at `tests/DSPRecipeTracker.Tests/DSPRecipeTracker.Tests.csproj`.
+- The shipping project targets `net472` and uses only the documented BepInEx 5
   lifecycle, identity, and logging surface.
 - Plugin/package semantic version is `M.m.N`; assembly/file version is
   `M.m.N.0`; diagnostic source labels do not change loader identity.
@@ -168,9 +176,14 @@ contract before feature code depends on them.
   hard-coded in multiple locations.
 - The repository-local `Release` build completes with zero errors when its
   documented external references are available.
+- The hosted `Release` build uses tracked declaration-only game and Unity
+  compile-reference shims beneath `ci/compile-references`. A validator compares
+  every external type and member used by production code with
+  `ci/compile-references/surface-inventory.json` and the shim declarations and
+  fails unless both cover the complete consumed set.
 - No project assembly is copied, installed, or loaded after the build.
 
-### S1-03 - Construct and inspect a local package
+### S1-03 - Construct and inspect a package
 
 **Status:** Proposed
 
@@ -181,15 +194,16 @@ real build output without implying that the package has run successfully.
 
 - Local package construction consumes the real `Release` output and writes
   only beneath a repository-local ignored output directory.
+- GitHub Actions builds against the validated compile-reference shims and uses
+  the same package construction and static validators as the local path.
 - Static validation rejects zero-byte, non-managed, version-mismatched, and
   plugin-metadata-mismatched DLLs.
+- Static validation rejects any shim or shim-inventory gap and rejects every
+  compile-reference shim or dependency binary from package output.
 - Package metadata states that installed and in-game validation have not been
   performed and that the artifact is not release-ready.
 - No package step writes to the DSP installation or starts a game, loader, or
   harness process.
-- Hosted executable packaging remains disabled unless a later authority
-  record establishes a lawful, complete dependency source that does not
-  redistribute installed binaries.
 
 ## Epic 2 - Testable panel logic
 
@@ -242,7 +256,7 @@ that do not disguise unvalidated runtime behavior as complete.
 - Runtime collection, tracker rules, and presentation values remain outside
   the Unity-facing layer.
 - Version-sensitive members are isolated behind a narrow boundary and are
-  supported by the current hash-linked feasibility evidence.
+  supported by the accepted recovered feasibility conclusions.
 - Missing runtime members are designed to fail softly, but that behavior is
   recorded as unverified until separately authorized runtime validation.
 - Source review confirms there is no startup fixture, automatic launch,
@@ -258,7 +272,7 @@ Owner approval and restored product contract
 S1-01 repository hygiene
     |
 S1-02 stable identity and source build
-    +--> S1-03 repository-local package
+    +--> S1-03 local and hosted package
     +--> S1-04 panel geometry and clamp tests
     +--> S1-05 visibility policy tests
     `--> S1-06 compile-time Unity UI boundary
@@ -272,8 +286,10 @@ implicitly activate or authorize a later story.
 ### Source-ready
 
 - Every story explicitly promoted into Sprint 1 meets its definition of done.
-- Focused deterministic tests and the authoritative `Release` build pass from
-  documented repository-local commands.
+- Focused deterministic tests and the local authority-backed `Release` build
+  pass from documented repository-local commands.
+- The hosted `Release` build and shim consumed-surface coverage validation pass
+  in GitHub Actions.
 - Static security review confirms that scripts, build targets, tests, and
   package steps cannot write to or execute from the DSP installation.
 - Final tracked changes contain no dependency binary, save data, environment
@@ -283,7 +299,7 @@ implicitly activate or authorize a later story.
 
 ### Package-inspected
 
-- The repository-local package contains the intended managed build output and
+- Local and hosted packages contain the intended managed build output and
   version-aligned metadata.
 - Static validators pass without installing or loading the package.
 - The artifact remains marked not release-ready and not runtime-validated.
@@ -304,8 +320,11 @@ package inspection, prior feasibility probes, or owner review of this sprint.
 
 ## Remaining owner decisions
 
-- Approve or revise this sanitized safety boundary.
-- Approve the stable BepInEx plugin GUID and display name.
-- Restore or replace `docs/PROJECT.md` as the product authority.
+- Decide the exact fixed panel dimensions and calibrated cell-treatment
+  opacity before S1-04 becomes Ready.
+- Decide the global Show/Hide icon and tracker-owned fallback text before a
+  story implements that production control.
+- Resolve the product decisions listed in `PROJECT.md` only before their
+  consuming stories become Ready.
 - Decide later whether to commission a separate controlled-runtime validation
   plan. That decision is not required to begin safe source work.

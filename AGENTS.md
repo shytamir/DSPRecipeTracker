@@ -147,10 +147,16 @@ The intended baseline is:
 - .NET Framework 4.7.2 (`net472`) unless implementation evidence requires a
   different target;
 - BepInEx 5;
-- Unity and game assemblies supplied by the installed Dyson Sphere Program.
+- Unity and game assemblies supplied by the installed Dyson Sphere Program for
+  local builds; and
+- minimal source-defined compile-reference shims for hosted builds, with
+  complete consumed-surface coverage validation.
 
 Do not copy or commit game, Unity, or BepInEx binaries. Resolve them from the
-local game installation or a documented CI source.
+local game installation, the documented BepInEx CI source, or the tracked
+compile-reference shims. Shims must contain declarations only, must cover every
+known external symbol consumed by production code, and must never be packaged,
+loaded, or treated as runtime evidence.
 
 When authoritative runtime knowledge is required, inspect the installed game
 assemblies or actual runtime evidence as read-only inputs. Distinguish

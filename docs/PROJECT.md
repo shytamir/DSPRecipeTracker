@@ -6,6 +6,10 @@
 
 **Product:** DSP Recipe Tracker
 
+**BepInEx plugin GUID:** `dsprecipetracker`
+
+**BepInEx display name:** `DSP-Recipe-Tracker`
+
 **Implementation status:** Implementation has started. Sprint 1 story S1-01 is
 Active and pending implementation. No functional plugin or supported release
 exists.
@@ -30,7 +34,7 @@ This contract does not:
 - activate a roadmap story;
 - record technical validation or owner acceptance;
 - authorize installation, game execution, or runtime evidence collection;
-- approve a plugin GUID, loader display name, release, or publication; or
+- approve a release or publication; or
 - promote a deferred feature into the MVP.
 
 ## 1. Product intent

@@ -65,30 +65,32 @@ scripts.
 
 ## 3. Build and validation workflow
 
-Sprint 1 implements local package construction and the same static validators
-that future automation will use. Hosted executable packaging remains disabled
-until an authority record establishes a lawful, complete game and Unity
-reference source. Once that gate is satisfied, a workflow triggered by each
-push to `main` and by manual dispatch will:
+Sprint 1 implements local package construction and GitHub Actions automation
+using the same static validators. A workflow triggered by each push to `main`
+and by manual dispatch will:
 
 1. verify that it checked out the triggering commit;
 2. derive all version forms from `VERSION`, the run number, and commit;
-3. build the real `net472` plugin and run the implemented deterministic tests;
-4. validate that `DSPRecipeTracker.dll` is a non-empty managed assembly with
+3. build the tracked game and Unity compile-reference shims and validate their
+   declaration-only surface against the tracked inventory;
+4. build the real `net472` plugin against those shims and run the implemented
+   deterministic tests;
+5. extract the production assembly's external references and validate their
+   complete coverage by both the shim declarations and surface inventory;
+6. validate that `DSPRecipeTracker.dll` is a non-empty managed assembly with
    the expected name, semantic metadata, assembly version, file version, and
    BepInEx plugin identity;
-5. build the Thunderstore ZIP from real build output and tracked package
+7. build the Thunderstore ZIP from real build output and tracked package
    assets;
-6. validate the exact archive allowlist, portable names, root files, manifest
+8. validate the exact archive allowlist, portable names, root files, manifest
    shape, semantic version, README presence, PNG format and dimensions, DLL
    path, and recorded DLL hash; and
-7. upload the ZIP, recipe-tracker DLL, build information, and static validation
+9. upload the ZIP, recipe-tracker DLL, build information, and static validation
    reports as one workflow artifact retained for 30 days.
 
-Until the hosted gate is satisfied, CI runs only checks that require no game or
-Unity binaries and emits no DLL or mod ZIP. Local package construction receives
-an explicit non-negative patch value corresponding to `N`; authorized GitHub
-automation supplies its run number. Neither path edits `VERSION`.
+Local package construction receives an explicit non-negative patch value
+corresponding to `N`; GitHub Actions supplies its run number. Neither path
+edits `VERSION`.
 
 The workflow does not publish to Thunderstore, create a GitHub release, or
 describe the artifact as supported or release-ready.
@@ -96,6 +98,11 @@ describe the artifact as supported or release-ready.
 Generic package validation checks structure, identity, integrity, and version
 consistency. It does not claim that recipe tracking, UI, interaction, runtime
 cleanup, compatibility, or any other product behavior works.
+
+Plugin metadata validation requires the exact BepInEx GUID
+`dsprecipetracker` and display name `DSP-Recipe-Tracker` recorded in
+`PROJECT.md`. Package tooling must not derive or normalize either value from a
+folder, assembly, repository, or Thunderstore package name.
 
 ## 4. Build prerequisites and reference boundary
 
@@ -106,14 +113,40 @@ cleanup, compatibility, or any other product behavior works.
   consumed assembly identity matches the conformance contract.
 - Hosted CI must not download, upload, cache, reconstruct, or redistribute
   licensed DSP or Unity binaries.
-- Partial DSP API shims, extracted implementation, and source declarations
-  that pretend to be the supported game assembly are prohibited.
-- If complete lawful game and Unity compile references are unavailable on the
-  hosted runner, executable building is reported as unavailable and no mod ZIP
-  or DLL artifact is emitted. Source and documentation checks that make no
-  executable claim may still run.
+- Hosted CI uses tracked source-defined compile-reference shims for the exact
+  DSP and Unity surface consumed by production code. They live under
+  `ci/compile-references` with their `surface-inventory.json`. A shim contains
+  type and member declarations only: no game logic, extracted implementation,
+  copied binary content, or runtime simulation.
+- The shim projects, their outputs, and their surface inventory are compile and
+  validation inputs only. They are never installed or included in the package.
 - The implemented automation uses the repository-selected .NET SDK and
   PowerShell tooling recorded by the active Sprint 1 story.
+
+### Shim coverage validation
+
+The repository maintains a machine-readable inventory of every known DSP and
+Unity compile-reference consumed by production code. Coverage includes assembly
+and type identities, base types and interfaces, constructors, methods, fields,
+properties, events, and the parameter and return types needed by those members.
+
+The validator extracts the external DSP and Unity type/member references from
+the production `Release` assembly and compares them with both the inventory and
+the declarations exported by the shim assemblies. It fails when:
+
+- a consumed external reference is absent from either source;
+- a declared name, containing type, static/instance form, parameter list,
+  return type, field/property/event type, or assembly identity disagrees;
+- a shim declaration falls outside the reviewed surface inventory;
+- production source uses an external reference that the extractor cannot
+  classify; or
+- a shim exposes executable behavior or is present in package output.
+
+External members reached only through reflection or other dynamic lookup do
+not appear in ordinary assembly member references. Each such known access must
+therefore have an explicit inventory entry and a focused source-level check.
+Shim coverage proves that hosted compilation covers every known consumed
+compile surface; it does not prove in-game behavior or compatibility.
 
 ## 5. Package assets
 
@@ -125,8 +158,8 @@ cleanup, compatibility, or any other product behavior works.
   current product and validation contracts.
 - `icon.png` satisfies Thunderstore's required PNG format and dimensions and
   contains no copied game art.
-- Package assets are tracked source inputs; generated archives and binaries
-  remain ignored build output.
+- Package assets are tracked beneath `packaging/`; generated archives and
+  binaries remain ignored build output.
 
 ## 6. Validation and publication boundary
 

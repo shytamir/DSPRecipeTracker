@@ -108,6 +108,9 @@ The project does not modify BepInEx, target the source checkout's BepInEx 6
 [docs/BEPINEX-CONFORMANCE.md](docs/BEPINEX-CONFORMANCE.md) for exact commits,
 recorded binary hashes, accepted conclusions, and the fixed-version policy.
 
+The approved BepInEx plugin GUID is `dsprecipetracker`; its loader display name
+is `DSP-Recipe-Tracker`.
+
 ## Build and install
 
 Build and installation instructions will be added with the first working
@@ -169,6 +172,11 @@ yet; gameplay, layout, input, and display-scale behavior remains unvalidated.
 
 Before contributing, read [AGENTS.md](AGENTS.md). It defines the repository's
 scope, safety, validation, and Git expectations.
+
+Implementation files will follow the adopted
+[source, test, CI-reference, validation, and package layout](docs/IMPLEMENTATION-CONTRACT.md#adopted-repository-layout)
+as their respective Sprint 1 stories become Active. Later-story placeholder
+projects and directories are not created in advance.
 
 The [original concept foundation](docs/planning/PINNED-RECIPE-TRACKER-CONCEPT.md)
 is retained as non-authoritative planning context. [The project contract](docs/PROJECT.md)
