@@ -2,9 +2,11 @@
 
 ## Status
 
-**Status:** Draft for owner review
+**Status:** In progress
 
-**Active story:** None
+**Active story:** S1-01 - Establish repository hygiene
+
+**Active story state:** Active and pending implementation
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -13,10 +15,10 @@
 executing project code in Dyson Sphere Program, modifying the installed game,
 or collecting data from the player's runtime environment.
 
-This is the sanitized replacement for the earlier "Executable Panel
-Foundation" draft. It deliberately narrows the parent roadmap. The earlier
-draft's installed-game checkpoints, loaded-game interaction, and retained
-runtime evidence are not authorized by this record.
+This owner-accepted record is the sanitized replacement for the earlier
+"Executable Panel Foundation" draft. It deliberately narrows the parent
+roadmap. The earlier draft's installed-game checkpoints, loaded-game
+interaction, and retained runtime evidence are not authorized by this record.
 
 ## Safety boundary
 
@@ -75,26 +77,27 @@ around**. It is work outside the authorized scope.
 | Source | Sprint 1 consequence |
 | --- | --- |
 | [`PRODUCT-PRINCIPLES.md`](PRODUCT-PRINCIPLES.md) | Preserve the native-extension design, but do not access live native resources in Sprint 1. |
+| [`PROJECT.md`](PROJECT.md) | Governs owner-accepted product behavior and scope. |
+| [`IMPLEMENTATION-CONTRACT.md`](IMPLEMENTATION-CONTRACT.md) | Governs architecture, integration mechanics, state ownership, and source constraints. |
+| [`VALIDATION-CONTRACT.md`](VALIDATION-CONTRACT.md) | Governs readiness states, evidence, owner acceptance, and publication claims. |
 | [`FEASIBILITY.md`](FEASIBILITY.md) | Treat existing findings as historical design evidence; do not repeat its probes or promote them to current runtime validation. |
 | [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) | Records the external source identities used by the recovered design; Sprint 1 does not copy or execute them. |
 | [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) | Compile only against the pinned BepInEx 5 surface; do not launch or alter the installed loader. |
+| [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) | Governs the single-DLL package layout, version mapping, and static package validation. |
 | [`planning/MVP-ROADMAP.md`](planning/MVP-ROADMAP.md) | Preserve the cross-sprint product sequence while this Sprint 1 record narrows its execution boundary. |
-
-`docs/PROJECT.md` and `docs/THUNDERSTORE-PACKAGE.md` are referenced by older
-project material but are not currently tracked. They supply no executable
-authority until restored, reviewed, and explicitly accepted.
 
 ## Entry gates
 
-Before any story becomes Active:
+The entry gates required to activate S1-01 are satisfied:
 
-- the owner approves this sanitized safety boundary;
-- the owner approves the exact BepInEx plugin GUID and display name;
-- `docs/PROJECT.md` is restored or replaced with an owner-reviewed product
-  contract;
+- the owner accepted the sanitized safety boundary and linked contract set;
+- the product contract is restored and owner accepted;
 - repository ignore rules cover dependency binaries, `bin/`, `obj/`, package
   output, and runtime evidence; and
-- the active story and its exact file scope are recorded here.
+- S1-01 and its exact scope are recorded as Active below.
+
+The exact BepInEx plugin GUID and loader display name remain a story-specific
+entry gate for S1-02. They do not block repository-hygiene work in S1-01.
 
 No implementation agent may infer these decisions from the concept record,
 the old roadmap, existing installed plugins, or feasibility artifacts.
@@ -130,7 +133,7 @@ the old roadmap, existing installed plugins, or feasibility artifacts.
 
 ### S1-01 - Establish repository hygiene
 
-**Status:** Proposed
+**Status:** Active - pending implementation
 
 **User story:** As a maintainer, I want generated and licensed material kept
 out of Git while source builds use explicit external references.

@@ -5,6 +5,10 @@ by DSP Recipe Tracker. The project conforms to the version already installed
 and operating with the default Steam game. It does not modify BepInEx, select
 an upgrade path, or promise compatibility with other loader versions.
 
+**Evidence disposition:** The former retained local snapshot was removed. The
+owner accepts the recorded identities, hashes, source mapping, and conformance
+conclusions in this document as the recovered baseline.
+
 ## Supported version
 
 | Field | Value |
@@ -26,7 +30,7 @@ commit above are authoritative for the installed BepInEx 5 API.
 
 ## Installed runtime identity
 
-The key retained binaries are:
+The recorded binary identities are:
 
 | File | Assembly/file version | SHA-256 |
 | --- | --- | --- |
@@ -45,33 +49,22 @@ MonoMod RuntimeDetour and Utils `21.9.19.1`. Those declarations match the
 installed dependency closure.
 
 `doorstop_config.ini` enables Doorstop and targets
-`BepInEx\core\BepInEx.Preloader.dll`. Its retained SHA-256 is
+`BepInEx\core\BepInEx.Preloader.dll`. Its recorded SHA-256 is
 `2255e7640434fdfccbfeb123a5f4fccb05032481b39c2ba822e905ccba58d20e`.
 
-## Local authority snapshot
+## Removed local authority snapshot
 
-The ignored local evidence is retained at:
-
-```text
-artifacts/authority/bepinex/
-|-- SHA256SUMS.txt
-|-- installed/
-|   |-- core/
-|   `-- loader/
-`-- source/
-    `-- BepInEx-v5.4.17-3c315359.zip
-```
-
-The installed snapshot contains all 18 files from `BepInEx/core` plus the
-Doorstop DLL and configuration. Every retained file was verified byte-for-byte
-against the active installation. The source ZIP was produced directly with
-`git archive` from the pinned tag; its SHA-256 is
+The former ignored snapshot contained the 18 files from `BepInEx/core`, the
+Doorstop DLL and configuration, recorded hashes, and a source archive produced
+from the pinned tag. Those files were removed. The recorded source-archive
+SHA-256 was
 `43154c79b2bcafe5978429df19a3076528471c2406ec923eaba185e68c1d6d26`.
 
-The source archive represents the BepInEx superproject. Its Harmony integration
-submodule is recorded as the pinned gitlink above rather than embedded source.
-If Harmony internals require inspection, use that exact submodule commit or
-the installed `0Harmony.dll`; do not substitute current upstream code.
+The owner accepts the conclusion that the snapshot matched the active
+installation and pinned source mapping at the time of recovery. If new Harmony
+internals require inspection, use the exact recorded submodule commit or a new
+explicitly established source; do not substitute current upstream code by
+inference.
 
 ## Minimal supported feature surface
 

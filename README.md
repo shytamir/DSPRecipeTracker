@@ -5,11 +5,11 @@ DSP Recipe Tracker is a planned in-game recipe companion for
 It will let players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
-The previous project is being recovered into a safe source-first plan. The
-sanitized Sprint 1 roadmap is a draft with no Active story, so implementation
-and runtime validation are not yet authorized. Runtime authority, historical
-feasibility findings, and UI-extension principles are documented, but no
-installable plugin or supported release exists yet.
+The recovered product, implementation, and validation contracts are owner
+accepted. Sprint 1 implementation has started with story S1-01 Active and
+pending implementation. Runtime execution and runtime validation remain
+outside the current source-only authorization. No installable plugin or
+supported release exists yet.
 
 ## Planned MVP
 
@@ -52,12 +52,13 @@ panel resizing are possible follow-up features rather than initial
 commitments. Automatic building placement and other factory automation are
 separate project ideas.
 
-The authoritative product scope and acceptance outline are maintained in
-[docs/PROJECT.md](docs/PROJECT.md).
+The authoritative product scope is maintained in
+[docs/PROJECT.md](docs/PROJECT.md). Readiness and acceptance criteria are
+maintained in [docs/VALIDATION-CONTRACT.md](docs/VALIDATION-CONTRACT.md).
 
-The sanitized Sprint 1 draft is [docs/ROADMAP.md](docs/ROADMAP.md).
-The authorized MVP skeleton and original concept foundation remain under
-`docs/planning/`.
+The active Sprint 1 implementation record is
+[docs/ROADMAP.md](docs/ROADMAP.md). The authorized long-range MVP roadmap and
+original concept foundation remain under `docs/planning/`.
 
 The governing UI-extension approach is recorded in
 [docs/PRODUCT-PRINCIPLES.md](docs/PRODUCT-PRINCIPLES.md). The initial
@@ -85,10 +86,10 @@ installed `Assembly-CSharp.dll` and a validation-passing export derived from
 that same binary. The assembly is authoritative for IL and exact API shapes;
 the export is authoritative for the Proto and graph fields it preserves.
 
-See [docs/RUNTIME-AUTHORITY.md](docs/RUNTIME-AUTHORITY.md) for the current
-source identities, retained local paths, evidence hierarchy, and refresh
-rules. Licensed binaries and generated datasets remain ignored under
-`artifacts/` and are never redistributed.
+See [docs/RUNTIME-AUTHORITY.md](docs/RUNTIME-AUTHORITY.md) for the recovered
+source identities, accepted conclusions, evidence hierarchy, and refresh
+rules. The former retained authority files were removed; licensed binaries and
+generated datasets are never redistributed.
 
 ## BepInEx conformance
 
@@ -105,7 +106,7 @@ clone of the native grid material with an independent state buffer.
 The project does not modify BepInEx, target the source checkout's BepInEx 6
 `master`, or promise compatibility with other loader versions. See
 [docs/BEPINEX-CONFORMANCE.md](docs/BEPINEX-CONFORMANCE.md) for exact commits,
-binary hashes, retained evidence, and the fixed-version policy.
+recorded binary hashes, accepted conclusions, and the fixed-version policy.
 
 ## Build and install
 
@@ -114,14 +115,13 @@ plugin skeleton. There is currently no functional DLL to build or install.
 
 The repository intentionally contains no placeholder DLL or dummy package
 pipeline. Sprint 1 will create the first package pipeline from the real plugin
-build output; it must not emit an installable-looking artifact before real
-source exists.
+build output according to
+[docs/THUNDERSTORE-PACKAGE.md](docs/THUNDERSTORE-PACKAGE.md).
 
 ## Versioning and packaging
 
-`VERSION` currently reserves the major and minor release line. Sprint 1 will
-define the real package pipeline and make one repository-owned version source
-derive:
+`VERSION` supplies the major and minor release line. The real package pipeline
+will use the GitHub Actions run number as the patch value and derive:
 
 ```text
 Package/plugin version: M.m.N
@@ -130,17 +130,18 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The reserved pre-release line is `0.1`. Package layout and validation
-documentation will be created with the real pipeline.
+The current pre-release line is `0.1`. The package contract defines the
+single-DLL archive layout and static validation boundary.
 
 ## Project status
 
-Sprint 1 is awaiting owner review and has no Active story. Historical assembly
-and isolated-runtime feasibility work identified the Replicator input surface,
-recipe and inventory APIs, native HUD host, exact major-interface visibility
-signals, and reusable presentation resources. Those findings do not authorize
-new runtime execution. No functional plugin exists yet; gameplay, layout,
-input, and display-scale behavior remains unvalidated.
+Sprint 1 implementation has started. S1-01, repository hygiene, is Active and
+pending implementation; later stories remain Proposed. Historical assembly
+and isolated-runtime feasibility conclusions identify the Replicator input
+surface, recipe and inventory APIs, native HUD host, exact major-interface
+visibility signals, and reusable presentation resources. Those accepted
+conclusions do not authorize new runtime execution. No functional plugin exists
+yet; gameplay, layout, input, and display-scale behavior remains unvalidated.
 
 ## Repository layout
 
@@ -159,6 +160,7 @@ input, and display-scale behavior remains unvalidated.
 |   |-- PROJECT.md
 |   |-- ROADMAP.md
 |   |-- RUNTIME-AUTHORITY.md
+|   |-- THUNDERSTORE-PACKAGE.md
 |   `-- VALIDATION-CONTRACT.md
 |-- VERSION
 |-- LICENSE

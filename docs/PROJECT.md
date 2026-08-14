@@ -6,10 +6,11 @@
 
 **Product:** DSP Recipe Tracker
 
-**Implementation status:** No functional plugin or supported release exists.
+**Implementation status:** Implementation has started. Sprint 1 story S1-01 is
+Active and pending implementation. No functional plugin or supported release
+exists.
 
-**Owner review:** Pending. This file does not satisfy the roadmap's
-owner-reviewed-contract entry gate until the owner explicitly accepts it.
+**Owner review:** Accepted on 2026-08-14.
 
 This file is the normative authority for settled product behavior and scope.
 It consolidates the product direction in
@@ -196,6 +197,7 @@ The following contracts implement and validate this product:
 | --- | --- |
 | [`IMPLEMENTATION-CONTRACT.md`](IMPLEMENTATION-CONTRACT.md) | Architecture, runtime adapters, native integration mechanics, state ownership, failure cleanup, and source baseline. |
 | [`VALIDATION-CONTRACT.md`](VALIDATION-CONTRACT.md) | Source, package, behavioral, owner-acceptance, and publication gates; evidence and runtime-authorization rules. |
+| [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) | Package layout, version mapping, build-reference boundary, artifact validation, and publication boundary. |
 | [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) | Runtime evidence identity, provenance, coverage, and refresh rules. |
 | [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) | Supported loader version and permitted BepInEx feature surface. |
 | [`ROADMAP.md`](ROADMAP.md) | Active story, implementation scope, sequencing, and operational authorization. |

@@ -1,9 +1,14 @@
 # Runtime Authority and Provenance
 
 This document defines the evidence hierarchy for Dyson Sphere Program runtime
-facts used by DSP Recipe Tracker. It records the current authoritative source
+facts used by DSP Recipe Tracker. It records the recovered authoritative source
 snapshot and prevents derived exports, inferred API shapes, or stale game
 files from being treated as interchangeable.
+
+**Evidence disposition:** The former retained authority files were removed.
+The owner accepts the recorded identities, hashes, coverage, and conclusions
+in this document as the recovered baseline. This record does not claim that
+the former local evidence remains available or reproducible.
 
 ## Authority hierarchy
 
@@ -13,10 +18,12 @@ Use sources in this order:
    below is the primary authority for types, members, signatures, inheritance,
    method bodies, IL call sites, and runtime API behavior encoded in that
    assembly.
-2. The hash-linked Phase 1 export bundle is authoritative derived evidence for
-   the runtime Proto records and graph relationships that it preserves.
-3. Direct inspection or a new focused export from the same assembly resolves
-   any fact that is absent, ambiguous, summarized, or deferred in the bundle.
+2. The recorded conclusions from the removed, hash-linked Phase 1 export are
+   accepted authority for the runtime Proto records and graph relationships
+   explicitly preserved in this document and `FEASIBILITY.md`.
+3. Direct inspection or a new focused export from the same assembly is
+   required for a new fact that is absent, ambiguous, summarized, or deferred
+   in the accepted record.
 4. Project documentation and implementation are consumers of those sources;
    they do not override them.
 
@@ -33,40 +40,41 @@ from the game-assembly authority chain.
 | Field | Value |
 | --- | --- |
 | Installed source | `C:\Program Files (x86)\Steam\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll` |
-| Retained local copy | `artifacts/authority/installed/Assembly-CSharp.dll` |
+| Former retained copy | Removed |
 | Size | 7,830,016 bytes |
 | SHA-256 | `ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85` |
 | Assembly identity | `Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null` |
 
-The retained assembly is an unmodified copy of the installed source. Its hash
-was verified after copying. It is a local inspection input only and must never
-be committed, packaged, or redistributed.
+The removed retained assembly was recorded as an unmodified copy of the
+installed source whose hash matched the value above. That conclusion is
+accepted as part of the recovered baseline. No retained copy is currently
+available from this repository.
 
-## Current derived export snapshot
+## Recorded derived export snapshot
 
 | Field | Value |
 | --- | --- |
 | Supplied bundle | `dsp_phase1_end_products_v1_0.zip` |
-| Retained bundle | `artifacts/authority/bundles/dsp_phase1_end_products_v1_0.zip` |
-| Extracted files | `artifacts/authority/exports/dsp_phase1_end_products_v1_0/` |
+| Former retained bundle | Removed |
+| Former extracted files | Removed |
 | Bundle size | 97,354 bytes |
 | Attached bundle SHA-256 | `282720387dffc1e5fea4bffd72f0aa405392c545c05989e554603059e45ee3ae` |
 | Export time recorded by bundle | `2026-07-19T01:51:31.9958668Z` |
 | Validation status | `PASS`, with no errors or warnings |
 | Assembly SHA-256 recorded by bundle | `ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85` |
 
-The bundle's recorded assembly hash exactly matches both the installed and
-retained assembly. This establishes that the export and direct assembly
-inspection refer to the same runtime binary.
+The recorded bundle assembly hash matched the installed and former retained
+assembly. The owner accepts the conclusion that the export and direct assembly
+inspection referred to the same runtime binary.
 
 The validation document also records
 `source_zip_sha256=6253ab971c284f19cd1b7bb0e5727a83197fcf75bbcf90cd847d67d27ff6a6f5`.
 That value identifies the export process's upstream source ZIP; it is not the
 SHA-256 of the attached six-file bundle. Keep the two hashes distinct.
 
-## Bundle contents and coverage
+## Recorded bundle contents and coverage
 
-The retained bundle contains:
+The removed bundle was recorded as containing:
 
 - `dsp_phase1_canonical_dataset_v1_0.json`;
 - `dsp_phase1_validation_v1_0.json`;
@@ -75,26 +83,28 @@ The retained bundle contains:
 - `dsp_phase1_milestone_seed_graph_v1_0.csv`; and
 - `dsp_phase1_reconstruction_report_v1_0.md`.
 
-All six extracted files were verified byte-for-byte against their archive
-entries. The validation reports 314 technologies, 161 recipes, 174 items, 25
-themes, and 14 vein types. IDs are unique, referenced graph nodes resolve, and
-the formal technology graph is acyclic.
+The former validation recorded all six extracted files as matching their
+archive entries. It reported 314 technologies, 161 recipes, 174 items, 25
+themes, and 14 vein types, with unique IDs, resolved graph references, and an
+acyclic formal technology graph. Those conclusions are accepted as given.
 
-For this project, the bundle is the first source for recipe identities, direct
-inputs and outputs, unlock relationships, item identities, and other fields it
-preserves exactly. Practical-interpretation edges remain separate from formal
-game-data edges and must not be promoted to runtime facts by inference.
+For this project, the recorded export conclusions are the accepted baseline
+for recipe identities, direct inputs and outputs, unlock relationships, item
+identities, and other explicitly preserved fields. Practical-interpretation
+edges remain separate from formal game-data edges and must not be promoted to
+runtime facts by inference.
 
-The bundle does not contain a dedicated IL-disassembly or exhaustive call-site
-inventory. It preserves some raw function ID/value pairs while explicitly
-deferring their semantic interpretation. Use direct assembly inspection when
-implementation requires IL references, exact member signatures, overload
-selection, control flow, or a call pattern not proven by the exported data.
+The former bundle did not contain a dedicated IL-disassembly or exhaustive
+call-site inventory. Direct assembly inspection is required when implementation
+needs IL references, exact member signatures, overload selection, control flow,
+or a call pattern not established by the accepted conclusions.
 
 ## Use and refresh rules
 
-- Verify the installed assembly SHA-256 before using this snapshot for new
-  runtime claims.
+- Treat the recorded conclusions as accepted recovery inputs, not as retained
+  evidence that can be reopened.
+- Verify the installed assembly identity before making a new runtime claim
+  against the current installation.
 - If the installed hash differs, treat this snapshot as historical. Do not mix
   facts from the new assembly with exports tied to the old hash.
 - Regenerate or supplement exports from the changed assembly before adopting
@@ -131,8 +141,7 @@ BepInEx, Unity, or a substitute runtime harness.
 
 ## Repository boundary
 
-All retained authority inputs live under the ignored `artifacts/` directory.
-They are intentionally absent from Git status and Git history. Tracked
-documentation may record identities, hashes, provenance, and derived
-conclusions, but must not embed or redistribute licensed game binaries or
-large generated datasets.
+The former retained authority inputs were removed. Tracked documentation may
+record their identities, hashes, provenance, coverage, and accepted
+conclusions, but it must not claim that the files remain locally available or
+embed or redistribute licensed game binaries or large generated datasets.

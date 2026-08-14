@@ -52,6 +52,10 @@ Preserve these invariants unless the task explicitly changes one:
 Read `docs/PROJECT.md` before changing product behavior, runtime integration,
 state handling, interaction, or UI.
 
+Read `docs/IMPLEMENTATION-CONTRACT.md` before changing implementation and
+`docs/VALIDATION-CONTRACT.md` before making readiness, acceptance,
+compatibility, release, or publication claims.
+
 `docs/PRODUCT-PRINCIPLES.md` defines the native-extension approach, and
 `docs/FEASIBILITY.md` records the confirmed integration surface and remaining
 runtime checkpoints. Follow both when implementing Replicator or tracker UI
@@ -153,18 +157,23 @@ assemblies or actual runtime evidence as read-only inputs. Distinguish
 confirmed members from inference, isolate fragile integration points, and
 record uncertainty instead of presenting a proxy as fact.
 
-`docs/RUNTIME-AUTHORITY.md` defines the current authority hierarchy, hashes,
-retained local inputs, and refresh rules. Verify the installed assembly hash
-before relying on retained exports. If it differs, do not mix the new runtime
-with the old snapshot; re-establish authority first. Use the hash-linked export
-for facts it preserves exactly and the matching assembly for IL, signatures,
-call sites, or gaps in the export.
+`docs/RUNTIME-AUTHORITY.md` records the recovered authority hierarchy, hashes,
+accepted conclusions, and refresh rules. The former retained evidence was
+removed and must not be claimed as present. Treat the recorded conclusions as
+the accepted recovery baseline. If new runtime claims are required against a
+different installed assembly, establish new evidence without mixing it into
+the accepted historical snapshot.
 
 `docs/BEPINEX-CONFORMANCE.md` fixes the supported plugin-manager contract at
 the installed BepInEx `5.4.17.0` and its pinned `v5.4.17` source tag. Use only
 the minimal documented feature surface. Do not target the source checkout's
 BepInEx 6 `master`, alter the loader, or add multi-version compatibility by
 inference. Reference HarmonyX only when a confirmed hook requires it.
+
+`docs/THUNDERSTORE-PACKAGE.md` defines the package layout, version mapping,
+external-reference boundary, static package validation, and publication
+boundary. Read it before changing package assets, versioning, build workflow,
+artifact retention, or distribution behavior.
 
 ## 9. Implementation discipline
 

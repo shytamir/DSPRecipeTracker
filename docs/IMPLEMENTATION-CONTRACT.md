@@ -4,9 +4,10 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** No functional plugin exists.
+**Implementation status:** Implementation has started. Sprint 1 story S1-01 is
+Active and pending implementation. No functional plugin exists.
 
-**Owner review:** Pending with the linked product contract.
+**Owner review:** Accepted on 2026-08-14.
 
 This file governs implementation structure, runtime integration mechanics,
 lifecycle ownership, failure handling, and the source toolchain. It implements
@@ -191,9 +192,10 @@ compatibility with later game, Unity, BepInEx, Harmony, or third-party mod
 versions.
 
 Game, Unity, and BepInEx assemblies remain external dependencies. Build
-configuration may reference them from an explicit maintainer-supplied
-location, but source and package construction must not copy, commit, or
-redistribute them.
+configuration receives them through the explicit maintainer-supplied
+`GameRoot` setting defined by `THUNDERSTORE-PACKAGE.md`; it must not silently
+discover another installation. Source and package construction must not copy,
+commit, or redistribute those assemblies.
 
 Use only the BepInEx lifecycle, identity, logging, and explicitly required
 configuration surface documented in `BEPINEX-CONFORMANCE.md`. Do not target
@@ -207,9 +209,7 @@ becomes Ready:
 - the stable BepInEx plugin GUID and loader display name;
 - exact fixed panel dimensions and calibrated cell-treatment opacity;
 - the icon and tracker-owned fallback text for the global Show/Hide control;
-- source project and test-project layout;
-- the explicit external-reference setting used by local builds; and
-- real package layout and build-pipeline design.
+- source project and test-project layout.
 
 Do not recover these values from placeholder metadata, installed plugins, or
 historical probe code by inference.

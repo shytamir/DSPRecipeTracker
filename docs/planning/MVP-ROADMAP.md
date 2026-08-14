@@ -10,10 +10,12 @@
 [`Sprint 1 - Safe Source Foundation`](../ROADMAP.md)
 
 The current Sprint 1 record is a sanitized source-only recovery plan with no
-Active story. It overrides this planning baseline wherever this file mentions
-installed, loaded-game, visual, or interaction validation. Those activities
-require a separate owner-approved controlled-runtime record and are not
-authorized merely because they appear in this long-range plan.
+broader runtime authorization. Implementation has started with S1-01,
+repository hygiene, Active and pending implementation. The active Sprint 1
+record overrides this planning baseline wherever this file mentions installed,
+loaded-game, visual, or interaction validation. Those activities require a
+separate owner-approved controlled-runtime record and are not authorized merely
+because they appear in this long-range plan.
 
 This record orders implementation; it does not create product authority.
 [`PROJECT.md`](../PROJECT.md) governs scope,
@@ -48,14 +50,14 @@ evidence. The original concept remains non-authoritative history.
 
 ## Roadmap
 
-### Sprint 1 - Executable panel foundation
+### Sprint 1 - Safe source foundation
 
 **Goal:** Establish a buildable BepInEx plugin and test its source-level panel
 boundary before adding recipe behavior.
 
 **Epics:**
 
-1. Build authority, stable identity, and version continuity.
+1. Repository hygiene, stable identity, and version continuity.
 2. Compile-time lifecycle and fail-soft UI integration boundaries.
 3. Panel composition, dragging, input containment, and visibility policy.
 4. Creation of the first real package path from build output.
@@ -116,7 +118,7 @@ separate controlled-runtime record is approved and completed.
 ## Dependency chain
 
 ```text
-Sprint 1: authoritative plugin and independent panel boundary
+Sprint 1: safe source foundation and compile-time panel boundary
     |
 Sprint 2: Replicator, tracker state, and HUD visibility integration
     |
@@ -136,7 +138,8 @@ The source prototype is ready for owner review only when it:
 
 - builds with zero release errors against complete, authority-aligned
   references;
-- satisfies the applicable acceptance outline in `PROJECT.md`;
+- satisfies the applicable acceptance contract in
+  [`VALIDATION-CONTRACT.md`](../VALIDATION-CONTRACT.md);
 - passes deterministic source-level behavior tests without loading DSP,
   BepInEx, Unity, or a substitute harness;
 - changes no inventory, crafting, factory, or save state;
