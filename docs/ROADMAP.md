@@ -4,12 +4,12 @@
 
 **Status:** In progress - owner authorized on 2026-08-14
 
-**Active story:** S2-02 - Add the native right-click pin gesture
+**Active story:** S2-03 - Present pin state without altering DSP's recipe-grid state
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S2-02 only
+**Implementation authorization:** S2-03 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,7 +17,7 @@ pending
 **Previous roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](archive/BOOTSTRAP-ROADMAP.md)
 
-The owner accepted S2-01 and activated S2-02 on 2026-08-14. Only the story
+The owner accepted S2-02 and activated S2-03 on 2026-08-14. Only the story
 identified above is authorized for implementation.
 
 **Goal:** Connect the existing panel boundary to the native Replicator and HUD
@@ -56,13 +56,13 @@ set of observations that cannot be established another way.
 
 ## Entry gates
 
-The entry gates required to activate S2-02 are satisfied:
+The entry gates required to activate S2-03 are satisfied:
 
 - the owner accepted this roadmap;
-- every decision required by S2-02 is recorded;
+- every decision required by S2-03 is recorded;
 - the repository begins from the accepted bootstrap state; and
-- S2-01 is owner accepted; and
-- exactly S2-02 is marked Active.
+- S2-01 and S2-02 are owner accepted; and
+- exactly S2-03 is marked Active.
 
 Later stories become Active one at a time only after the preceding dependency
 is technically validated and explicitly owner accepted. Completion never
@@ -195,8 +195,7 @@ authorized S2-02; it does not infer acceptance of later work.
 
 ### S2-02 - Add the native right-click pin gesture
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-14
 
 **User story:** As a player, I want right-click on an eligible native
 Replicator recipe cell to toggle its pin while ordinary recipe selection keeps
@@ -281,14 +280,15 @@ builds completed with zero warnings and zero errors; the hosted product passed
 the exhaustive declaration-only shim and consumed-surface validator. No game,
 loader, save, plugin, or substitute runtime was started or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S2-03.
+**Owner acceptance:** Accepted explicitly on 2026-08-14. This acceptance
+authorized S2-03; it does not infer acceptance of later work.
 
 ## Epic 3 - Independent native cell treatment
 
 ### S2-03 - Present pin state without altering DSP's recipe-grid state
 
-**Status:** Proposed - depends on S2-02
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want available and pinned recipes distinguished
 subtly while native feedback remains authoritative.
@@ -321,6 +321,59 @@ subtly while native feedback remains authoritative.
 **Acceptance gate:** Focused tests, Local/Hosted Release builds, shim
 validation, and source review pass, including confirmation of no write path to
 the original DSP state buffer. Live appearance and cleanup remain unvalidated.
+
+**Implementation result:**
+
+- `RecipeGridTreatmentModel` owns an independent 120-cell `uint` state array.
+  It maps populated unpinned cells to native filter mask `0x2`, populated
+  pinned cells to native banned mask `0x8`, and every other cell to neutral.
+- Population identities and ordered pins are snapshotted without per-refresh
+  allocation. Unchanged requests suppress GPU uploads and diagnostics;
+  repopulation clears stale cells even when an absent recipe remains pinned.
+- `UnityRecipeGridTreatmentAdapter` clones the native `recipeBg` image once,
+  disables raycasting, removes the copied `EventTrigger`, and places the clone
+  immediately below `recipeIcons`.
+- The clone owns a new material and 120-entry compute buffer. It never reads or
+  writes DSP's `recipeStateArray`, `recipeStateBuffer`, or `recipeBgMat`.
+- The accepted feasibility calibration is recorded as image opacity `0.08`,
+  filter green `(0.20, 0.75, 0.25, 1.00)`, and banned red
+  `(0.78, 0.22, 0.22, 0.45)`. Live suitability remains an owner observation at
+  the later combined gate.
+- Missing population or Unity resources disable only this treatment. Partial
+  and normal cleanup release the owned buffer, material, and clone once. S2-03
+  introduces no event subscription.
+- Bounded Debug diagnostics record initialize/release and changed refresh
+  counts only; no per-cell data is logged.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S2-03.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>'
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 9 `
+  -SourceRevision $revision
+```
+
+Focused tests covered independent state ownership, green/red/neutral mapping,
+pin changes, population replacement, stale clearing, absent pins, unchanged
+suppression, missing-resource isolation, inert failure, one-time cleanup, and
+bounded changed-count diagnostics. Read-only metadata validation reconfirmed
+the hash-matched 120-cell native layout, public image fields, private native
+state resources, and native `_StateBuffer` binding. Static inspection found no
+production reference or reflection string for the original native state array,
+buffer, or material. Local and Hosted Release builds completed with zero
+warnings and zero errors; both products passed exhaustive consumed-surface
+coverage against exact declaration-only shims. No game, loader, save, plugin,
+or substitute runtime was started or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S2-04.
 
 ## Epic 4 - HUD visibility and controls
 

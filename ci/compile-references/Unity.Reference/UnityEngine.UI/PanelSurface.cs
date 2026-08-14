@@ -83,6 +83,17 @@ namespace UnityEngine.UI
         {
             set { }
         }
+
+        public virtual UnityEngine.Color color
+        {
+            set { }
+        }
+
+        public virtual UnityEngine.Material material
+        {
+            get { return null; }
+            set { }
+        }
     }
 
     public abstract class MaskableGraphic : Graphic
@@ -101,6 +112,13 @@ namespace UnityEngine.UI
         public UnityEngine.Sprite sprite
         {
             set { }
+        }
+    }
+
+    public class RawImage : MaskableGraphic
+    {
+        protected RawImage()
+        {
         }
     }
 }

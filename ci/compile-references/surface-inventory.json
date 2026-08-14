@@ -29,7 +29,8 @@
           "usage": "panel-object-lifecycle",
           "members": [
             { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
-            { "kind": "method", "name": "Destroy", "signature": "System.Void(UnityEngine.Object)", "isStatic": true }
+            { "kind": "method", "name": "Destroy", "signature": "System.Void(UnityEngine.Object)", "isStatic": true },
+            { "kind": "method", "name": "Instantiate", "signature": "!!0(!!0,UnityEngine.Transform,System.Boolean)", "isStatic": true }
           ]
         },
         {
@@ -37,7 +38,10 @@
           "baseType": "UnityEngine.Object",
           "usage": "component-creation-return-type",
           "members": [
-            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "get_transform", "signature": "UnityEngine.Transform()" },
+            { "kind": "method", "name": "get_gameObject", "signature": "UnityEngine.GameObject()" },
+            { "kind": "method", "name": "GetComponent", "signature": "!!0()" }
           ]
         },
         {
@@ -61,7 +65,10 @@
           "baseType": "UnityEngine.Component",
           "usage": "panel-parent-attachment",
           "members": [
-            { "kind": "method", "name": "SetParent", "signature": "System.Void(UnityEngine.Transform,System.Boolean)" }
+            { "kind": "method", "name": "SetParent", "signature": "System.Void(UnityEngine.Transform,System.Boolean)" },
+            { "kind": "method", "name": "get_parent", "signature": "UnityEngine.Transform()" },
+            { "kind": "method", "name": "GetSiblingIndex", "signature": "System.Int32()" },
+            { "kind": "method", "name": "SetSiblingIndex", "signature": "System.Void(System.Int32)" }
           ]
         },
         {
@@ -102,6 +109,34 @@
           "members": []
         },
         {
+          "name": "UnityEngine.Color",
+          "baseType": "System.ValueType",
+          "usage": "recipe-treatment-colors-and-opacity",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Single,System.Single,System.Single,System.Single)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Material",
+          "baseType": "UnityEngine.Object",
+          "usage": "tracker-owned-recipe-treatment-material",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(UnityEngine.Material)" },
+            { "kind": "method", "name": "SetBuffer", "signature": "System.Void(System.String,UnityEngine.ComputeBuffer)" },
+            { "kind": "method", "name": "SetColor", "signature": "System.Void(System.String,UnityEngine.Color)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.ComputeBuffer",
+          "baseType": "System.Object",
+          "usage": "tracker-owned-recipe-treatment-state",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Int32,System.Int32)" },
+            { "kind": "method", "name": "SetData", "signature": "System.Void(System.Array)" },
+            { "kind": "method", "name": "Release", "signature": "System.Void()" }
+          ]
+        },
+        {
           "name": "UnityEngine.Events.UnityAction`1",
           "baseType": "System.MulticastDelegate",
           "usage": "replicator-pointer-listener",
@@ -139,7 +174,10 @@
           "baseType": "UnityEngine.EventSystems.UIBehaviour",
           "usage": "raycast-containment",
           "members": [
-            { "kind": "method", "name": "set_raycastTarget", "signature": "System.Void(System.Boolean)" }
+            { "kind": "method", "name": "set_raycastTarget", "signature": "System.Void(System.Boolean)" },
+            { "kind": "method", "name": "set_color", "signature": "System.Void(UnityEngine.Color)" },
+            { "kind": "method", "name": "get_material", "signature": "UnityEngine.Material()" },
+            { "kind": "method", "name": "set_material", "signature": "System.Void(UnityEngine.Material)" }
           ]
         },
         {
@@ -155,6 +193,12 @@
           "members": [
             { "kind": "method", "name": "set_sprite", "signature": "System.Void(UnityEngine.Sprite)" }
           ]
+        },
+        {
+          "name": "UnityEngine.UI.RawImage",
+          "baseType": "UnityEngine.UI.MaskableGraphic",
+          "usage": "native-recipe-icon-layer-ordering",
+          "members": []
         },
         {
           "name": "UnityEngine.EventSystems.BaseEventData",
@@ -239,7 +283,10 @@
           "name": "UIReplicatorWindow",
           "baseType": "System.Object",
           "usage": "replicator-adapter-host-type",
-          "members": []
+          "members": [
+            { "kind": "field", "name": "recipeBg", "signature": "UnityEngine.UI.Image" },
+            { "kind": "field", "name": "recipeIcons", "signature": "UnityEngine.UI.RawImage" }
+          ]
         }
       ]
     }

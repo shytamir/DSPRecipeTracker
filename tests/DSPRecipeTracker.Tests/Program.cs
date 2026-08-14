@@ -128,6 +128,70 @@ using (var input = new ReplicatorPinInput(failedAttachAdapter, new PinnedRecipeS
 Check(failedAttachAdapter.ReleaseCalls == 1, "failed input binding cleanup is one-time");
 Check(failedAttachDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "failed input binding diagnostic is emitted once");
 
+var treatmentDiagnostics = new RecordingDiagnosticSink();
+var treatmentAdapter = new RecordingRecipeGridTreatmentAdapter();
+treatmentAdapter.SetPopulation(10, 20, 30);
+using (var treatment = new RecipeGridTreatment(treatmentAdapter, treatmentDiagnostics))
+{
+    Check(treatment.TryInitialize(), "recipe-grid treatment initializes");
+    Check(treatment.IsAvailable, "recipe-grid treatment reports availability");
+    Check(treatmentAdapter.InitializeCalls == 1, "recipe-grid treatment resources initialize once");
+    Check(treatment.TryRefresh(new[] { 20 }), "initial recipe-grid treatment refresh succeeds");
+    Check(treatmentAdapter.ApplyCalls == 1, "initial recipe-grid treatment uploads once");
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "initial recipe-grid treatment", 0, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "pinned recipe-grid treatment", 1, RecipeGridTreatmentModel.PinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "second unpinned recipe-grid treatment", 2, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "initial neutral recipe-grid treatment", 3, RecipeGridTreatmentModel.NeutralMask);
+    Check(treatmentAdapter.OriginalState.All(value => value == 99), "tracker never writes the simulated native state buffer");
+
+    Check(treatment.TryRefresh(new[] { 20 }), "unchanged recipe-grid treatment refresh succeeds");
+    Check(treatmentAdapter.ApplyCalls == 1, "unchanged recipe-grid treatment suppresses upload");
+
+    Check(treatment.TryRefresh(new[] { 30 }), "pin-change recipe-grid treatment refresh succeeds");
+    Check(treatmentAdapter.ApplyCalls == 2, "pin change uploads once");
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "unpin remaps to green", 1, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "new pin remaps to red", 2, RecipeGridTreatmentModel.PinnedMask);
+
+    treatmentAdapter.SetPopulation(40);
+    Check(treatment.TryRefresh(new[] { 30 }), "repopulated recipe-grid treatment refresh succeeds");
+    Check(treatmentAdapter.ApplyCalls == 3, "population change uploads once");
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "repopulated cell is unpinned", 0, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "stale cell one is cleared", 1, RecipeGridTreatmentModel.NeutralMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "stale cell two is cleared", 2, RecipeGridTreatmentModel.NeutralMask);
+    Check(treatmentAdapter.LastAppliedState.Count(value => value != RecipeGridTreatmentModel.NeutralMask) == 1, "pins absent from current grid remain neutral");
+
+    treatmentAdapter.SetPopulation(50);
+    Check(treatment.TryRefresh(new[] { 30 }), "same-mask population identity change refresh succeeds");
+    Check(treatmentAdapter.ApplyCalls == 4, "population identity change uploads even when visible mask is unchanged");
+}
+Check(treatmentAdapter.ReleaseCalls == 1, "recipe-grid treatment resources release once");
+Check(treatmentDiagnostics.Records.Count(record => record.Message.Contains("action=refresh", StringComparison.Ordinal)) == 4, "changed recipe-grid treatment refreshes emit diagnostics only");
+Check(treatmentDiagnostics.Records.Any(record => record.Message == "recipe-grid-treatment action=refresh populated=3 unpinned=2 pinned=1"), "recipe-grid treatment diagnostic reports changed counts");
+Check(treatmentDiagnostics.Records.Any(record => record.Message == "recipe-grid-treatment action=release"), "recipe-grid treatment release diagnostic is emitted");
+Check(treatmentDiagnostics.Records.Where(record => record.Message.StartsWith("recipe-grid-treatment action=", StringComparison.Ordinal)).All(record => record.Level == TrackerDiagnosticLevel.Debug), "recipe-grid treatment diagnostics use Debug level");
+Check(treatmentDiagnostics.Records.Where(record => record.Message.StartsWith("recipe-grid-treatment action=", StringComparison.Ordinal)).All(record => record.Message.Length < 128), "recipe-grid treatment diagnostics remain bounded");
+
+var missingTreatmentDiagnostics = new RecordingDiagnosticSink();
+var missingTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter { InitializeResult = false };
+using (var treatment = new RecipeGridTreatment(missingTreatmentAdapter, missingTreatmentDiagnostics))
+{
+    Check(!treatment.TryInitialize(), "missing recipe-grid treatment resources fail softly");
+    Check(!treatment.IsAvailable, "missing recipe-grid treatment remains unavailable");
+}
+Check(missingTreatmentAdapter.ReleaseCalls == 1, "partial recipe-grid treatment cleanup is one-time");
+Check(missingTreatmentDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "missing recipe-grid treatment failure is reported once");
+
+var failedTreatmentDiagnostics = new RecordingDiagnosticSink();
+var failedTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter { ReadResult = false };
+using (var treatment = new RecipeGridTreatment(failedTreatmentAdapter, failedTreatmentDiagnostics))
+{
+    Check(treatment.TryInitialize(), "failing recipe-grid treatment initializes before isolated failure");
+    Check(!treatment.TryRefresh(Array.Empty<int>()), "recipe-grid population failure disables only treatment");
+    Check(!treatment.TryRefresh(Array.Empty<int>()), "disabled recipe-grid treatment remains inert");
+}
+Check(failedTreatmentAdapter.ReleaseCalls == 1, "failed recipe-grid treatment cleanup is one-time");
+Check(failedTreatmentDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "recipe-grid treatment failure is reported once");
+
 Check(PanelGeometry.FixedWidth == 360f, "fixed panel width");
 Check(PanelGeometry.FixedHeight == 252f, "fixed panel height");
 
@@ -219,7 +283,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -244,6 +308,15 @@ void CheckRecipeOrder(IReadOnlyList<int> actual, string name, params int[] expec
     for (var index = 0; index < Math.Min(actual.Count, expected.Length); index++)
     {
         Check(actual[index] == expected[index], name + " index " + index);
+    }
+}
+
+void CheckTreatmentState(IReadOnlyList<uint> actual, string name, int index, uint expected)
+{
+    Check(actual.Count == RecipeGridTreatmentModel.CellCount, name + " count");
+    if (index < actual.Count)
+    {
+        Check(actual[index] == expected, name + " state");
     }
 }
 
@@ -366,5 +439,66 @@ internal sealed class RecordingReplicatorPinInputAdapter : IReplicatorPinInputAd
     {
         NativeSelectionCalls++;
         listener?.Invoke(button);
+    }
+}
+
+internal sealed class RecordingRecipeGridTreatmentAdapter : IRecipeGridTreatmentAdapter
+{
+    private readonly int[] population = new int[RecipeGridTreatmentModel.CellCount];
+
+    public bool InitializeResult { get; set; } = true;
+
+    public bool ReadResult { get; set; } = true;
+
+    public bool ApplyResult { get; set; } = true;
+
+    public int InitializeCalls { get; private set; }
+
+    public int ApplyCalls { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public uint[] OriginalState { get; } = Enumerable.Repeat(99u, RecipeGridTreatmentModel.CellCount).ToArray();
+
+    public uint[] LastAppliedState { get; private set; } = new uint[RecipeGridTreatmentModel.CellCount];
+
+    public bool TryInitialize()
+    {
+        InitializeCalls++;
+        return InitializeResult;
+    }
+
+    public bool TryReadPopulation(int[] recipeIds)
+    {
+        if (!ReadResult)
+        {
+            return false;
+        }
+
+        Array.Copy(population, recipeIds, population.Length);
+        return true;
+    }
+
+    public bool TryApplyState(uint[] states)
+    {
+        if (!ApplyResult)
+        {
+            return false;
+        }
+
+        ApplyCalls++;
+        LastAppliedState = (uint[])states.Clone();
+        return true;
+    }
+
+    public void Release()
+    {
+        ReleaseCalls++;
+    }
+
+    public void SetPopulation(params int[] recipeIds)
+    {
+        Array.Clear(population, 0, population.Length);
+        Array.Copy(recipeIds, population, Math.Min(recipeIds.Length, population.Length));
     }
 }

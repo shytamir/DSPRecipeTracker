@@ -31,12 +31,33 @@ namespace UnityEngine
         public static void Destroy(Object value)
         {
         }
+
+        public static T Instantiate<T>(T original, Transform parent, bool instantiateInWorldSpace)
+            where T : Object
+        {
+            return null;
+        }
     }
 
     public class Component : Object
     {
         public Component()
         {
+        }
+
+        public Transform transform
+        {
+            get { return null; }
+        }
+
+        public GameObject gameObject
+        {
+            get { return null; }
+        }
+
+        public T GetComponent<T>() where T : Component
+        {
+            return null;
         }
     }
 
@@ -61,6 +82,20 @@ namespace UnityEngine
         }
 
         public void SetParent(Transform parent, bool worldPositionStays)
+        {
+        }
+
+        public Transform parent
+        {
+            get { return null; }
+        }
+
+        public int GetSiblingIndex()
+        {
+            return 0;
+        }
+
+        public void SetSiblingIndex(int index)
         {
         }
     }
@@ -116,6 +151,43 @@ namespace UnityEngine
     public struct Vector2
     {
         public Vector2(float x, float y)
+        {
+        }
+    }
+
+    public struct Color
+    {
+        public Color(float red, float green, float blue, float alpha)
+        {
+        }
+    }
+
+    public class Material : Object
+    {
+        public Material(Material source)
+        {
+        }
+
+        public void SetBuffer(string name, ComputeBuffer value)
+        {
+        }
+
+        public void SetColor(string name, Color value)
+        {
+        }
+    }
+
+    public sealed class ComputeBuffer
+    {
+        public ComputeBuffer(int count, int stride)
+        {
+        }
+
+        public void SetData(Array data)
+        {
+        }
+
+        public void Release()
         {
         }
     }

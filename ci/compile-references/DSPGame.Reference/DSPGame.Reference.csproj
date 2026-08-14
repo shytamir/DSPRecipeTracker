@@ -8,4 +8,8 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Unity.Reference\UnityEngine.UI\UnityEngine.UI.Reference.csproj" />
+  </ItemGroup>
 </Project>

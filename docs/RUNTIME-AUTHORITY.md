@@ -203,6 +203,40 @@ metadata by `Validate-S2-02.ps1`; they are not falsely exposed as public shim
 members. This inspection did not load DSP, Unity, BepInEx, or the plugin as a
 runtime.
 
+### S2-03 independent recipe-grid treatment surface
+
+On 2026-08-14, S2-03 reused the same hash-matched installed metadata and
+accepted feasibility calibration. Read-only inspection reconfirmed that
+`UIReplicatorWindow._OnCreate()` allocates 120-entry `RecipeProto[]` and
+`System.UInt32[]` arrays and a 120-by-4-byte `ComputeBuffer` for the native
+recipe grid. `SetMaterialProps()` binds the private native `recipeStateBuffer`
+to the private native `recipeBgMat` through `_StateBuffer`.
+
+The tracker does not consume those private native state or material members.
+It consumes the following independent construction surface:
+
+| Assembly | Declaring type | Exact use |
+| --- | --- | --- |
+| `Assembly-CSharp` | `UIReplicatorWindow` | public `Image recipeBg`, public `RawImage recipeIcons`, and private-read `RecipeProto[] recipeProtoArray` |
+| `UnityEngine.CoreModule` | `UnityEngine.Object` | generic `Instantiate<T>(T, Transform, Boolean)` and `Destroy(Object)` |
+| `UnityEngine.CoreModule` | `Component` / `Transform` | object, transform, parent, component, and sibling access used to clone and order the non-raycasting layer |
+| `UnityEngine.CoreModule` | `Material` | clone constructor, `SetBuffer`, and `SetColor` |
+| `UnityEngine.CoreModule` | `ComputeBuffer` | 120-by-4 constructor, `SetData(Array)`, and `Release()` |
+| `UnityEngine.UI` | `Graphic` | material get/set, color set, and raycast-target set |
+
+The tracker-owned material uses `_StateBuffer`, `_FilterColor`, and
+`_BansColor`. The accepted calibration is filter mask `0x2` with green
+`(0.20, 0.75, 0.25, 1.00)`, banned mask `0x8` with red
+`(0.78, 0.22, 0.22, 0.45)`, and image opacity `0.08`. These are source inputs,
+not a live-appearance claim; visual suitability remains for the later owner
+gate.
+
+`Validate-S2-03.ps1` confirms the native private fields as forbidden original
+resources and rejects any production reflection or direct-name path to
+`recipeStateArray`, `recipeStateBuffer`, or `recipeBgMat`. The exhaustive
+validator covers every public external member consumed by both Local and
+Hosted builds. No runtime was loaded for this validation.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

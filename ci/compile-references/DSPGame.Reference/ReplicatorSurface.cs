@@ -19,4 +19,7 @@ public class UIReplicatorWindow
     private UIReplicatorWindow()
     {
     }
+
+    public UnityEngine.UI.Image recipeBg;
+    public UnityEngine.UI.RawImage recipeIcons;
 }
