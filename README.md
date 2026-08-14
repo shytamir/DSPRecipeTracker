@@ -151,12 +151,15 @@ input, and display-scale behavior remains unvalidated.
 |-- docs/
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
+|   |-- IMPLEMENTATION-CONTRACT.md
 |   |-- planning/
 |   |   |-- MVP-ROADMAP.md
 |   |   `-- PINNED-RECIPE-TRACKER-CONCEPT.md
 |   |-- PRODUCT-PRINCIPLES.md
+|   |-- PROJECT.md
 |   |-- ROADMAP.md
-|   `-- RUNTIME-AUTHORITY.md
+|   |-- RUNTIME-AUTHORITY.md
+|   `-- VALIDATION-CONTRACT.md
 |-- VERSION
 |-- LICENSE
 `-- README.md
