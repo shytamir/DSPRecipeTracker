@@ -9,6 +9,50 @@ Check(BuildIdentity.AssemblyVersion == BuildIdentity.SemanticVersion + ".0", "as
 Check(BuildIdentity.DiagnosticLabel.StartsWith(BuildIdentity.SemanticVersion + ".", StringComparison.Ordinal), "diagnostic label");
 Check(BuildIdentity.DiagnosticLabel != BuildIdentity.SemanticVersion, "diagnostic label is not loader identity");
 
+var stateDiagnostics = new RecordingDiagnosticSink();
+var pinnedRecipes = new PinnedRecipeState(stateDiagnostics);
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "initial pin order");
+
+var pinTen = pinnedRecipes.Toggle(10);
+Check(pinTen.Kind == PinStateChangeKind.Pinned, "first pin transition");
+Check(pinTen.RecipeId == 10, "first pin recipe identity");
+Check(pinTen.EvictedRecipeId == null, "first pin has no eviction");
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "first pin order", 10);
+
+pinnedRecipes.Toggle(20);
+pinnedRecipes.Toggle(30);
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "three-pin order", 30, 20, 10);
+
+var pinForty = pinnedRecipes.Toggle(40);
+Check(pinForty.Kind == PinStateChangeKind.Pinned, "fourth pin transition");
+Check(pinForty.EvictedRecipeId == 10, "fourth pin evicts bottom entry");
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "fourth pin FILO order", 40, 30, 20);
+
+var unpinMiddle = pinnedRecipes.Toggle(30);
+Check(unpinMiddle.Kind == PinStateChangeKind.Unpinned, "explicit unpin transition");
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "middle unpin preserves order", 40, 20);
+
+pinnedRecipes.Toggle(30);
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "repin inserts at top without duplicate", 30, 40, 20);
+
+var removeMiddle = pinnedRecipes.RemoveUnavailable(40);
+Check(removeMiddle.Kind == PinStateChangeKind.UnavailableRemoved, "unavailable removal transition");
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "unavailable removal preserves order", 30, 20);
+
+var diagnosticCountBeforeNoOp = stateDiagnostics.Records.Count;
+var removeMissing = pinnedRecipes.RemoveUnavailable(999);
+Check(!removeMissing.Changed, "missing unavailable recipe is a no-op");
+CheckRecipeOrder(pinnedRecipes.RecipeIds, "no-op removal preserves order", 30, 20);
+Check(stateDiagnostics.Records.Count == diagnosticCountBeforeNoOp, "no-op transition is diagnostically silent");
+
+Check(stateDiagnostics.Records.Count == 7, "one diagnostic per completed pin transition");
+Check(stateDiagnostics.Records.All(record => record.Level == TrackerDiagnosticLevel.Debug), "pin diagnostics use Debug level");
+Check(stateDiagnostics.Records.All(record => record.Message.StartsWith("tracker-state action=", StringComparison.Ordinal)), "pin diagnostics identify action");
+Check(stateDiagnostics.Records.All(record => record.Message.Contains(" recipeId=", StringComparison.Ordinal)), "pin diagnostics identify affected recipe");
+Check(stateDiagnostics.Records.All(record => record.Message.Contains(" order=[", StringComparison.Ordinal)), "pin diagnostics identify resulting order");
+Check(stateDiagnostics.Records.All(record => record.Message.Length < 128), "pin diagnostics remain bounded");
+Check(stateDiagnostics.Records[3].Message.Contains("evictedRecipeId=10", StringComparison.Ordinal), "eviction diagnostic identifies removed recipe");
+
 Check(PanelGeometry.FixedWidth == 360f, "fixed panel width");
 Check(PanelGeometry.FixedHeight == 252f, "fixed panel height");
 
@@ -117,6 +161,27 @@ void CheckRect(PanelRectangle actual, float expectedLeft, float expectedTop, str
     Check(actual.Top == expectedTop, name + " top");
     Check(actual.Width == PanelGeometry.FixedWidth, name + " width");
     Check(actual.Height == PanelGeometry.FixedHeight, name + " height");
+}
+
+void CheckRecipeOrder(IReadOnlyList<int> actual, string name, params int[] expected)
+{
+    Check(actual.Count == expected.Length, name + " count");
+    for (var index = 0; index < Math.Min(actual.Count, expected.Length); index++)
+    {
+        Check(actual[index] == expected[index], name + " index " + index);
+    }
+}
+
+internal readonly record struct DiagnosticRecord(TrackerDiagnosticLevel Level, string Message);
+
+internal sealed class RecordingDiagnosticSink : ITrackerDiagnosticSink
+{
+    public List<DiagnosticRecord> Records { get; } = new List<DiagnosticRecord>();
+
+    public void Write(TrackerDiagnosticLevel level, string message)
+    {
+        Records.Add(new DiagnosticRecord(level, message));
+    }
 }
 
 internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter

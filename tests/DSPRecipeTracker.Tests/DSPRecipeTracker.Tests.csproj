@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\DSPRecipeTracker\PanelGeometry.cs" Link="Product\PanelGeometry.cs" />
+    <Compile Include="..\..\src\DSPRecipeTracker\PinnedRecipeState.cs" Link="Product\PinnedRecipeState.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\PluginMetadata.cs" Link="Product\PluginMetadata.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\TrackerPanelUiBoundary.cs" Link="Product\TrackerPanelUiBoundary.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\VisibilityPolicy.cs" Link="Product\VisibilityPolicy.cs" />

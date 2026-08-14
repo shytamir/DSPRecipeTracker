@@ -6,7 +6,8 @@
 
 **Active story:** S2-01 - Implement transient pin ordering and capacity
 
-**Active story state:** Active - pending implementation
+**Active story state:** Implemented and technically validated; owner acceptance
+pending
 
 **Implementation authorization:** S2-01 only
 
@@ -101,7 +102,8 @@ activates the next story by inference.
 
 ### S2-01 - Implement transient pin ordering and capacity
 
-**Status:** Active - pending implementation
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want my explicit recipe pins to occupy a stable
 three-entry order so the tracker responds predictably without touching game or
@@ -136,6 +138,58 @@ save state.
 zero errors. Source inspection confirms that the component has no runtime,
 Unity, persistence, inventory, crafting, or factory dependency. Owner
 acceptance is recorded separately.
+
+**Implementation result:**
+
+- `PinnedRecipeState` owns a private ordered list of at most three integer
+  recipe IDs and exposes it through a read-only view.
+- `Toggle` inserts a new recipe at the top, unpins an existing recipe, and
+  reports the bottom eviction when a fourth distinct recipe is pinned.
+- `RemoveUnavailable` removes only an existing invalid identity, preserves the
+  relative order of remaining pins, and is a silent no-op when the identity is
+  absent.
+- `PinStateChange` reports the transition kind, affected identity, and optional
+  eviction without coupling state to presentation or runtime integration.
+- The UI-independent `ITrackerDiagnosticSink` receives one bounded Debug
+  message per completed transition with action, affected ID, retained order,
+  and optional eviction. No-op removal emits nothing.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S2-01.ps1
+
+$revision = git rev-parse HEAD
+.\scripts\build\Build-S1-02.ps1 `
+  -ReferenceMode Local `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 7 `
+  -SourceRevision $revision
+
+.\scripts\build\Build-S1-02.ps1 `
+  -ReferenceMode Hosted `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 7 `
+  -SourceRevision $revision
+```
+
+The focused deterministic gate covered empty state, successive top insertion,
+explicit unpinning, duplicate prevention, three-entry capacity, fourth-pin
+bottom eviction, unavailable middle removal, remaining-order preservation,
+transition results, Debug fields and level, bounded message length, eviction
+identity, and no-op diagnostic silence. The test process linked the state source
+directly and loaded no shipping, Unity, DSP, BepInEx, or substitute-runtime
+assembly.
+
+Local and Hosted Release builds completed with zero warnings and zero errors.
+The hosted product passed complete compile-reference surface validation. Static
+inspection found no Unity, DSP, BepInEx, inventory, crafting, factory,
+persistence, or file-system dependency in the state component, and no generated
+or binary output entered the tracked tree. No game, loader, save, or runtime was
+started or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S2-02.
 
 ## Epic 2 - Native Replicator integration
 
