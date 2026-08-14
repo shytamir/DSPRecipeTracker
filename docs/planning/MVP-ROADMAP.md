@@ -6,21 +6,21 @@
 
 **Planning horizon:** Concept to working MVP prototype
 
-**Current Sprint 1 roadmap:**
-[`Sprint 1 - Safe Source Foundation`](../ROADMAP.md)
+**Current implementation record:**
+[`Planning pending`](../ROADMAP.md)
 
-The current Sprint 1 record is a sanitized source-only recovery plan with no
-broader runtime authorization. S1-01 through S1-05 are owner accepted; S1-06
-has implemented and technically validated the compile-time Unity panel boundary
-and remains Active pending owner acceptance. The active Sprint 1 record
-overrides this planning baseline wherever
-this file mentions installed, loaded-game, visual, or interaction validation.
-Agents do not perform those activities; the owner performs only the bounded
-human checks supplied at later meaningful testable-build gates.
+**Completed bootstrap roadmap:**
+[`Bootstrap Roadmap - Safe Source Foundation`](../archive/BOOTSTRAP-ROADMAP.md)
 
-The Sprint 1 Source-ready and Package-inspected exit gates pass for commit
-`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`. S1-06 owner acceptance and the
-explicit Owner-reviewed sprint gate remain pending.
+The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
+Its Source-ready and Package-inspected exit gates pass for commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
+accepted. Sprint 2 planning is pending, no implementation story is active, and
+no broader runtime authorization exists.
+
+Agents do not perform installed, loaded-game, visual, or interaction
+validation. The owner performs only bounded human checks supplied at later
+meaningful testable-build gates.
 
 This record orders implementation; it does not create product authority.
 [`PROJECT.md`](../PROJECT.md) governs scope,

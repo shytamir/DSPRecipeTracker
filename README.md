@@ -6,9 +6,10 @@ It will let players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
-accepted. S1-01 and S1-02 are owner accepted. S1-03 is implemented and
-technically validated pending owner acceptance. Runtime execution and
-runtime validation remain outside the current source-only authorization.
+accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
+exit gates are owner accepted. Planning for the next sprint is pending, and no
+implementation story is active. Runtime execution and runtime validation
+remain outside the current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
@@ -180,12 +181,11 @@ for 30 days; the workflow does not publish it.
 
 ## Project status
 
-S1-01 through S1-05 are complete and owner accepted. S1-06 has implemented and
-technically validated an inert compile-time Unity panel boundary and remains
-Active pending explicit owner acceptance.
-The Sprint 1 Source-ready and Package-inspected exit gates pass for commit
-`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`; explicit Owner-reviewed status
-remains pending.
+The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
+Its Source-ready and Package-inspected gates pass for commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
+accepted. Planning for the next sprint is pending, and no implementation story
+is active.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -216,6 +216,8 @@ and display-scale behavior remain unvalidated.
 |-- DSPRecipeTracker.sln
 |-- global.json
 |-- docs/
+|   |-- archive/
+|   |   `-- BOOTSTRAP-ROADMAP.md
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
 |   |-- IMPLEMENTATION-CONTRACT.md

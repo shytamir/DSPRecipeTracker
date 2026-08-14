@@ -4,11 +4,12 @@
 
 **Status:** Current validation contract
 
-**Implementation status:** S1-01 through S1-05 are owner accepted. S1-06 is
-implemented and technically validated, and remains Active pending owner
-acceptance. The Source-ready and Package-inspected Sprint 1 exit gates pass for
-commit `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`; Owner-reviewed remains
-pending and no supported release exists.
+**Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
+complete and owner accepted. The Source-ready and Package-inspected exit gates
+pass for commit `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and the
+Owner-reviewed gate passed by explicit owner acceptance. Planning for the next
+sprint is pending, no implementation story is active, and no supported release
+exists.
 
 **Owner review:** Accepted on 2026-08-14.
 
