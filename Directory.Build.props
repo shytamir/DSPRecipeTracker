@@ -9,7 +9,8 @@
     <DSPManagedReferenceRoot>$([MSBuild]::NormalizeDirectory('$(GameRoot)\DSPGAME_Data\Managed'))</DSPManagedReferenceRoot>
     <DSPBepInExReferenceRoot>$([MSBuild]::NormalizeDirectory('$(GameRoot)\BepInEx\core'))</DSPBepInExReferenceRoot>
     <DSPAssemblyCSharpReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)Assembly-CSharp.dll'))</DSPAssemblyCSharpReferencePath>
-    <DSPBepInExReferencePath>$([MSBuild]::NormalizePath('$(DSPBepInExReferenceRoot)BepInEx.dll'))</DSPBepInExReferencePath>
+    <DSPBepInExReferencePath Condition="'$(BepInExReferencePath)' != ''">$([MSBuild]::NormalizePath('$(BepInExReferencePath)'))</DSPBepInExReferencePath>
+    <DSPBepInExReferencePath Condition="'$(DSPBepInExReferencePath)' == ''">$([MSBuild]::NormalizePath('$(DSPBepInExReferenceRoot)BepInEx.dll'))</DSPBepInExReferencePath>
     <DSPUnityEngineReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.dll'))</DSPUnityEngineReferencePath>
     <DSPUnityCoreModuleReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.CoreModule.dll'))</DSPUnityCoreModuleReferencePath>
     <DSPUnityUIModuleReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.UIModule.dll'))</DSPUnityUIModuleReferencePath>
@@ -21,5 +22,6 @@
     <DSPUnityEngineHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'))</DSPUnityEngineHostedReferencePath>
     <DSPUnityCoreModuleHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'))</DSPUnityCoreModuleHostedReferencePath>
     <DSPUnityUIHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll'))</DSPUnityUIHostedReferencePath>
+    <DSPAssemblyCSharpHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)DSPGame.Reference\obj\Release\netstandard2.0\ref\Assembly-CSharp.dll'))</DSPAssemblyCSharpHostedReferencePath>
   </PropertyGroup>
 </Project>

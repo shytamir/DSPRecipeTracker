@@ -3,6 +3,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$GameRoot,
 
+    [string]$BepInExReferencePath,
+
     [Parameter(Mandatory = $true)]
     [ValidateRange(0, 65535)]
     [int]$BuildNumber,
@@ -16,13 +18,17 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $sourceTestGate = Join-Path $PSScriptRoot 'Validate-S1-05.ps1'
 $buildScript = Join-Path $repoRoot 'scripts\build\Build-S1-02.ps1'
-$bepInExReference = Join-Path $GameRoot 'BepInEx\core\BepInEx.dll'
+$bepInExReference = $BepInExReferencePath
+if ([string]::IsNullOrWhiteSpace($bepInExReference)) {
+    $bepInExReference = Join-Path $GameRoot 'BepInEx\core\BepInEx.dll'
+}
 $inventoryPath = Join-Path $repoRoot 'ci\compile-references\surface-inventory.json'
 $pluginPath = Join-Path $repoRoot 'src\DSPRecipeTracker\bin\Release\net472\DSPRecipeTracker.dll'
 $shimPaths = @(
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'),
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'),
-    (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll')
+    (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll'),
+    (Join-Path $repoRoot 'ci\compile-references\DSPGame.Reference\obj\Release\netstandard2.0\ref\Assembly-CSharp.dll')
 )
 
 & $sourceTestGate
@@ -36,7 +42,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "S1-06 Hosted Release validation failed with exit code $LASTEXITCODE."
 }
 
-& $buildScript -ReferenceMode Local -GameRoot $GameRoot `
+& $buildScript -ReferenceMode Local -GameRoot $GameRoot -BepInExReferencePath $bepInExReference `
     -BuildNumber $BuildNumber -SourceRevision $SourceRevision
 if ($LASTEXITCODE -ne 0) {
     throw "S1-06 Local Release validation failed with exit code $LASTEXITCODE."
@@ -80,4 +86,4 @@ foreach ($prohibitedSurface in @(
     }
 }
 
-Write-Output 'S1-06 acceptance validation passed for real and hosted Unity references with complete consumed-surface coverage.'
+Write-Output 'S1-06 acceptance validation passed for real and hosted DSP/Unity references with complete consumed-surface coverage.'

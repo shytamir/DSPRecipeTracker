@@ -171,6 +171,38 @@ lookup, and adds no Unity member outside this recorded surface. The tracked
 shims are declarations derived from these signatures, not runtime substitutes
 or authority sources.
 
+### S2-02 Replicator input surface
+
+On 2026-08-14, the recorded `Assembly-CSharp`, `UnityEngine.CoreModule`, and
+`UnityEngine.UI` hashes were rechecked before read-only Mono.Cecil inspection.
+The accepted input adapter consumes this exact surface:
+
+| Access | Declaring type | Exact member |
+| --- | --- | --- |
+| private reflection | `UIReplicatorWindow` | `UnityEngine.EventSystems.EventTrigger evtRecipe` |
+| private reflection | `UIReplicatorWindow` | `RecipeProto[] recipeProtoArray` |
+| private reflection | `UIReplicatorWindow` | `System.Int32 mouseRecipeIndex` |
+| public compile | `Proto` | instance field `System.Int32 ID` |
+| public compile | `EventTrigger` | instance getter `List<EventTrigger.Entry> triggers` |
+| public compile | `EventTrigger.Entry` | instance fields `EventTriggerType eventID` and `EventTrigger.TriggerEvent callback` |
+| public compile | `UnityEvent<BaseEventData>` | instance `AddListener` and `RemoveListener` |
+| public compile | `PointerEventData` | instance getter `InputButton button` |
+
+`UIReplicatorWindow._OnCreate()` creates the shared recipe `PointerDown` entry,
+adds `OnRecipeMouseDown(BaseEventData)` first, and then stores that entry in
+`evtRecipe.triggers`. The native handler reads `mouseRecipeIndex` and
+`recipeProtoArray`, rejects invalid or null entries, and calls
+`SetSelectedRecipeIndex(index, true)`. S2-02 therefore appends one listener to
+that existing callback and uses the same index and populated array; it neither
+replaces the native listener nor creates an independent eligibility rule.
+
+The declaration-only shims cover every public type and member consumed by the
+compiled product. The three private fields remain explicit `runtimeBindings`
+in `surface-inventory.json` and are checked against hash-matched installed
+metadata by `Validate-S2-02.ps1`; they are not falsely exposed as public shim
+members. This inspection did not load DSP, Unity, BepInEx, or the plugin as a
+runtime.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

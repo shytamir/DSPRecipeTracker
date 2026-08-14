@@ -4,12 +4,12 @@
 
 **Status:** In progress - owner authorized on 2026-08-14
 
-**Active story:** S2-01 - Implement transient pin ordering and capacity
+**Active story:** S2-02 - Add the native right-click pin gesture
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S2-01 only
+**Implementation authorization:** S2-02 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,8 +17,8 @@ pending
 **Previous roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](archive/BOOTSTRAP-ROADMAP.md)
 
-The owner accepted this Sprint 2 roadmap and activated S2-01 on 2026-08-14.
-Only the story identified above is authorized for implementation.
+The owner accepted S2-01 and activated S2-02 on 2026-08-14. Only the story
+identified above is authorized for implementation.
 
 **Goal:** Connect the existing panel boundary to the native Replicator and HUD
 surfaces while keeping pin state deterministic, transient, and separate from
@@ -56,12 +56,13 @@ set of observations that cannot be established another way.
 
 ## Entry gates
 
-The entry gates required to activate S2-01 are satisfied:
+The entry gates required to activate S2-02 are satisfied:
 
 - the owner accepted this roadmap;
-- every decision required by S2-01 is recorded;
+- every decision required by S2-02 is recorded;
 - the repository begins from the accepted bootstrap state; and
-- exactly S2-01 is marked Active.
+- S2-01 is owner accepted; and
+- exactly S2-02 is marked Active.
 
 Later stories become Active one at a time only after the preceding dependency
 is technically validated and explicitly owner accepted. Completion never
@@ -102,8 +103,7 @@ activates the next story by inference.
 
 ### S2-01 - Implement transient pin ordering and capacity
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-14
 
 **User story:** As a player, I want my explicit recipe pins to occupy a stable
 three-entry order so the tracker responds predictably without touching game or
@@ -188,14 +188,15 @@ persistence, or file-system dependency in the state component, and no generated
 or binary output entered the tracked tree. No game, loader, save, or runtime was
 started or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S2-02.
+**Owner acceptance:** Accepted explicitly on 2026-08-14. This acceptance
+authorized S2-02; it does not infer acceptance of later work.
 
 ## Epic 2 - Native Replicator integration
 
 ### S2-02 - Add the native right-click pin gesture
 
-**Status:** Proposed - depends on S2-01
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want right-click on an eligible native
 Replicator recipe cell to toggle its pin while ordinary recipe selection keeps
@@ -229,6 +230,59 @@ working as designed.
 **Acceptance gate:** Focused tests, Local/Hosted Release builds, exhaustive
 shim validation, and static review pass. Live gesture behavior remains
 unvalidated pending the later owner gate.
+
+**Implementation result:**
+
+- `ReplicatorPinInput` filters the UI-independent input boundary to right-click,
+  resolves the current native recipe identity, and delegates the toggle to
+  `PinnedRecipeState`.
+- `UnityReplicatorPinInputAdapter` resolves `evtRecipe`, `recipeProtoArray`, and
+  `mouseRecipeIndex` once, appends one listener to DSP's existing
+  `PointerDown` callback, and removes only that listener during release.
+- The existing native callback remains first. Recipe eligibility is inherited
+  from the same populated array and current index used by DSP.
+- Missing fields, events, indices, or populated recipes disable the boundary
+  softly. No Harmony patch, alternate pin surface, unlock model, crafting, or
+  persistence behavior was introduced.
+- Bounded Debug diagnostics record attach/detach and accepted right-clicks with
+  grid index, recipe ID, and action; rejected buttons are silent and failures
+  are reported once.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S2-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>'
+
+$revision = git rev-parse HEAD
+.\scripts\build\Build-S1-02.ps1 `
+  -ReferenceMode Local `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 8 `
+  -SourceRevision $revision
+
+.\scripts\build\Build-S1-02.ps1 `
+  -ReferenceMode Hosted `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 8 `
+  -SourceRevision $revision
+```
+
+Focused tests covered left/middle filtering, native-before-tracker ordering,
+pin/unpin handoff, negative and out-of-range indices, unpopulated entries,
+failed attachment, inert post-release behavior, one-time cleanup, diagnostic
+fields, and rejection silence. Read-only Mono.Cecil inspection rechecked the
+recorded Assembly-CSharp and Unity hashes and confirmed the three private
+bindings, native handler signature, native index/array use, selection call,
+and existing PointerDown callback construction. Local and Hosted Release
+builds completed with zero warnings and zero errors; the hosted product passed
+the exhaustive declaration-only shim and consumed-surface validator. No game,
+loader, save, plugin, or substitute runtime was started or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S2-03.
 
 ## Epic 3 - Independent native cell treatment
 

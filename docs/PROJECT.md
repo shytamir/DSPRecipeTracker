@@ -13,12 +13,12 @@
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its Source-ready, Package-inspected, and
 Owner-reviewed exit gates passed. The owner-authorized Sprint 2 roadmap is
-active, implementation is under way, and S2-01 is implemented and technically
-validated pending owner acceptance. The source contains the minimal plugin
+active, implementation is under way, S2-01 is owner accepted, and S2-02 is
+implemented and technically validated pending owner acceptance. The source contains the minimal plugin
 skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic
-transient pin state, but no runtime recipe integration; no supported release
-exists.
+transient pin state, and an isolated native Replicator input adapter that is not
+yet connected to plugin startup; no supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

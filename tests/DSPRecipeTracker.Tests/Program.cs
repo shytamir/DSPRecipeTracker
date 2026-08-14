@@ -53,6 +53,81 @@ Check(stateDiagnostics.Records.All(record => record.Message.Contains(" order=[",
 Check(stateDiagnostics.Records.All(record => record.Message.Length < 128), "pin diagnostics remain bounded");
 Check(stateDiagnostics.Records[3].Message.Contains("evictedRecipeId=10", StringComparison.Ordinal), "eviction diagnostic identifies removed recipe");
 
+var inputDiagnostics = new RecordingDiagnosticSink();
+var inputState = new PinnedRecipeState(inputDiagnostics);
+var inputAdapter = new RecordingReplicatorPinInputAdapter();
+using (var input = new ReplicatorPinInput(inputAdapter, inputState, inputDiagnostics))
+{
+    Check(input.TryInitialize(), "Replicator input initializes");
+    Check(input.IsAvailable, "Replicator input reports availability");
+    Check(inputAdapter.AttachCalls == 1, "Replicator input listener attaches once");
+
+    inputAdapter.RecipeIds = new int?[] { 101 };
+    inputAdapter.Raise(ReplicatorPointerButton.Left);
+    inputAdapter.Raise(ReplicatorPointerButton.Middle);
+    CheckRecipeOrder(inputState.RecipeIds, "left and middle clicks do not enter tracker state");
+
+    inputAdapter.Raise(ReplicatorPointerButton.Right);
+    Check(inputAdapter.NativeSelectionCalls == 3, "native selection runs for every pointer-down event");
+    Check(inputAdapter.NativeSelectionObservedBeforeTracker, "native selection runs before tracker listener");
+    CheckRecipeOrder(inputState.RecipeIds, "right click pins populated recipe", 101);
+
+    inputAdapter.Raise(ReplicatorPointerButton.Right);
+    CheckRecipeOrder(inputState.RecipeIds, "second right click unpins populated recipe");
+}
+Check(inputAdapter.ReleaseCalls == 1, "Replicator input listener releases once");
+Check(inputAdapter.ListenerCount == 0, "Replicator input removes only its listener");
+inputAdapter.Raise(ReplicatorPointerButton.Right);
+CheckRecipeOrder(inputState.RecipeIds, "released Replicator input remains inert");
+Check(inputDiagnostics.Records.Count(record => record.Message.StartsWith("replicator-pin-input action=", StringComparison.Ordinal)) == 4, "Replicator input diagnostics cover attach, accepted gestures, and detach only");
+Check(inputDiagnostics.Records.Any(record => record.Message == "replicator-pin-input action=pin gridIndex=0 recipeId=101"), "accepted pin diagnostic identifies index, recipe, and action");
+Check(inputDiagnostics.Records.Any(record => record.Message == "replicator-pin-input action=unpin gridIndex=0 recipeId=101"), "accepted unpin diagnostic identifies index, recipe, and action");
+Check(inputDiagnostics.Records.Any(record => record.Message == "replicator-pin-input action=detach"), "listener removal diagnostic is emitted once");
+Check(inputDiagnostics.Records.Where(record => record.Message.StartsWith("replicator-pin-input action=", StringComparison.Ordinal)).All(record => record.Level == TrackerDiagnosticLevel.Debug), "Replicator input diagnostics use Debug level");
+Check(inputDiagnostics.Records.Where(record => record.Message.StartsWith("replicator-pin-input action=", StringComparison.Ordinal)).All(record => record.Message.Length < 128), "Replicator input diagnostics remain bounded");
+
+var invalidDiagnostics = new RecordingDiagnosticSink();
+var invalidState = new PinnedRecipeState(invalidDiagnostics);
+var invalidAdapter = new RecordingReplicatorPinInputAdapter
+{
+    CurrentRecipeIndex = -1,
+    RecipeIds = new int?[] { 201 }
+};
+using (var input = new ReplicatorPinInput(invalidAdapter, invalidState, invalidDiagnostics))
+{
+    Check(input.TryInitialize(), "invalid-recipe input initializes");
+    invalidAdapter.Raise(ReplicatorPointerButton.Right);
+    invalidAdapter.Raise(ReplicatorPointerButton.Right);
+    Check(!input.IsAvailable, "invalid populated recipe fails softly");
+}
+CheckRecipeOrder(invalidState.RecipeIds, "invalid recipe never reaches tracker state");
+Check(invalidDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "invalid recipe failure is reported once");
+Check(invalidAdapter.ReleaseCalls == 1, "invalid recipe listener cleanup is one-time");
+
+foreach (var invalidIndexAdapter in new[]
+{
+    new RecordingReplicatorPinInputAdapter { CurrentRecipeIndex = 1, RecipeIds = new int?[] { 201 } },
+    new RecordingReplicatorPinInputAdapter { CurrentRecipeIndex = 0, RecipeIds = new int?[] { null } }
+})
+{
+    var diagnostics = new RecordingDiagnosticSink();
+    var state = new PinnedRecipeState(diagnostics);
+    using var input = new ReplicatorPinInput(invalidIndexAdapter, state, diagnostics);
+    Check(input.TryInitialize(), "invalid index case initializes");
+    invalidIndexAdapter.Raise(ReplicatorPointerButton.Right);
+    CheckRecipeOrder(state.RecipeIds, "out-of-range or unpopulated recipe is rejected");
+}
+
+var failedAttachDiagnostics = new RecordingDiagnosticSink();
+var failedAttachAdapter = new RecordingReplicatorPinInputAdapter { AttachResult = false };
+using (var input = new ReplicatorPinInput(failedAttachAdapter, new PinnedRecipeState(failedAttachDiagnostics), failedAttachDiagnostics))
+{
+    Check(!input.TryInitialize(), "failed input binding fails softly");
+    Check(!input.TryInitialize(), "failed input binding cannot attach again");
+}
+Check(failedAttachAdapter.ReleaseCalls == 1, "failed input binding cleanup is one-time");
+Check(failedAttachDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "failed input binding diagnostic is emitted once");
+
 Check(PanelGeometry.FixedWidth == 360f, "fixed panel width");
 Check(PanelGeometry.FixedHeight == 252f, "fixed panel height");
 
@@ -144,7 +219,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -232,5 +307,64 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
     public void Release()
     {
         ReleaseCalls++;
+    }
+}
+
+internal sealed class RecordingReplicatorPinInputAdapter : IReplicatorPinInputAdapter
+{
+    private Action<ReplicatorPointerButton>? listener;
+
+    public bool AttachResult { get; set; } = true;
+
+    public int CurrentRecipeIndex { get; set; }
+
+    public int?[] RecipeIds { get; set; } = Array.Empty<int?>();
+
+    public int AttachCalls { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public int NativeSelectionCalls { get; private set; }
+
+    public bool NativeSelectionObservedBeforeTracker { get; private set; }
+
+    public int ListenerCount => listener == null ? 0 : 1;
+
+    public bool TryAttach(Action<ReplicatorPointerButton> pointerDown)
+    {
+        AttachCalls++;
+        if (!AttachResult)
+        {
+            return false;
+        }
+
+        listener = pointerDown;
+        return true;
+    }
+
+    public bool TryGetCurrentRecipe(out int gridIndex, out int recipeId)
+    {
+        gridIndex = CurrentRecipeIndex;
+        NativeSelectionObservedBeforeTracker = NativeSelectionCalls > 0;
+        if (CurrentRecipeIndex < 0 || CurrentRecipeIndex >= RecipeIds.Length || !RecipeIds[CurrentRecipeIndex].HasValue)
+        {
+            recipeId = 0;
+            return false;
+        }
+
+        recipeId = RecipeIds[CurrentRecipeIndex]!.Value;
+        return true;
+    }
+
+    public void Release()
+    {
+        ReleaseCalls++;
+        listener = null;
+    }
+
+    public void Raise(ReplicatorPointerButton button)
+    {
+        NativeSelectionCalls++;
+        listener?.Invoke(button);
     }
 }

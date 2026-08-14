@@ -107,7 +107,7 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
             continue;
         }
 
-        var typeName = FullTypeDefinitionName(reader, definition);
+        var typeName = FullTypeDefinitionName(reader, handle);
         actualTypes.Add(typeName);
         var expectedType = expectedAssembly.Types.SingleOrDefault(item => item.Name == typeName);
         if (expectedType is not null)
@@ -132,6 +132,20 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
             var methodName = reader.GetString(method.Name);
             var isStatic = (method.Attributes & MethodAttributes.Static) != 0;
             actualMembers.Add(MemberKey(typeName, "method", methodName, signatureText, isStatic));
+        }
+
+        foreach (var fieldHandle in definition.GetFields())
+        {
+            var field = reader.GetFieldDefinition(fieldHandle);
+            if ((field.Attributes & FieldAttributes.FieldAccessMask) != FieldAttributes.Public)
+            {
+                continue;
+            }
+
+            var signatureText = field.DecodeSignature(provider, genericContext: null);
+            var fieldName = reader.GetString(field.Name);
+            var isStatic = (field.Attributes & FieldAttributes.Static) != 0;
+            actualMembers.Add(MemberKey(typeName, "field", fieldName, signatureText, isStatic));
         }
     }
 
@@ -174,7 +188,7 @@ static HashSet<string> ValidateProduction(string path, Inventory inventory, List
             continue;
         }
 
-        var typeName = FullTypeReferenceName(reader, type);
+        var typeName = FullTypeReferenceName(reader, handle);
         consumedSurface.Add($"{assemblyName}|type|{typeName}");
         if (!expectedAssembly.Types.Any(item => item.Name == typeName))
         {
@@ -197,11 +211,26 @@ static HashSet<string> ValidateProduction(string path, Inventory inventory, List
             continue;
         }
 
-        var typeName = FullTypeReferenceName(reader, type);
+        var typeName = FullTypeReferenceName(reader, (TypeReferenceHandle)member.Parent);
         var memberName = reader.GetString(member.Name);
-        var signature = member.DecodeMethodSignature(provider, genericContext: null);
-        var signatureText = signature.ReturnType + "(" + string.Join(",", signature.ParameterTypes) + ")";
-        var key = MemberKey(typeName, "method", memberName, signatureText, !signature.Header.IsInstance);
+        var signatureReader = reader.GetBlobReader(member.Signature);
+        var signatureHeader = signatureReader.ReadSignatureHeader();
+        string key;
+        if (signatureHeader.Kind == SignatureKind.Field)
+        {
+            var signatureText = member.DecodeFieldSignature(provider, genericContext: null);
+            var matchingField = expectedAssembly.Types
+                .Where(item => item.Name == typeName)
+                .SelectMany(item => item.Members)
+                .SingleOrDefault(item => item.Kind == "field" && item.Name == memberName && item.Signature == signatureText);
+            key = MemberKey(typeName, "field", memberName, signatureText, matchingField?.IsStatic ?? false);
+        }
+        else
+        {
+            var signature = member.DecodeMethodSignature(provider, genericContext: null);
+            var signatureText = signature.ReturnType + "(" + string.Join(",", signature.ParameterTypes) + ")";
+            key = MemberKey(typeName, "method", memberName, signatureText, !signature.Header.IsInstance);
+        }
         consumedSurface.Add($"{assemblyName}|member|{key}");
         var expected = expectedAssembly.Types
             .Where(item => item.Name == typeName)
@@ -233,23 +262,36 @@ static string? CustomAttributeTypeName(MetadataReader reader, CustomAttribute at
         var constructor = reader.GetMemberReference((MemberReferenceHandle)attribute.Constructor);
         if (constructor.Parent.Kind == HandleKind.TypeReference)
         {
-            return FullTypeReferenceName(reader, reader.GetTypeReference((TypeReferenceHandle)constructor.Parent));
+            return FullTypeReferenceName(reader, (TypeReferenceHandle)constructor.Parent);
         }
     }
 
     return null;
 }
 
-static string FullTypeDefinitionName(MetadataReader reader, TypeDefinition definition)
+static string FullTypeDefinitionName(MetadataReader reader, TypeDefinitionHandle handle)
 {
+    var definition = reader.GetTypeDefinition(handle);
     var name = reader.GetString(definition.Name);
+    var declaringType = definition.GetDeclaringType();
+    if (!declaringType.IsNil)
+    {
+        return FullTypeDefinitionName(reader, declaringType) + "+" + name;
+    }
+
     var ns = reader.GetString(definition.Namespace);
     return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
 }
 
-static string FullTypeReferenceName(MetadataReader reader, TypeReference reference)
+static string FullTypeReferenceName(MetadataReader reader, TypeReferenceHandle handle)
 {
+    var reference = reader.GetTypeReference(handle);
     var name = reader.GetString(reference.Name);
+    if (reference.ResolutionScope.Kind == HandleKind.TypeReference)
+    {
+        return FullTypeReferenceName(reader, (TypeReferenceHandle)reference.ResolutionScope) + "+" + name;
+    }
+
     var ns = reader.GetString(reference.Namespace);
     return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
 }
@@ -258,8 +300,9 @@ static string FullEntityTypeName(MetadataReader reader, EntityHandle handle)
 {
     return handle.Kind switch
     {
-        HandleKind.TypeDefinition => FullTypeDefinitionName(reader, reader.GetTypeDefinition((TypeDefinitionHandle)handle)),
-        HandleKind.TypeReference => FullTypeReferenceName(reader, reader.GetTypeReference((TypeReferenceHandle)handle)),
+        HandleKind.TypeDefinition => FullTypeDefinitionName(reader, (TypeDefinitionHandle)handle),
+        HandleKind.TypeReference => FullTypeReferenceName(reader, (TypeReferenceHandle)handle),
+        HandleKind.TypeSpecification => reader.GetTypeSpecification((TypeSpecificationHandle)handle).DecodeSignature(new TypeNameProvider(), genericContext: null),
         _ => handle.Kind.ToString()
     };
 }
@@ -302,17 +345,34 @@ sealed class TypeNameProvider : ISignatureTypeProvider<string, object?>
     public string GetSZArrayType(string elementType) => elementType + "[]";
     public string GetTypeFromDefinition(MetadataReader reader, TypeDefinitionHandle handle, byte rawTypeKind)
     {
-        var definition = reader.GetTypeDefinition(handle);
-        return JoinName(reader.GetString(definition.Namespace), reader.GetString(definition.Name));
+        return DefinitionName(reader, handle);
     }
     public string GetTypeFromReference(MetadataReader reader, TypeReferenceHandle handle, byte rawTypeKind)
     {
-        var reference = reader.GetTypeReference(handle);
-        return JoinName(reader.GetString(reference.Namespace), reader.GetString(reference.Name));
+        return ReferenceName(reader, handle);
     }
     public string GetTypeFromSpecification(MetadataReader reader, object? genericContext, TypeSpecificationHandle handle, byte rawTypeKind) => reader.GetTypeSpecification(handle).DecodeSignature(this, genericContext);
 
     private static string JoinName(string ns, string name) => string.IsNullOrEmpty(ns) ? name : ns + "." + name;
+
+    private static string DefinitionName(MetadataReader reader, TypeDefinitionHandle handle)
+    {
+        var definition = reader.GetTypeDefinition(handle);
+        var name = reader.GetString(definition.Name);
+        var declaringType = definition.GetDeclaringType();
+        return declaringType.IsNil
+            ? JoinName(reader.GetString(definition.Namespace), name)
+            : DefinitionName(reader, declaringType) + "+" + name;
+    }
+
+    private static string ReferenceName(MetadataReader reader, TypeReferenceHandle handle)
+    {
+        var reference = reader.GetTypeReference(handle);
+        var name = reader.GetString(reference.Name);
+        return reference.ResolutionScope.Kind == HandleKind.TypeReference
+            ? ReferenceName(reader, (TypeReferenceHandle)reference.ResolutionScope) + "+" + name
+            : JoinName(reader.GetString(reference.Namespace), name);
+    }
 }
 
 sealed class Inventory

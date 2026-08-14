@@ -6,11 +6,13 @@
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its three exit gates passed. The owner-authorized
-Sprint 2 roadmap is active, implementation is under way, and S2-01 is
-implemented and technically validated pending owner acceptance. The source tree
+Sprint 2 roadmap is active, implementation is under way, S2-01 is owner
+accepted, and S2-02 is implemented and technically validated pending owner
+acceptance. The source tree
 contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
 pipeline, UI-independent panel geometry and visibility policy, an inert
-compile-time Unity panel boundary, and deterministic transient pin state.
+compile-time Unity panel boundary, deterministic transient pin state, and an
+isolated native Replicator input adapter awaiting later startup orchestration.
 
 **Owner review:** Accepted on 2026-08-14.
 
@@ -199,9 +201,11 @@ compatibility with later game, Unity, BepInEx, Harmony, or third-party mod
 versions.
 
 Game, Unity, and BepInEx assemblies remain external dependencies. Local build
-configuration receives them through the explicit maintainer-supplied
-`GameRoot` setting defined by `THUNDERSTORE-PACKAGE.md`; it must not silently
-discover another installation. Hosted builds use the contract's minimal
+configuration receives game and Unity inputs through the explicit
+maintainer-supplied `GameRoot` setting defined by `THUNDERSTORE-PACKAGE.md`.
+BepInEx may come from that root or from an explicit documented
+`BepInExReferencePath`; neither path is discovered silently. Hosted builds use
+the contract's minimal
 source-defined game and Unity compile-reference shims and the documented
 BepInEx CI source. Source and package construction must not copy, commit, or
 redistribute installed assemblies. Compile-reference shims contain declaration
@@ -209,7 +213,8 @@ shapes only and are not runtime substitutes.
 
 `Directory.Build.props` exposes the authorized local reference paths only when
 the caller explicitly selects `DSPReferenceMode=Local` and supplies
-`GameRoot`. Hosted builds explicitly select `DSPReferenceMode=Hosted` and use
+`GameRoot`; an explicitly supplied BepInEx path overrides only that compile
+input. Hosted builds explicitly select `DSPReferenceMode=Hosted` and use
 the fixed repository-owned `ci/compile-references` root. Consuming projects set
 `DSPRecipeTrackerRequiresExternalReferences=true`; the shared target then fails
 with an ordinary MSBuild error when the mode, root, surface inventory, or any

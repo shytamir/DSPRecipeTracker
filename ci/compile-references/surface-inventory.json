@@ -100,6 +100,27 @@
           "baseType": "UnityEngine.Object",
           "usage": "native-supplied-panel-background",
           "members": []
+        },
+        {
+          "name": "UnityEngine.Events.UnityAction`1",
+          "baseType": "System.MulticastDelegate",
+          "usage": "replicator-pointer-listener",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Object,System.IntPtr)" },
+            { "kind": "method", "name": "Invoke", "signature": "System.Void(!0)" },
+            { "kind": "method", "name": "BeginInvoke", "signature": "System.IAsyncResult(!0,System.AsyncCallback,System.Object)" },
+            { "kind": "method", "name": "EndInvoke", "signature": "System.Void(System.IAsyncResult)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Events.UnityEvent`1",
+          "baseType": "System.Object",
+          "usage": "replicator-pointer-listener-lifecycle",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "AddListener", "signature": "System.Void(UnityEngine.Events.UnityAction`1<!0>)" },
+            { "kind": "method", "name": "RemoveListener", "signature": "System.Void(UnityEngine.Events.UnityAction`1<!0>)" }
+          ]
         }
       ]
     },
@@ -134,8 +155,119 @@
           "members": [
             { "kind": "method", "name": "set_sprite", "signature": "System.Void(UnityEngine.Sprite)" }
           ]
+        },
+        {
+          "name": "UnityEngine.EventSystems.BaseEventData",
+          "baseType": "System.Object",
+          "usage": "replicator-pointer-event-payload",
+          "members": []
+        },
+        {
+          "name": "UnityEngine.EventSystems.PointerEventData",
+          "baseType": "UnityEngine.EventSystems.BaseEventData",
+          "usage": "replicator-pointer-button-filter",
+          "members": [
+            { "kind": "method", "name": "get_button", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton()" }
+          ]
+        },
+        {
+          "name": "UnityEngine.EventSystems.PointerEventData+InputButton",
+          "baseType": "System.Enum",
+          "usage": "replicator-pointer-button-values",
+          "members": [
+            { "kind": "field", "name": "value__", "signature": "System.Int32" },
+            { "kind": "field", "name": "Left", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton", "isStatic": true },
+            { "kind": "field", "name": "Right", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton", "isStatic": true },
+            { "kind": "field", "name": "Middle", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton", "isStatic": true }
+          ]
+        },
+        {
+          "name": "UnityEngine.EventSystems.EventTriggerType",
+          "baseType": "System.Enum",
+          "usage": "replicator-pointer-down-entry-selection",
+          "members": [
+            { "kind": "field", "name": "value__", "signature": "System.Int32" },
+            { "kind": "field", "name": "PointerEnter", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
+            { "kind": "field", "name": "PointerExit", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
+            { "kind": "field", "name": "PointerDown", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true }
+          ]
+        },
+        {
+          "name": "UnityEngine.EventSystems.EventTrigger",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "existing-replicator-shared-event",
+          "members": [
+            { "kind": "method", "name": "get_triggers", "signature": "System.Collections.Generic.List`1<UnityEngine.EventSystems.EventTrigger+Entry>()" }
+          ]
+        },
+        {
+          "name": "UnityEngine.EventSystems.EventTrigger+TriggerEvent",
+          "baseType": "UnityEngine.Events.UnityEvent`1<UnityEngine.EventSystems.BaseEventData>",
+          "usage": "existing-pointer-down-callback",
+          "members": []
+        },
+        {
+          "name": "UnityEngine.EventSystems.EventTrigger+Entry",
+          "baseType": "System.Object",
+          "usage": "existing-pointer-down-entry",
+          "members": [
+            { "kind": "field", "name": "eventID", "signature": "UnityEngine.EventSystems.EventTriggerType" },
+            { "kind": "field", "name": "callback", "signature": "UnityEngine.EventSystems.EventTrigger+TriggerEvent" }
+          ]
         }
       ]
+    },
+    {
+      "name": "Assembly-CSharp",
+      "shimProject": "DSPGame.Reference/DSPGame.Reference.csproj",
+      "types": [
+        {
+          "name": "Proto",
+          "baseType": "System.Object",
+          "usage": "native-recipe-identity",
+          "members": [
+            { "kind": "field", "name": "ID", "signature": "System.Int32" }
+          ]
+        },
+        {
+          "name": "RecipeProto",
+          "baseType": "Proto",
+          "usage": "native-populated-recipe-array-element",
+          "members": []
+        },
+        {
+          "name": "UIReplicatorWindow",
+          "baseType": "System.Object",
+          "usage": "replicator-adapter-host-type",
+          "members": []
+        }
+      ]
+    }
+  ],
+  "runtimeBindings": [
+    {
+      "assembly": "Assembly-CSharp",
+      "type": "UIReplicatorWindow",
+      "kind": "field",
+      "name": "evtRecipe",
+      "signature": "UnityEngine.EventSystems.EventTrigger",
+      "visibility": "private"
+    },
+    {
+      "assembly": "Assembly-CSharp",
+      "type": "UIReplicatorWindow",
+      "kind": "field",
+      "name": "recipeProtoArray",
+      "signature": "RecipeProto[]",
+      "visibility": "private"
+    },
+    {
+      "assembly": "Assembly-CSharp",
+      "type": "UIReplicatorWindow",
+      "kind": "field",
+      "name": "mouseRecipeIndex",
+      "signature": "System.Int32",
+      "visibility": "private"
     }
   ]
 }

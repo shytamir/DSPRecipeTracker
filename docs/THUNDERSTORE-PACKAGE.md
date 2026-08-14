@@ -108,8 +108,9 @@ folder, assembly, repository, or Thunderstore package name.
 ## 4. Build prerequisites and reference boundary
 
 - Local builds use an explicit `GameRoot` setting that points to the supported
-  DSP installation. Game, Unity, and BepInEx assemblies are read as compile
-  inputs and are never copied into source control or package output.
+  DSP installation. Game and Unity assemblies are read there; BepInEx is read
+  there or from an explicit documented `BepInExReferencePath`. These compile
+  inputs are never copied into source control or package output.
 - Hosted CI may acquire the exact documented BepInEx `5.4.17` package when the
   consumed assembly identity matches the conformance contract.
 - Hosted CI must not download, upload, cache, reconstruct, or redistribute

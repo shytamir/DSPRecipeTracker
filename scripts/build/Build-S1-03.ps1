@@ -36,6 +36,9 @@ $sourceArguments = @{
 }
 if ($ReferenceMode -eq 'Local') {
     $sourceArguments.GameRoot = $GameRoot
+    if (-not [string]::IsNullOrWhiteSpace($BepInExReferencePath)) {
+        $sourceArguments.BepInExReferencePath = $BepInExReferencePath
+    }
 }
 else {
     $sourceArguments.BepInExReferencePath = $BepInExReferencePath

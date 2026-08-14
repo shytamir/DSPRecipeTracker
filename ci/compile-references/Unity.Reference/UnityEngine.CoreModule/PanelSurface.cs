@@ -1,5 +1,25 @@
 using System;
 
+namespace UnityEngine.Events
+{
+    public delegate void UnityAction<in T0>(T0 arg0);
+
+    public class UnityEvent<T0>
+    {
+        public UnityEvent()
+        {
+        }
+
+        public void AddListener(UnityAction<T0> call)
+        {
+        }
+
+        public void RemoveListener(UnityAction<T0> call)
+        {
+        }
+    }
+}
+
 namespace UnityEngine
 {
     public class Object
