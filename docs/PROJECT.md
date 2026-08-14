@@ -12,9 +12,11 @@
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its Source-ready, Package-inspected, and
-Owner-reviewed exit gates passed. The owner-authorized Sprint 2 roadmap is
-active, implementation is under way, S2-01 through S2-05 are owner accepted,
-and S2-06 is implemented and technically validated pending owner acceptance.
+Owner-reviewed exit gates passed. Sprint 2, S2-01 through S2-06, and its three
+exit gates are complete and owner accepted. Its Source-ready and Package-
+inspected gates pass for commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`.
+The repository is planning pending with no active implementation story or
+implementation authorization.
 The source contains the minimal plugin
 skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic
@@ -215,7 +217,7 @@ The following contracts implement and validate this product:
 | [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) | Package layout, version mapping, build-reference boundary, artifact validation, and publication boundary. |
 | [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) | Runtime evidence identity, provenance, coverage, and refresh rules. |
 | [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) | Supported loader version and permitted BepInEx feature surface. |
-| [`ROADMAP.md`](ROADMAP.md) | Active story, implementation scope, sequencing, and operational authorization. |
+| [`ROADMAP.md`](ROADMAP.md) | Current planning state and implementation authorization, when any. |
 
 Anyone changing implementation must read the implementation contract and the
 active roadmap. Anyone making a readiness, acceptance, compatibility, release,

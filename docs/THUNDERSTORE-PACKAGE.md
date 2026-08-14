@@ -123,7 +123,8 @@ folder, assembly, repository, or Thunderstore package name.
 - The shim projects, their outputs, and their surface inventory are compile and
   validation inputs only. They are never installed or included in the package.
 - The implemented automation uses the repository-selected .NET SDK and
-  PowerShell tooling recorded by the active Sprint 1 story.
+  PowerShell tooling recorded by the implementation contract and completed
+  bootstrap record.
 
 ### Shim coverage validation
 

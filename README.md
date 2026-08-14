@@ -7,9 +7,9 @@ direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
-exit gates are owner accepted. The owner-authorized Sprint 2 roadmap is active;
-S2-01 through S2-05 are owner accepted, and S2-06 is implemented and
-technically validated and remains Active pending owner acceptance. Runtime
+exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
+its exit gates are also complete and owner accepted. The repository is now
+planning pending with no active implementation story. Runtime
 execution and runtime validation remain outside the current source-only
 authorization.
 Future in-game validation is performed only by the owner from testable builds,
@@ -61,9 +61,11 @@ The authoritative product scope is maintained in
 [docs/PROJECT.md](docs/PROJECT.md). Readiness and acceptance criteria are
 maintained in [docs/VALIDATION-CONTRACT.md](docs/VALIDATION-CONTRACT.md).
 
-The active Sprint 2 implementation record is
-[docs/ROADMAP.md](docs/ROADMAP.md). The authorized long-range MVP roadmap and
-original concept foundation remain under `docs/planning/`.
+The current planning-pending state is recorded in
+[docs/ROADMAP.md](docs/ROADMAP.md). The completed Sprint 2 record is archived
+as [docs/archive/UI_INTEGRATION_ROADMAP.md](docs/archive/UI_INTEGRATION_ROADMAP.md).
+The authorized long-range MVP roadmap and original concept foundation remain
+under `docs/planning/`.
 
 The governing UI-extension approach is recorded in
 [docs/PRODUCT-PRINCIPLES.md](docs/PRODUCT-PRINCIPLES.md). The initial
@@ -186,9 +188,9 @@ for 30 days; the workflow does not publish it.
 The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
-accepted. The owner-authorized Sprint 2 roadmap is active, implementation is
-under way. S2-01 through S2-05 are owner accepted; S2-06 is implemented and
-technically validated pending owner acceptance.
+accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
+inspected, and Owner-reviewed gates are complete and owner accepted. The
+repository is planning pending with no active implementation authorization.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -202,7 +204,8 @@ The source now contains deterministic transient pin ordering, unpinning,
 three-entry capacity, bottom eviction, unavailable-recipe removal, independent
 native recipe-grid treatment, and exact fail-closed six-interface visibility
 collection, plus three ordered native recipe-icon panel slots, with bounded
-Debug transition diagnostics. It is not connected to DSP or plugin startup.
+Debug transition diagnostics. These integrations are connected through the
+plugin startup orchestration; installed behavior remains unvalidated.
 
 ## Repository layout
 
@@ -277,7 +280,7 @@ Before contributing, read [AGENTS.md](AGENTS.md). It defines the repository's
 scope, safety, validation, and Git expectations.
 
 Implementation files will follow the adopted
-[source, test, CI-reference, validation, and package layout](docs/IMPLEMENTATION-CONTRACT.md#adopted-repository-layout)
+[source, test, CI-reference, validation, and package layout](docs/IMPLEMENTATION-CONTRACT.md#8-adopted-repository-layout)
 as their respective Sprint 1 stories become Active. Later-story placeholder
 projects and directories are not created in advance.
 

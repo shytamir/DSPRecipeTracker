@@ -6,8 +6,11 @@
 
 **Planning horizon:** Concept to working MVP prototype
 
-**Current implementation record:**
-[`Sprint 2 - Native Integration and Tracker State`](../ROADMAP.md)
+**Current delivery state:**
+[`Planning pending`](../ROADMAP.md)
+
+**Completed Sprint 2 roadmap:**
+[`Sprint 2 - Native Integration and Tracker State`](../archive/UI_INTEGRATION_ROADMAP.md)
 
 **Completed bootstrap roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](../archive/BOOTSTRAP-ROADMAP.md)
@@ -15,9 +18,10 @@
 The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
 Its Source-ready and Package-inspected exit gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
-accepted. The owner-authorized Sprint 2 roadmap is active, implementation is
-under way. S2-01 through S2-05 are owner accepted; S2-06 is implemented and
-technically validated pending owner acceptance. No broader runtime
+accepted. Sprint 2, S2-01 through S2-06, and its three exit gates are complete
+and owner accepted. Its Source-ready and Package-inspected gates pass for
+commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The repository is planning
+pending with no active implementation authorization. No broader runtime
 authorization exists.
 
 Agents do not perform installed, loaded-game, visual, or interaction

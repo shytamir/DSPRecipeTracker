@@ -66,9 +66,11 @@ non-authoritative planning foundation. Use it for intent, design history,
 deferred ideas, and open questions; `docs/PROJECT.md` governs whenever they
 differ.
 
-`docs/ROADMAP.md` is the active implementation record. Read it before changing
-implementation or management state, work only the story marked Active, and do
-not mark technical validation or owner acceptance by inference.
+`docs/ROADMAP.md` is the current planning and implementation-authorization
+record. Read it before changing implementation or management state. When it
+marks no story Active, implementation is not authorized. Otherwise, work only
+the story marked Active. Do not mark technical validation or owner acceptance
+by inference.
 
 ## 4. Scope
 

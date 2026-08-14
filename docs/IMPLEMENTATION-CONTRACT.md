@@ -5,10 +5,11 @@
 **Status:** Current implementation contract
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
-complete and owner accepted. Its three exit gates passed. The owner-authorized
-Sprint 2 roadmap is active, implementation is under way, S2-01 through S2-05
-are owner accepted, and S2-06 is implemented and technically validated pending
-owner acceptance. The source tree
+complete and owner accepted. Its three exit gates passed. Sprint 2, S2-01
+through S2-06, and its three exit gates are also complete and owner accepted.
+Its Source-ready and Package-inspected gates pass for commit
+`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The repository is planning
+pending with no active implementation authorization. The source tree
 contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
 pipeline, UI-independent panel geometry and visibility policy, an inert
 compile-time Unity panel boundary, deterministic transient pin state, and an
@@ -38,7 +39,8 @@ Use these sources for their respective authority:
   versioning, hosted compile references, and package validation;
 - [`VALIDATION-CONTRACT.md`](VALIDATION-CONTRACT.md) for readiness and evidence
   claims; and
-- [`ROADMAP.md`](ROADMAP.md) for active scope and operational authorization.
+- [`ROADMAP.md`](ROADMAP.md) for current planning state and operational
+  authorization, when any.
 
 This contract does not activate a story, authorize runtime execution, record
 validation, or approve a release.
