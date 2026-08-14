@@ -7,9 +7,9 @@
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. The Source-ready and Package-inspected exit gates
 pass for commit `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and the
-Owner-reviewed gate passed by explicit owner acceptance. Planning for the next
-sprint is pending, no implementation story is active, and no supported release
-exists.
+Owner-reviewed gate passed by explicit owner acceptance. The owner-authorized
+Sprint 2 roadmap is active, implementation is under way, S2-01 is Active
+pending implementation, and no supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

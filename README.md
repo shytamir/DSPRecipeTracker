@@ -7,9 +7,9 @@ direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
-exit gates are owner accepted. Planning for the next sprint is pending, and no
-implementation story is active. Runtime execution and runtime validation
-remain outside the current source-only authorization.
+exit gates are owner accepted. The owner-authorized Sprint 2 roadmap is active,
+and S2-01 is Active pending implementation. Runtime execution and runtime
+validation remain outside the current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
@@ -184,8 +184,8 @@ for 30 days; the workflow does not publish it.
 The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
-accepted. Planning for the next sprint is pending, and no implementation story
-is active.
+accepted. The owner-authorized Sprint 2 roadmap is active, implementation is
+under way, and S2-01 is Active pending implementation.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those

@@ -5,11 +5,11 @@
 **Status:** Current implementation contract
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
-complete and owner accepted. Its three exit gates passed. Planning for the next
-sprint is pending, and no implementation story is active. The source tree
-contains the minimal BepInEx identity/lifecycle/logging skeleton, static
-package pipeline, UI-independent panel geometry, visibility policy, and an
-inert compile-time Unity panel boundary.
+complete and owner accepted. Its three exit gates passed. The owner-authorized
+Sprint 2 roadmap is active, implementation is under way, and S2-01 is Active
+pending implementation. The source tree contains the minimal BepInEx identity/
+lifecycle/logging skeleton, static package pipeline, UI-independent panel
+geometry, visibility policy, and an inert compile-time Unity panel boundary.
 
 **Owner review:** Accepted on 2026-08-14.
 

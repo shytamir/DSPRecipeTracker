@@ -12,11 +12,12 @@
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its Source-ready, Package-inspected, and
-Owner-reviewed exit gates passed. Planning for the next sprint is pending, and
-no implementation story is active. The source contains the minimal plugin
-skeleton, inspected package pipeline, UI-independent panel geometry and
-visibility policy, and an inert compile-time Unity panel boundary, but no
-recipe-tracking behavior; no supported release exists.
+Owner-reviewed exit gates passed. The owner-authorized Sprint 2 roadmap is
+active, implementation is under way, and S2-01 is Active pending
+implementation. The source contains the minimal plugin skeleton, inspected
+package pipeline, UI-independent panel geometry and visibility policy, and an
+inert compile-time Unity panel boundary, but no recipe-tracking behavior; no
+supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 
@@ -260,8 +261,7 @@ fingerprint require an explicit owner decision.
 The following are not decided by this contract:
 
 - inclusion or exclusion of tracker-icon navigation;
-- supported resolution and UI-scale matrix;
-- the initial tracker-owned localization fallback.
+- supported resolution and UI-scale matrix.
 
 These decisions must be recorded in the applicable roadmap story before that
 story becomes Ready. No implementation agent may invent them from installed
