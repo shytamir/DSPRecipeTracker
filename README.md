@@ -8,8 +8,8 @@ direct material requirements with the contents of Icarus's inventory.
 The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. The owner-authorized Sprint 2 roadmap is active;
-S2-01 and S2-02 are owner accepted, and S2-03 is implemented and technically
-validated and remains Active pending owner acceptance. Runtime execution and
+S2-01 through S2-03 are owner accepted, and S2-04 is implemented and
+technically validated and remains Active pending owner acceptance. Runtime execution and
 runtime validation remain outside the current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
@@ -186,7 +186,7 @@ The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. The owner-authorized Sprint 2 roadmap is active, implementation is
-under way. S2-01 and S2-02 are owner accepted; S2-03 is implemented and
+under way. S2-01 through S2-03 are owner accepted; S2-04 is implemented and
 technically validated pending owner acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
@@ -198,8 +198,10 @@ activate the panel boundary at startup; gameplay, native appearance, live
 layout, input, cleanup, and display-scale behavior remain unvalidated.
 
 The source now contains deterministic transient pin ordering, unpinning,
-three-entry capacity, bottom eviction, unavailable-recipe removal, and bounded
-Debug transition diagnostics. It is not connected to DSP or plugin startup.
+three-entry capacity, bottom eviction, unavailable-recipe removal, independent
+native recipe-grid treatment, and exact fail-closed six-interface visibility
+collection with bounded Debug transition diagnostics. It is not connected to
+DSP or plugin startup.
 
 ## Repository layout
 
@@ -254,7 +256,8 @@ Debug transition diagnostics. It is not connected to DSP or plugin startup.
 |       |-- Validate-S1-06.ps1
 |       |-- Validate-S2-01.ps1
 |       |-- Validate-S2-02.ps1
-|       `-- Validate-S2-03.ps1
+|       |-- Validate-S2-03.ps1
+|       `-- Validate-S2-04.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

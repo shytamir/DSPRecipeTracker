@@ -280,9 +280,60 @@
           "members": []
         },
         {
+          "name": "ManualBehaviour",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "major-interface-active-state",
+          "members": [
+            { "kind": "method", "name": "get_active", "signature": "System.Boolean()" }
+          ]
+        },
+        {
+          "name": "UIGame",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-host",
+          "members": [
+            { "kind": "field", "name": "techTree", "signature": "UITechTree" },
+            { "kind": "field", "name": "dysonEditor", "signature": "UIDysonEditor" },
+            { "kind": "field", "name": "inventoryWindow", "signature": "UIInventoryWindow" },
+            { "kind": "field", "name": "replicator", "signature": "UIReplicatorWindow" },
+            { "kind": "field", "name": "statWindow", "signature": "UIStatisticsWindow" },
+            { "kind": "field", "name": "dashboard", "signature": "UIDashboard" }
+          ]
+        },
+        {
+          "name": "UITechTree",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-tech-state",
+          "members": []
+        },
+        {
+          "name": "UIDysonEditor",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-dyson-editor-state",
+          "members": []
+        },
+        {
+          "name": "UIInventoryWindow",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-inventory-state",
+          "members": []
+        },
+        {
+          "name": "UIStatisticsWindow",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-statistics-state",
+          "members": []
+        },
+        {
+          "name": "UIDashboard",
+          "baseType": "ManualBehaviour",
+          "usage": "major-interface-dashboard-state",
+          "members": []
+        },
+        {
           "name": "UIReplicatorWindow",
-          "baseType": "System.Object",
-          "usage": "replicator-adapter-host-type",
+          "baseType": "ManualBehaviour",
+          "usage": "replicator-adapter-host-and-major-interface-state",
           "members": [
             { "kind": "field", "name": "recipeBg", "signature": "UnityEngine.UI.Image" },
             { "kind": "field", "name": "recipeIcons", "signature": "UnityEngine.UI.RawImage" }

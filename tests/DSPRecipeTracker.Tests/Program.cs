@@ -241,6 +241,90 @@ foreach (var visibilityCase in visibilityCases)
         $"visibility truth table ({visibilityCase.HasRows}, {visibilityCase.ManualRequested}, {visibilityCase.MajorInterfaceActive})");
 }
 
+var individualMajorInterfaces = new[]
+{
+    (Name: "Tech", Signals: new MajorInterfaceSignals(true, false, false, false, false, false)),
+    (Name: "DysonEditor", Signals: new MajorInterfaceSignals(false, true, false, false, false, false)),
+    (Name: "Inventory", Signals: new MajorInterfaceSignals(false, false, true, false, false, false)),
+    (Name: "Replicator", Signals: new MajorInterfaceSignals(false, false, false, true, false, false)),
+    (Name: "Statistics", Signals: new MajorInterfaceSignals(false, false, false, false, true, false)),
+    (Name: "Dashboard", Signals: new MajorInterfaceSignals(false, false, false, false, false, true))
+};
+
+foreach (var majorInterface in individualMajorInterfaces)
+{
+    var diagnostics = new RecordingDiagnosticSink();
+    var adapter = new RecordingMajorInterfaceStateAdapter { Signals = majorInterface.Signals };
+    var input = new MajorInterfaceVisibilityInput(adapter, diagnostics);
+    var snapshot = input.Read();
+    Check(snapshot.IsAvailable, majorInterface.Name + " signal is available");
+    Check(snapshot.IsActive == true, majorInterface.Name + " signal activates the combined state");
+    Check(
+        diagnostics.Records.Single().Message.Contains("members=[" + majorInterface.Name + "]", StringComparison.Ordinal),
+        majorInterface.Name + " diagnostic names the active member");
+}
+
+var combinedAdapter = new RecordingMajorInterfaceStateAdapter
+{
+    Signals = new MajorInterfaceSignals(true, false, true, false, false, true)
+};
+var combinedInput = new MajorInterfaceVisibilityInput(combinedAdapter, new RecordingDiagnosticSink());
+var combinedSnapshot = combinedInput.Read();
+Check(combinedSnapshot.IsAvailable && combinedSnapshot.IsActive == true, "simultaneous major-interface signals combine with logical OR");
+Check(combinedSnapshot.Signals.FormatActiveMembers() == "[Tech,Inventory,Dashboard]", "simultaneous signal names use the fixed order");
+
+combinedAdapter.Signals = new MajorInterfaceSignals(false, false, false, false, false, false);
+var inactiveSnapshot = combinedInput.Read();
+Check(inactiveSnapshot.IsAvailable && inactiveSnapshot.IsActive == false, "all-false signals remain available and inactive");
+
+var unavailableAdapter = new RecordingMajorInterfaceStateAdapter { Available = false };
+var unavailableInput = new MajorInterfaceVisibilityInput(unavailableAdapter, new RecordingDiagnosticSink());
+var unavailableSnapshot = unavailableInput.Read();
+Check(!unavailableSnapshot.IsAvailable, "unavailable bindings remain explicitly unavailable");
+Check(!unavailableSnapshot.IsActive.HasValue, "unavailable bindings do not invent an inactive value");
+Check(!MajorInterfaceVisibilityInput.ResolveTrackerVisibility(true, true, unavailableSnapshot), "unavailable bindings hide presentation fail-closed");
+Check(
+    MajorInterfaceVisibilityInput.ResolveTrackerVisibility(true, true, MajorInterfaceSnapshot.Available(default(MajorInterfaceSignals))),
+    "an available inactive snapshot preserves manual visibility intent");
+Check(
+    !MajorInterfaceVisibilityInput.ResolveTrackerVisibility(true, false, MajorInterfaceSnapshot.Available(default(MajorInterfaceSignals))),
+    "the collection boundary does not redefine manual visibility policy");
+
+var throwingMajorInterfaceAdapter = new RecordingMajorInterfaceStateAdapter { ThrowOnRead = true };
+var throwingMajorInterfaceInput = new MajorInterfaceVisibilityInput(throwingMajorInterfaceAdapter, new RecordingDiagnosticSink());
+Check(!throwingMajorInterfaceInput.Read().IsAvailable, "adapter exceptions fail softly as unavailable");
+
+var visibilityDiagnostics = new RecordingDiagnosticSink();
+var transitionAdapter = new RecordingMajorInterfaceStateAdapter { Available = false };
+var transitionInput = new MajorInterfaceVisibilityInput(transitionAdapter, visibilityDiagnostics);
+transitionInput.Read();
+transitionInput.Read();
+transitionAdapter.Available = true;
+transitionAdapter.Signals = default(MajorInterfaceSignals);
+transitionInput.Read();
+transitionInput.Read();
+transitionAdapter.Signals = new MajorInterfaceSignals(true, false, false, false, false, false);
+transitionInput.Read();
+transitionAdapter.Signals = new MajorInterfaceSignals(false, false, true, false, false, false);
+transitionInput.Read();
+transitionAdapter.Signals = default(MajorInterfaceSignals);
+transitionInput.Read();
+transitionAdapter.Available = false;
+transitionInput.Read();
+transitionInput.Read();
+transitionAdapter.Available = true;
+transitionAdapter.Signals = new MajorInterfaceSignals(true, false, false, false, false, true);
+transitionInput.Read();
+Check(visibilityDiagnostics.Records.Count == 6, "major-interface diagnostics suppress unchanged availability and combined state");
+Check(visibilityDiagnostics.Records[0].Message == "major-interface availability=unavailable", "initial unavailable binding is diagnosed once");
+Check(visibilityDiagnostics.Records[1].Message == "major-interface availability=available active=false members=[]", "available transition reports inactive state");
+Check(visibilityDiagnostics.Records[2].Message == "major-interface state=active members=[Tech]", "active transition names its member");
+Check(visibilityDiagnostics.Records[3].Message == "major-interface state=inactive members=[]", "inactive transition is diagnosed");
+Check(visibilityDiagnostics.Records[4].Message == "major-interface availability=unavailable", "availability loss is diagnosed");
+Check(visibilityDiagnostics.Records[5].Message == "major-interface availability=available active=true members=[Tech,Dashboard]", "availability recovery reports combined state and members");
+Check(visibilityDiagnostics.Records.All(record => record.Level == TrackerDiagnosticLevel.Debug), "major-interface diagnostics use Debug level");
+Check(visibilityDiagnostics.Records.All(record => record.Message.Length < 128), "major-interface diagnostics remain bounded");
+
 var uiAdapter = new RecordingPanelUiAdapter();
 using (var uiBoundary = new TrackerPanelUiBoundary(uiAdapter))
 {
@@ -283,7 +367,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -500,5 +584,25 @@ internal sealed class RecordingRecipeGridTreatmentAdapter : IRecipeGridTreatment
     {
         Array.Clear(population, 0, population.Length);
         Array.Copy(recipeIds, population, Math.Min(recipeIds.Length, population.Length));
+    }
+}
+
+internal sealed class RecordingMajorInterfaceStateAdapter : IMajorInterfaceStateAdapter
+{
+    public bool Available { get; set; } = true;
+
+    public bool ThrowOnRead { get; set; }
+
+    public MajorInterfaceSignals Signals { get; set; }
+
+    public bool TryRead(out MajorInterfaceSignals signals)
+    {
+        if (ThrowOnRead)
+        {
+            throw new InvalidOperationException("Unavailable major-interface binding.");
+        }
+
+        signals = Signals;
+        return Available;
     }
 }

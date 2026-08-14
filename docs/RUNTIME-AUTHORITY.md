@@ -237,6 +237,35 @@ resources and rejects any production reflection or direct-name path to
 validator covers every public external member consumed by both Local and
 Hosted builds. No runtime was loaded for this validation.
 
+### S2-04 exact major-interface visibility surface
+
+On 2026-08-14, S2-04 used the same hash-matched installed
+`Assembly-CSharp.dll` as a read-only metadata authority. Inspection confirmed
+the exact direct surface below:
+
+| Declaring type | Member | Exact shape |
+| --- | --- | --- |
+| `UIGame` | `techTree` | public `UITechTree` field |
+| `UIGame` | `dysonEditor` | public `UIDysonEditor` field |
+| `UIGame` | `inventoryWindow` | public `UIInventoryWindow` field |
+| `UIGame` | `replicator` | public `UIReplicatorWindow` field |
+| `UIGame` | `statWindow` | public `UIStatisticsWindow` field |
+| `UIGame` | `dashboard` | public `UIDashboard` field |
+| `ManualBehaviour` | `active` | public `System.Boolean` getter; non-public setter |
+
+Each of the six window types directly inherits `ManualBehaviour`, which
+inherits `UnityEngine.MonoBehaviour`. Production caches those six public
+references and consumes only the inherited `active` getter. It does not use
+`UIGame.isAnyFunctionWindowActive`, `UIGame.uiPanelActiveMask`, reflection,
+Harmony, or per-window lifecycle patches.
+
+`Validate-S2-04.ps1` checks the field types, accessibility, inheritance, and
+property accessors against the authority assembly. The declaration-only shims
+and consumed-surface inventory represent every public external type, member,
+and inheritance edge consumed by production; exhaustive validation passed for
+both Local and Hosted builds. This establishes source compatibility with the
+recorded surface, not live window behavior.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

@@ -4,12 +4,12 @@
 
 **Status:** In progress - owner authorized on 2026-08-14
 
-**Active story:** S2-03 - Present pin state without altering DSP's recipe-grid state
+**Active story:** S2-04 - Supply the exact major-interface visibility input
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S2-03 only
+**Implementation authorization:** S2-04 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,7 +17,7 @@ pending
 **Previous roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](archive/BOOTSTRAP-ROADMAP.md)
 
-The owner accepted S2-02 and activated S2-03 on 2026-08-14. Only the story
+The owner accepted S2-03 and activated S2-04 on 2026-08-14. Only the story
 identified above is authorized for implementation.
 
 **Goal:** Connect the existing panel boundary to the native Replicator and HUD
@@ -56,13 +56,13 @@ set of observations that cannot be established another way.
 
 ## Entry gates
 
-The entry gates required to activate S2-03 are satisfied:
+The entry gates required to activate S2-04 are satisfied:
 
 - the owner accepted this roadmap;
-- every decision required by S2-03 is recorded;
+- every decision required by S2-04 is recorded;
 - the repository begins from the accepted bootstrap state; and
-- S2-01 and S2-02 are owner accepted; and
-- exactly S2-03 is marked Active.
+- S2-01 through S2-03 are owner accepted; and
+- exactly S2-04 is marked Active.
 
 Later stories become Active one at a time only after the preceding dependency
 is technically validated and explicitly owner accepted. Completion never
@@ -287,8 +287,7 @@ authorized S2-03; it does not infer acceptance of later work.
 
 ### S2-03 - Present pin state without altering DSP's recipe-grid state
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-14
 
 **User story:** As a player, I want available and pinned recipes distinguished
 subtly while native feedback remains authoritative.
@@ -372,14 +371,15 @@ warnings and zero errors; both products passed exhaustive consumed-surface
 coverage against exact declaration-only shims. No game, loader, save, plugin,
 or substitute runtime was started or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S2-04.
+**Owner acceptance:** Accepted explicitly on 2026-08-14. This acceptance
+authorized S2-04; it does not infer acceptance of later work.
 
 ## Epic 4 - HUD visibility and controls
 
 ### S2-04 - Supply the exact major-interface visibility input
 
-**Status:** Proposed - depends on S2-01
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want the tracker hidden during the six agreed
 major interfaces without unrelated windows changing my choice.
@@ -405,6 +405,56 @@ major interfaces without unrelated windows changing my choice.
 
 **Acceptance gate:** Focused tests, Local/Hosted Release builds, exhaustive shim
 validation, and source review pass. Live window state remains unvalidated.
+
+**Implementation result:**
+
+- `MajorInterfaceSignals` represents exactly Tech, Dyson Editor, Inventory,
+  Replicator, Statistics, and Dashboard and derives their logical OR without
+  admitting unrelated DSP window state.
+- `UnityMajorInterfaceStateAdapter` caches the six public `UIGame` window
+  references once and reads their inherited public `ManualBehaviour.active`
+  getters directly. It uses no reflection, Harmony patch, broad window proxy,
+  or per-window lifecycle subscription.
+- `MajorInterfaceSnapshot` preserves binding availability separately from the
+  active value. The policy handoff hides presentation while unavailable and
+  otherwise delegates unchanged manual intent and row state to
+  `VisibilityPolicy`.
+- Missing references or read failures return unavailable and fail softly.
+  They do not invent an inactive runtime state or mutate manual visibility.
+- Bounded Debug diagnostics report the first availability observation,
+  availability transitions, and combined active/inactive transitions only.
+  Active diagnostics name members from the fixed six-name set; changing the
+  active member while the logical OR remains true is deliberately silent.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S2-04.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>'
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 10 `
+  -SourceRevision $revision
+```
+
+Focused tests covered each individual signal, simultaneous signals, all false,
+unavailable and throwing adapters, fail-closed presentation, unchanged policy
+ownership, availability transitions, combined-state transitions, fixed member
+names, Debug level, bounded messages, and unchanged suppression. Read-only
+metadata validation confirmed the hash-matched public `UIGame` fields, each
+window's `ManualBehaviour` inheritance, and the public Boolean `active` getter.
+Local and Hosted Release builds completed with zero warnings and zero errors;
+both products passed exhaustive consumed-surface coverage against exact
+declaration-only shims. No game, loader, save, plugin, or substitute runtime
+was started or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S2-05. Live window state remains unvalidated until the later
+meaningful owner gate.
 
 ### S2-05 - Connect native recipe-icon slots to the panel
 

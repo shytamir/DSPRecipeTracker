@@ -6,14 +6,15 @@
 
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its three exit gates passed. The owner-authorized
-Sprint 2 roadmap is active, implementation is under way, S2-01 and S2-02 are
-owner accepted, and S2-03 is implemented and technically validated pending
+Sprint 2 roadmap is active, implementation is under way, S2-01 through S2-03
+are owner accepted, and S2-04 is implemented and technically validated pending
 owner acceptance. The source tree
 contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
 pipeline, UI-independent panel geometry and visibility policy, an inert
 compile-time Unity panel boundary, deterministic transient pin state, and an
-isolated native Replicator input adapter, and independent native recipe-grid
-treatment model and adapter awaiting later startup orchestration.
+isolated native Replicator input adapter, independent native recipe-grid
+treatment model and adapter, and exact fail-closed major-interface visibility
+input awaiting later startup orchestration.
 
 **Owner review:** Accepted on 2026-08-14.
 

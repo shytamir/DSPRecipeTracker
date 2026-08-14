@@ -6,8 +6,9 @@ compile-reference shims used by hosted builds.
 The `UnityEngine` facade supplies the transitive `MonoBehaviour` declaration
 required by BepInEx. The Unity shims declare the exact panel and Replicator
 event and rendering surface consumed by production. `DSPGame.Reference`
-declares only the Replicator host, populated recipe type, recipe identity, and
-public native background/icon fields needed by S2-02 and S2-03.
+declares only the Replicator host, populated recipe type, recipe identity,
+public native background/icon fields, and exact six-window active-state surface
+needed by S2-02 through S2-04.
 Private reflection bindings are inventoried separately and validated against
 the hash-matched installed metadata; they are not misrepresented as public
 compile-time members.
