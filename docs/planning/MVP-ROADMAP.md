@@ -11,11 +11,11 @@
 
 The current Sprint 1 record is a sanitized source-only recovery plan with no
 broader runtime authorization. Implementation has started with S1-01,
-repository hygiene, Active and pending implementation. The active Sprint 1
-record overrides this planning baseline wherever this file mentions installed,
-loaded-game, visual, or interaction validation. Agents do not perform those
-activities; the owner performs only the bounded human checks supplied at later
-meaningful testable-build gates.
+repository hygiene, implemented and technically validated; owner acceptance is
+pending. The active Sprint 1 record overrides this planning baseline wherever
+this file mentions installed, loaded-game, visual, or interaction validation.
+Agents do not perform those activities; the owner performs only the bounded
+human checks supplied at later meaningful testable-build gates.
 
 This record orders implementation; it does not create product authority.
 [`PROJECT.md`](../PROJECT.md) governs scope,

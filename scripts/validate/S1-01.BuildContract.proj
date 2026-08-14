@@ -1,0 +1,13 @@
+<Project DefaultTargets="ValidateS101Contract">
+  <Import Project="..\..\Directory.Build.props" />
+
+  <PropertyGroup>
+    <DSPRecipeTrackerRequiresExternalReferences>true</DSPRecipeTrackerRequiresExternalReferences>
+  </PropertyGroup>
+
+  <Import Project="..\..\Directory.Build.targets" />
+
+  <Target
+    Name="ValidateS101Contract"
+    DependsOnTargets="ValidateDSPRecipeTrackerExternalReferences" />
+</Project>

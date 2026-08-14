@@ -4,8 +4,9 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** Implementation has started. Sprint 1 story S1-01 is
-Active and pending implementation. No functional plugin exists.
+**Implementation status:** Sprint 1 story S1-01 is implemented and technically
+validated. It remains Active pending owner acceptance. No functional plugin
+exists.
 
 **Owner review:** Accepted on 2026-08-14.
 
@@ -201,6 +202,15 @@ source-defined game and Unity compile-reference shims and the documented
 BepInEx CI source. Source and package construction must not copy, commit, or
 redistribute installed assemblies. Compile-reference shims contain declaration
 shapes only and are not runtime substitutes.
+
+`Directory.Build.props` exposes the authorized local reference paths only when
+the caller explicitly selects `DSPReferenceMode=Local` and supplies
+`GameRoot`. Hosted builds explicitly select `DSPReferenceMode=Hosted` and use
+the fixed repository-owned `ci/compile-references` root. Consuming projects set
+`DSPRecipeTrackerRequiresExternalReferences=true`; the shared target then fails
+with an ordinary MSBuild error when the mode, root, surface inventory, or any
+authorized local assembly is missing. The shared configuration contains no
+discovery, download, copy, installation, or process-execution behavior.
 
 Use only the BepInEx lifecycle, identity, logging, and explicitly required
 configuration surface documented in `BEPINEX-CONFORMANCE.md`. Do not target

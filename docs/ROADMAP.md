@@ -6,7 +6,8 @@
 
 **Active story:** S1-01 - Establish repository hygiene
 
-**Active story state:** Active and pending implementation
+**Active story state:** Implemented and technically validated; owner acceptance
+pending
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -135,7 +136,8 @@ the old roadmap, existing installed plugins, or feasibility artifacts.
 
 ### S1-01 - Establish repository hygiene
 
-**Status:** Active - pending implementation
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want generated and licensed material kept
 out of Git while source builds use explicit external references.
@@ -151,6 +153,34 @@ out of Git while source builds use explicit external references.
 - A missing reference produces an ordinary build failure without fallback
   discovery, installation mutation, network acquisition, or environment
   probing.
+
+**Implementation result:**
+
+- `.gitignore` covers generated build output, packages, dependency binaries,
+  saves, logs, screenshots, diagnostics, and runtime evidence.
+- `Directory.Build.props` exposes the explicit local `GameRoot` paths and the
+  fixed tracked hosted-reference root.
+- `Directory.Build.targets` supplies fail-fast MSBuild errors `DRT1001` through
+  `DRT1005` without discovery, network, execution, or mutation behavior.
+- `ci/compile-references/surface-inventory.json` records the current empty DSP
+  and Unity production surface without creating later-story shim projects.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S1-01.ps1 -GameRoot '<DSP installation>'
+```
+
+The validation confirmed every required ignore class, no prohibited tracked
+file, valid explicit Local and Hosted modes, the current hosted inventory, and
+the expected fail-fast errors for missing mode, missing `GameRoot`, nonexistent
+`GameRoot`, and a missing required assembly. It also confirmed that the shared
+build contract rejects a redirected hosted-reference root and contains no
+discovery, network, execution, or mutation task.
+No game, loader, save, installation, or runtime process was opened or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S1-02.
 
 ### S1-02 - Establish stable identity and a source build
 

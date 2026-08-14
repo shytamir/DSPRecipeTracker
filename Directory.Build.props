@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <DSPRecipeTrackerRepositoryRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)'))</DSPRecipeTrackerRepositoryRoot>
+    <DSPRecipeTrackerCompileReferenceRoot>$([MSBuild]::NormalizeDirectory('$(DSPRecipeTrackerRepositoryRoot)ci\compile-references'))</DSPRecipeTrackerCompileReferenceRoot>
+    <DSPRecipeTrackerSurfaceInventoryPath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)surface-inventory.json'))</DSPRecipeTrackerSurfaceInventoryPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(DSPReferenceMode)' == 'Local' and '$(GameRoot)' != ''">
+    <DSPManagedReferenceRoot>$([MSBuild]::NormalizeDirectory('$(GameRoot)\DSPGAME_Data\Managed'))</DSPManagedReferenceRoot>
+    <DSPBepInExReferenceRoot>$([MSBuild]::NormalizeDirectory('$(GameRoot)\BepInEx\core'))</DSPBepInExReferenceRoot>
+    <DSPAssemblyCSharpReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)Assembly-CSharp.dll'))</DSPAssemblyCSharpReferencePath>
+    <DSPBepInExReferencePath>$([MSBuild]::NormalizePath('$(DSPBepInExReferenceRoot)BepInEx.dll'))</DSPBepInExReferencePath>
+    <DSPUnityEngineReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.dll'))</DSPUnityEngineReferencePath>
+    <DSPUnityCoreModuleReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.CoreModule.dll'))</DSPUnityCoreModuleReferencePath>
+    <DSPUnityUIModuleReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.UIModule.dll'))</DSPUnityUIModuleReferencePath>
+    <DSPUnityUIReferencePath>$([MSBuild]::NormalizePath('$(DSPManagedReferenceRoot)UnityEngine.UI.dll'))</DSPUnityUIReferencePath>
+  </PropertyGroup>
+</Project>

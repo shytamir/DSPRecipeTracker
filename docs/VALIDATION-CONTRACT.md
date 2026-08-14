@@ -4,9 +4,9 @@
 
 **Status:** Current validation contract
 
-**Implementation status:** Implementation has started. Sprint 1 story S1-01 is
-Active and pending implementation. No functional plugin or supported release
-exists.
+**Implementation status:** Sprint 1 story S1-01 is implemented and technically
+validated. It remains Active pending owner acceptance. No functional plugin or
+supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

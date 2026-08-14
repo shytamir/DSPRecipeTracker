@@ -1,0 +1,49 @@
+<Project>
+  <Target
+    Name="ValidateDSPRecipeTrackerExternalReferences"
+    BeforeTargets="ResolveAssemblyReferences"
+    Condition="'$(DSPRecipeTrackerRequiresExternalReferences)' == 'true'">
+
+    <PropertyGroup>
+      <_DSPRecipeTrackerExpectedCompileReferenceRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)ci\compile-references'))</_DSPRecipeTrackerExpectedCompileReferenceRoot>
+    </PropertyGroup>
+
+    <Error
+      Condition="'$(DSPReferenceMode)' != 'Local' and '$(DSPReferenceMode)' != 'Hosted'"
+      Code="DRT1001"
+      Text="Set DSPReferenceMode explicitly to Local or Hosted." />
+
+    <Error
+      Condition="'$(DSPReferenceMode)' == 'Local' and '$(GameRoot)' == ''"
+      Code="DRT1002"
+      Text="Local builds require an explicit GameRoot property." />
+
+    <Error
+      Condition="'$(DSPReferenceMode)' == 'Local' and '$(GameRoot)' != '' and !Exists('$(GameRoot)')"
+      Code="DRT1003"
+      Text="The explicit GameRoot path does not exist: $(GameRoot)" />
+
+    <Error
+      Condition="'$(DSPReferenceMode)' == 'Hosted' and '$(DSPRecipeTrackerCompileReferenceRoot)' != '$(_DSPRecipeTrackerExpectedCompileReferenceRoot)'"
+      Code="DRT1005"
+      Text="Hosted builds must use the tracked compile-reference root: $(_DSPRecipeTrackerExpectedCompileReferenceRoot)" />
+
+    <ItemGroup Condition="'$(DSPReferenceMode)' == 'Local' and '$(GameRoot)' != '' and Exists('$(GameRoot)')">
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPAssemblyCSharpReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPBepInExReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityEngineReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityCoreModuleReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityUIModuleReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityUIReferencePath)" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(DSPReferenceMode)' == 'Hosted'">
+      <_DSPRecipeTrackerRequiredReference Include="$([MSBuild]::NormalizePath('$(_DSPRecipeTrackerExpectedCompileReferenceRoot)surface-inventory.json'))" />
+    </ItemGroup>
+
+    <Error
+      Condition="!Exists('%(_DSPRecipeTrackerRequiredReference.Identity)')"
+      Code="DRT1004"
+      Text="Required external reference input was not found: %(_DSPRecipeTrackerRequiredReference.Identity)" />
+  </Target>
+</Project>

@@ -6,6 +6,11 @@ dist/
 packages/
 TestResults/
 coverage/
+screenshots/
+captures/
+diagnostics/
+saves/
+logs/
 
 # Compiled and packaged binaries
 *.dll
@@ -23,6 +28,8 @@ coverage/
 *.tmp
 *.temp
 *.bak
+*.dsv
+*.sav
 
 # IDE and user-local files
 .vs/

@@ -7,11 +7,11 @@ direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
 accepted. Sprint 1 implementation has started with story S1-01 Active and
-pending implementation. Runtime execution and runtime validation remain
-outside the current source-only authorization. Future in-game validation is
-performed only by the owner from testable builds, after non-runtime checks are
-exhausted and only at meaningful gates. No installable plugin or supported
-release exists yet.
+technically validated; owner acceptance is pending. Runtime execution and
+runtime validation remain outside the current source-only authorization.
+Future in-game validation is performed only by the owner from testable builds,
+after non-runtime checks are exhausted and only at meaningful gates. No
+installable plugin or supported release exists yet.
 
 ## Planned MVP
 
@@ -118,6 +118,16 @@ is `DSP-Recipe-Tracker`.
 Build and installation instructions will be added with the first working
 plugin skeleton. There is currently no functional DLL to build or install.
 
+The S1-01 repository and external-reference contract is validated with:
+
+```powershell
+.\scripts\validate\Validate-S1-01.ps1 -GameRoot '<DSP installation>'
+```
+
+The command reads the explicitly supplied installation only to confirm the
+documented compile inputs exist. It does not copy, install, load, or execute
+them.
+
 The repository intentionally contains no placeholder DLL or dummy package
 pipeline. Sprint 1 will create the first package pipeline from the real plugin
 build output according to
@@ -140,13 +150,14 @@ single-DLL archive layout and static validation boundary.
 
 ## Project status
 
-Sprint 1 implementation has started. S1-01, repository hygiene, is Active and
-pending implementation; later stories remain Proposed. Historical assembly
-and isolated-runtime feasibility conclusions identify the Replicator input
-surface, recipe and inventory APIs, native HUD host, exact major-interface
-visibility signals, and reusable presentation resources. Those accepted
-conclusions do not authorize new runtime execution. No functional plugin exists
-yet; gameplay, layout, input, and display-scale behavior remains unvalidated.
+S1-01, repository hygiene, is implemented and technically validated. It remains
+Active pending explicit owner acceptance; later stories remain Proposed.
+Historical assembly and isolated-runtime feasibility conclusions identify the
+Replicator input surface, recipe and inventory APIs, native HUD host, exact
+major-interface visibility signals, and reusable presentation resources. Those
+accepted conclusions do not authorize new runtime execution. No functional
+plugin exists yet; gameplay, layout, input, and display-scale behavior remains
+unvalidated.
 
 ## Repository layout
 
@@ -154,6 +165,12 @@ yet; gameplay, layout, input, and display-scale behavior remains unvalidated.
 .
 |-- AGENTS.md
 |-- .gitignore
+|-- ci/
+|   `-- compile-references/
+|       |-- README.md
+|       `-- surface-inventory.json
+|-- Directory.Build.props
+|-- Directory.Build.targets
 |-- docs/
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
@@ -167,6 +184,10 @@ yet; gameplay, layout, input, and display-scale behavior remains unvalidated.
 |   |-- RUNTIME-AUTHORITY.md
 |   |-- THUNDERSTORE-PACKAGE.md
 |   `-- VALIDATION-CONTRACT.md
+|-- scripts/
+|   `-- validate/
+|       |-- S1-01.BuildContract.proj
+|       `-- Validate-S1-01.ps1
 |-- VERSION
 |-- LICENSE
 `-- README.md
