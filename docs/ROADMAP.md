@@ -4,7 +4,7 @@
 
 **Status:** In progress
 
-**Active story:** S1-02 - Establish stable identity and a source build
+**Active story:** S1-03 - Construct and inspect a package
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
@@ -184,8 +184,7 @@ and activated S1-02.
 
 ### S1-02 - Establish stable identity and a source build
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - technically validated and owner accepted on 2026-08-14
 
 **User story:** As a maintainer, I want one stable plugin identity and version
 contract before feature code depends on them.
@@ -244,12 +243,13 @@ passed. Build outputs remained beneath ignored repository-local paths. No
 project or dependency assembly was copied, installed, or loaded after build;
 DSP, BepInEx, Unity, Steam, and saves were not executed or opened.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate another story.
+**Owner acceptance:** Passed on 2026-08-14. The owner explicitly accepted S1-02
+and activated S1-03.
 
 ### S1-03 - Construct and inspect a package
 
-**Status:** Proposed
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want package construction to describe the
 real build output without implying that the package has run successfully.
@@ -268,6 +268,54 @@ real build output without implying that the package has run successfully.
   performed and that the artifact is not release-ready.
 - No package step writes to the DSP installation or starts a game, loader, or
   harness process.
+
+**Implementation result:**
+
+- `packaging/` contains the tracked manifest template, readiness-limited
+  package README, and original 256x256 PNG icon. Generated versions replace the
+  manifest token only in ignored staging output.
+- `scripts/build/Build-S1-03.ps1` consumes the real S1-02 `Release` DLL and
+  creates the exact four-entry ZIP beneath `artifacts/package/`.
+- `PackageValidator` inspects the ZIP without loading the plugin. It verifies
+  portable exact-case paths, manifest shape and dependency, readiness text,
+  PNG format/dimensions, managed assembly identity, all version forms,
+  BepInEx GUID/display/version metadata, and the packaged DLL hash.
+- `Validate-S1-03.ps1` runs both Local and Hosted package paths and confirms
+  rejection of zero-byte and non-managed DLLs, version and plugin-metadata
+  mismatches, a compile-reference shim, and a dependency binary.
+- `.github/workflows/build-package.yml` checks out the triggering commit,
+  acquires only the hash-verified documented BepInEx compile reference, runs
+  the same hosted build and validators, and retains the ZIP, DLL, build
+  information, and validation report for 30 days. Every action is pinned to a
+  full reviewed commit SHA; the workflow has read-only repository permission
+  and contains no publication step.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-03.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 2 `
+  -SourceRevision $revision
+```
+
+Both Local and Hosted `Release` builds completed with zero warnings and zero
+errors. Source identity tests, shim consumed-surface validation, positive
+package inspection, and all six required rejection cases passed. The inspected
+ZIP contained only `manifest.json`, `README.md`, `icon.png`, and the real
+`DSPRecipeTracker.dll` at its contracted path; its DLL hash matched the build
+output. A disposable check also confirmed the documented Thunderstore BepInEx
+download contains exactly one assembly with the accepted 5.4.17.0 hash.
+
+All generated output remained under ignored repository-local paths. No package
+step wrote to the DSP installation or started DSP, BepInEx, Unity, Steam, a
+save, or a substitute runtime. Package inspection establishes no installed,
+behavioral, visual, compatibility, owner-accepted, publication-ready, or
+supported-release claim.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate another story.
 
 ## Epic 2 - Testable panel logic
 

@@ -1,0 +1,76 @@
+name: Build inspected package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-package:
+    runs-on: windows-latest
+    steps:
+      - name: Check out triggering commit
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Verify checkout identity
+        shell: pwsh
+        run: |
+          $actual = (git rev-parse HEAD).Trim()
+          if ($actual -ne '${{ github.sha }}') {
+            throw "Checked out $actual instead of ${{ github.sha }}."
+          }
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+
+      - name: Acquire documented BepInEx compile reference
+        id: bepinex
+        shell: pwsh
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'BepInEx-5.4.17.zip'
+          $extract = Join-Path $env:RUNNER_TEMP 'BepInEx-5.4.17'
+          Invoke-WebRequest `
+            -Uri 'https://thunderstore.io/package/download/xiaoye97/BepInEx/5.4.17/' `
+            -OutFile $archive
+          Expand-Archive -LiteralPath $archive -DestinationPath $extract
+          $matches = @(Get-ChildItem -LiteralPath $extract -Recurse -Filter 'BepInEx.dll' -File)
+          if ($matches.Count -ne 1) {
+            throw "Expected one BepInEx.dll in the documented package, found $($matches.Count)."
+          }
+          $reference = $matches[0].FullName
+          $version = [Reflection.AssemblyName]::GetAssemblyName($reference).Version.ToString()
+          if ($version -ne '5.4.17.0') {
+            throw "Downloaded BepInEx assembly version is $version, expected 5.4.17.0."
+          }
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $reference).Hash.ToLowerInvariant()
+          if ($hash -ne 'dc1cb6b58b962bda5aaa1d6b5f9ae14ec174f61836a1a1f96c1a040c7e8381f7') {
+            throw "Downloaded BepInEx assembly hash does not match the conformance contract."
+          }
+          "reference=$reference" >> $env:GITHUB_OUTPUT
+
+      - name: Build and inspect package
+        shell: pwsh
+        run: |
+          .\scripts\build\Build-S1-03.ps1 `
+            -ReferenceMode Hosted `
+            -BepInExReferencePath '${{ steps.bepinex.outputs.reference }}' `
+            -BuildNumber $env:GITHUB_RUN_NUMBER `
+            -SourceRevision '${{ github.sha }}'
+
+      - name: Upload inspected artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: DSPRecipeTracker-${{ github.run_number }}
+          path: |
+            artifacts/package/*/DSPRecipeTracker-*.zip
+            artifacts/package/*/DSPRecipeTracker.dll
+            artifacts/package/*/build-info.json
+            artifacts/package/*/*-validation.json
+          if-no-files-found: error
+          retention-days: 30

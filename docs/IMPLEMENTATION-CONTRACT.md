@@ -4,9 +4,10 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** S1-01 is owner accepted. S1-02 is implemented and
-technically validated, and remains Active pending owner acceptance. The source
-tree contains the minimal BepInEx identity/lifecycle/logging skeleton only.
+**Implementation status:** S1-01 and S1-02 are owner accepted. S1-03 is
+implemented and technically validated, and remains Active pending owner
+acceptance. The source tree contains the minimal BepInEx identity/lifecycle/
+logging skeleton and static package pipeline only.
 
 **Owner review:** Accepted on 2026-08-14.
 

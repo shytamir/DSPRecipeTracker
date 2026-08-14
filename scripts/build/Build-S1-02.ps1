@@ -116,10 +116,29 @@ if ($fileInfo.ProductVersion -ne $diagnosticLabel) {
 
 if ($ReferenceMode -eq 'Hosted') {
     $shimPath = Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'
-    & dotnet run --project (Join-Path $repoRoot 'scripts\validate\CompileReferenceValidator\CompileReferenceValidator.csproj') --configuration Release -- $pluginPath $shimPath (Join-Path $repoRoot 'ci\compile-references\surface-inventory.json')
+    $compileReferenceReport = Join-Path $repoRoot 'artifacts\build\compile-reference-validation.json'
+    & dotnet run --project (Join-Path $repoRoot 'scripts\validate\CompileReferenceValidator\CompileReferenceValidator.csproj') --configuration Release -- $pluginPath $shimPath (Join-Path $repoRoot 'ci\compile-references\surface-inventory.json') $compileReferenceReport
     if ($LASTEXITCODE -ne 0) {
         throw "Compile-reference validation failed with exit code $LASTEXITCODE."
     }
 }
+
+$buildInfoDirectory = Join-Path $repoRoot 'artifacts\build'
+$buildInfoPath = Join-Path $buildInfoDirectory 'build-info.json'
+[IO.Directory]::CreateDirectory($buildInfoDirectory) | Out-Null
+$buildInfo = [ordered]@{
+    schemaVersion = 1
+    referenceMode = $ReferenceMode
+    semanticVersion = $semanticVersion
+    assemblyVersion = $assemblyVersion
+    diagnosticLabel = $diagnosticLabel
+    buildNumber = $BuildNumber
+    sourceRevision = $SourceRevision.ToLowerInvariant()
+    pluginRelativePath = 'src/DSPRecipeTracker/bin/Release/net472/DSPRecipeTracker.dll'
+}
+[IO.File]::WriteAllText(
+    $buildInfoPath,
+    ($buildInfo | ConvertTo-Json -Depth 3),
+    [Text.UTF8Encoding]::new($false))
 
 Write-Output "S1-02 $ReferenceMode Release validation passed for $diagnosticLabel."

@@ -6,12 +6,12 @@ It will let players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
-accepted. S1-01 is owner accepted, and S1-02 is implemented and technically
-validated pending owner acceptance. Runtime execution and
+accepted. S1-01 and S1-02 are owner accepted. S1-03 is implemented and
+technically validated pending owner acceptance. Runtime execution and
 runtime validation remain outside the current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
-installable package or supported release exists yet.
+supported or published release exists yet.
 
 ## Planned MVP
 
@@ -143,13 +143,23 @@ $revision = git rev-parse HEAD
 This produces ignored repository-local build output, runs deterministic
 identity tests, checks assembly/file/diagnostic versions, and validates the
 exact hosted Unity compile-reference surface. It does not install or load the
-plugin. Hosted CI supplies its own explicit BepInEx compile reference; S1-03
-will add package construction and workflow automation.
+plugin. Hosted CI supplies its own explicit BepInEx compile reference.
 
-The repository intentionally contains no placeholder DLL or dummy package
-pipeline. Sprint 1 will create the first package pipeline from the real plugin
-build output according to
-[docs/THUNDERSTORE-PACKAGE.md](docs/THUNDERSTORE-PACKAGE.md).
+Build and inspect the real development package in both reference modes with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-03.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 2 `
+  -SourceRevision $revision
+```
+
+The package, retained DLL, build information, and validation report are written
+only beneath ignored `artifacts/package/`. The validator checks the exact ZIP
+allowlist, manifest, README, PNG, managed DLL identity and versions, BepInEx
+metadata, and DLL hash. It also runs required fail-closed package cases. The
+package is not installed or loaded.
 
 ## Versioning and packaging
 
@@ -163,13 +173,15 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current pre-release line is `0.1`. The package contract defines the
-single-DLL archive layout and static validation boundary.
+The current pre-release line is `0.1`. Pushes to `main` and manual dispatches
+run the same hosted build, shim-coverage check, package construction, and static
+inspection in GitHub Actions. The resulting development artifact is retained
+for 30 days; the workflow does not publish it.
 
 ## Project status
 
-S1-01, repository hygiene, is complete and owner accepted. S1-02 has produced
-the minimal source build and is technically validated; it remains Active
+S1-01 and S1-02 are complete and owner accepted. S1-03 has produced and
+statically inspected the first real development package; it remains Active
 pending explicit owner acceptance, while later stories remain Proposed.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
@@ -184,6 +196,9 @@ display-scale behavior remain unvalidated.
 .
 |-- AGENTS.md
 |-- .gitignore
+|-- .github/
+|   `-- workflows/
+|       `-- build-package.yml
 |-- ci/
 |   `-- compile-references/
 |       |-- README.md
@@ -193,6 +208,7 @@ display-scale behavior remain unvalidated.
 |-- Directory.Build.props
 |-- Directory.Build.targets
 |-- DSPRecipeTracker.sln
+|-- global.json
 |-- docs/
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
@@ -208,12 +224,19 @@ display-scale behavior remain unvalidated.
 |   `-- VALIDATION-CONTRACT.md
 |-- scripts/
 |   |-- build/
-|   |   `-- Build-S1-02.ps1
+|   |   |-- Build-S1-02.ps1
+|   |   `-- Build-S1-03.ps1
 |   `-- validate/
 |       |-- CompileReferenceValidator/
+|       |-- PackageValidator/
 |       |-- S1-01.BuildContract.proj
 |       |-- Validate-S1-01.ps1
-|       `-- Validate-S1-02.ps1
+|       |-- Validate-S1-02.ps1
+|       `-- Validate-S1-03.ps1
+|-- packaging/
+|   |-- icon.png
+|   |-- manifest.json
+|   `-- README.md
 |-- src/
 |   `-- DSPRecipeTracker/
 |-- tests/

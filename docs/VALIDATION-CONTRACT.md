@@ -4,9 +4,10 @@
 
 **Status:** Current validation contract
 
-**Implementation status:** S1-01 is owner accepted. S1-02 is implemented and
-technically validated, and remains Active pending owner acceptance. Its local
-and hosted-mode source build gates pass; no package or supported release exists.
+**Implementation status:** S1-01 and S1-02 are owner accepted. S1-03 is
+implemented and technically validated, and remains Active pending owner
+acceptance. Source-ready checks and the S1-03 Package-inspected gate pass; no
+supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

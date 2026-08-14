@@ -4,8 +4,9 @@
 
 **Status:** Current package contract
 
-**Implementation status:** The package pipeline is pending implementation in
-Sprint 1. No installable package or supported release exists.
+**Implementation status:** The S1-03 package pipeline is implemented and
+technically validated pending owner acceptance. It creates an inspected
+development artifact only; no supported or published release exists.
 
 This contract defines package layout, version mapping, build inputs, static
 validation, and artifact retention for DSP Recipe Tracker. It does not publish,

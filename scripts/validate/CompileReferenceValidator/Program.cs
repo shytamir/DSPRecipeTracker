@@ -3,9 +3,9 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text.Json;
 
-if (args.Length != 3)
+if (args.Length is not 3 and not 4)
 {
-    Console.Error.WriteLine("Usage: CompileReferenceValidator <production.dll> <shim.dll> <surface-inventory.json>");
+    Console.Error.WriteLine("Usage: CompileReferenceValidator <production.dll> <shim.dll> <surface-inventory.json> [report.json]");
     return 2;
 }
 
@@ -24,6 +24,21 @@ else
 {
     ValidateShim(args[1], assembly, failures);
     ValidateProduction(args[0], inventory, failures);
+}
+
+if (args.Length == 4)
+{
+    var reportPath = Path.GetFullPath(args[3]);
+    Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+    var report = new
+    {
+        schemaVersion = 1,
+        productionAssembly = Path.GetFileName(args[0]),
+        shimAssembly = Path.GetFileName(args[1]),
+        passed = failures.Count == 0,
+        failures
+    };
+    File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 }
 
 if (failures.Count != 0)

@@ -1,0 +1,9 @@
+{
+  "name": "DSPRecipeTracker",
+  "version_number": "__VERSION__",
+  "website_url": "https://github.com/shytamir/DSPRecipeTracker",
+  "description": "Development artifact for a planned Replicator recipe and inventory tracker; not release-ready.",
+  "dependencies": [
+    "xiaoye97-BepInEx-5.4.17"
+  ]
+}
