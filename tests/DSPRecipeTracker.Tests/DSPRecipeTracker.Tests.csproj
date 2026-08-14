@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>DSPRecipeTracker.Tests</AssemblyName>
+    <RootNamespace>DSPRecipeTracker.Tests</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\DSPRecipeTracker\PluginMetadata.cs" Link="Product\PluginMetadata.cs" />
+    <Compile Include="$(GeneratedVersionSource)" Link="Generated\BuildIdentity.g.cs" />
+  </ItemGroup>
+
+  <Target Name="RequireGeneratedVersionSource" BeforeTargets="CoreCompile">
+    <Error Condition="'$(GeneratedVersionSource)' == '' or !Exists('$(GeneratedVersionSource)')" Text="Build through scripts/build/Build-S1-02.ps1 so version identity is generated from VERSION." />
+  </Target>
+</Project>

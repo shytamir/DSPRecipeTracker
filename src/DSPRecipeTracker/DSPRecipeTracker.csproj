@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>DSPRecipeTracker</AssemblyName>
+    <RootNamespace>DSPRecipeTracker</RootNamespace>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <DSPRecipeTrackerRequiresExternalReferences>true</DSPRecipeTrackerRequiresExternalReferences>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Compile Include="$(GeneratedVersionSource)" Link="Generated\BuildIdentity.g.cs" />
+    <Reference Include="BepInEx" HintPath="$(DSPBepInExReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine" HintPath="$(DSPUnityEngineReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine.CoreModule" HintPath="$(DSPUnityCoreModuleReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine" HintPath="$(DSPUnityEngineHostedReferencePath)" Private="false" />
+  </ItemGroup>
+
+  <Target Name="RequireGeneratedVersionSource" BeforeTargets="CoreCompile">
+    <Error Condition="'$(GeneratedVersionSource)' == '' or !Exists('$(GeneratedVersionSource)')" Text="Build through scripts/build/Build-S1-02.ps1 so version identity is generated from VERSION." />
+  </Target>
+</Project>

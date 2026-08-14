@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPRecipeTracker", "src\DSPRecipeTracker\DSPRecipeTracker.csproj", "{91A3F164-C2E5-4AB6-86AC-7E40B4DD3998}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSPRecipeTracker.Tests", "tests\DSPRecipeTracker.Tests\DSPRecipeTracker.Tests.csproj", "{CE6E8EE0-EDB0-4278-8FB9-FAC476525669}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{91A3F164-C2E5-4AB6-86AC-7E40B4DD3998}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91A3F164-C2E5-4AB6-86AC-7E40B4DD3998}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91A3F164-C2E5-4AB6-86AC-7E40B4DD3998}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91A3F164-C2E5-4AB6-86AC-7E40B4DD3998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE6E8EE0-EDB0-4278-8FB9-FAC476525669}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6E8EE0-EDB0-4278-8FB9-FAC476525669}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE6E8EE0-EDB0-4278-8FB9-FAC476525669}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE6E8EE0-EDB0-4278-8FB9-FAC476525669}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

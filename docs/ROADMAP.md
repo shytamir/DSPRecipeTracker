@@ -4,7 +4,7 @@
 
 **Status:** In progress
 
-**Active story:** S1-01 - Establish repository hygiene
+**Active story:** S1-02 - Establish stable identity and a source build
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
@@ -93,12 +93,12 @@ The entry gates required to activate S1-01 are satisfied:
 - the product contract is restored and owner accepted;
 - repository ignore rules cover dependency binaries, `bin/`, `obj/`, package
   output, and runtime evidence; and
-- S1-01 and its exact scope are recorded as Active below.
+- S1-01 and its exact scope were recorded as Active before implementation.
 
 The owner-approved BepInEx plugin GUID is `dsprecipetracker`, the loader display
 name is `DSP-Recipe-Tracker`, and the source/test/CI/package layout is fixed by
-`IMPLEMENTATION-CONTRACT.md`. These S1-02 decision gates are satisfied, but
-S1-02 remains Proposed until S1-01 is completed and the owner activates it.
+`IMPLEMENTATION-CONTRACT.md`. These S1-02 decision gates are satisfied. The
+owner accepted S1-01 and activated S1-02 on 2026-08-14.
 
 No implementation agent may infer these decisions from the concept record,
 the old roadmap, existing installed plugins, or feasibility artifacts.
@@ -136,8 +136,7 @@ the old roadmap, existing installed plugins, or feasibility artifacts.
 
 ### S1-01 - Establish repository hygiene
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - technically validated and owner accepted on 2026-08-14
 
 **User story:** As a maintainer, I want generated and licensed material kept
 out of Git while source builds use explicit external references.
@@ -161,7 +160,7 @@ out of Git while source builds use explicit external references.
 - `Directory.Build.props` exposes the explicit local `GameRoot` paths and the
   fixed tracked hosted-reference root.
 - `Directory.Build.targets` supplies fail-fast MSBuild errors `DRT1001` through
-  `DRT1005` without discovery, network, execution, or mutation behavior.
+  `DRT1006` without discovery, network, execution, or mutation behavior.
 - `ci/compile-references/surface-inventory.json` records the current empty DSP
   and Unity production surface without creating later-story shim projects.
 
@@ -173,18 +172,20 @@ out of Git while source builds use explicit external references.
 
 The validation confirmed every required ignore class, no prohibited tracked
 file, valid explicit Local and Hosted modes, the current hosted inventory, and
-the expected fail-fast errors for missing mode, missing `GameRoot`, nonexistent
-`GameRoot`, and a missing required assembly. It also confirmed that the shared
+the expected fail-fast errors for missing mode, missing `GameRoot`, missing
+hosted BepInEx input, nonexistent `GameRoot`, and a missing required assembly.
+It also confirmed that the shared
 build contract rejects a redirected hosted-reference root and contains no
 discovery, network, execution, or mutation task.
 No game, loader, save, installation, or runtime process was opened or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S1-02.
+**Owner acceptance:** Passed on 2026-08-14. The owner explicitly accepted S1-01
+and activated S1-02.
 
 ### S1-02 - Establish stable identity and a source build
 
-**Status:** Proposed
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want one stable plugin identity and version
 contract before feature code depends on them.
@@ -210,6 +211,41 @@ contract before feature code depends on them.
   `ci/compile-references/surface-inventory.json` and the shim declarations and
   fails unless both cover the complete consumed set.
 - No project assembly is copied, installed, or loaded after the build.
+
+**Implementation result:**
+
+- `DSPRecipeTracker.sln` contains the `net472` shipping project and the
+  runtime-independent deterministic test project at their contracted paths.
+- `DSPRecipeTrackerPlugin` consumes only `BepInPlugin`, `BaseUnityPlugin`, and
+  the plugin-owned logger, using the approved GUID and display name.
+- `scripts/build/Build-S1-02.ps1` derives semantic, assembly/file, and
+  diagnostic versions from `VERSION`, an explicit build number, and an
+  explicit source revision.
+- Hosted mode builds a compiler-marked `UnityEngine` reference assembly that
+  declares only the `MonoBehaviour` surface required through BepInEx's base
+  type. No DSP game declaration is currently consumed or shimmed.
+- `CompileReferenceValidator` rejects inventory/shim surface differences and
+  any production reference to an unlisted shimmed type or method.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 1 `
+  -SourceRevision $revision
+```
+
+Both Local and Hosted `Release` builds completed with zero warnings and zero
+errors. Deterministic identity/version tests, assembly and file version checks,
+diagnostic-label checks, and hosted compile-reference coverage validation
+passed. Build outputs remained beneath ignored repository-local paths. No
+project or dependency assembly was copied, installed, or loaded after build;
+DSP, BepInEx, Unity, Steam, and saves were not executed or opened.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate another story.
 
 ### S1-03 - Construct and inspect a package
 

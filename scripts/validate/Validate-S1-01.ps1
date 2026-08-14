@@ -98,9 +98,9 @@ foreach ($candidate in $ignoredCandidates) {
 try {
     $inventory = Get-Content -LiteralPath $inventoryPath -Raw | ConvertFrom-Json
     if ($inventory.schemaVersion -eq 1 -and
-        $inventory.status -eq 'empty-no-production-source' -and
-        @($inventory.assemblies).Count -eq 0) {
-        Write-Pass 'Hosted compile-reference inventory represents the current empty production surface.'
+        @($inventory.assemblies).Count -ge 1 -and
+        @($inventory.assemblies | Where-Object { [string]::IsNullOrWhiteSpace($_.name) }).Count -eq 0) {
+        Write-Pass 'Hosted compile-reference inventory has the required versioned assembly shape.'
     }
     else {
         Write-Failure 'Hosted compile-reference inventory has an unexpected initial shape or state.'
@@ -130,13 +130,21 @@ Invoke-MsBuildCase -Name 'Explicit local reference configuration' `
     -ExpectSuccess $true -ExpectedCode ''
 
 Invoke-MsBuildCase -Name 'Explicit hosted reference configuration' `
-    -Properties @('-property:DSPReferenceMode=Hosted') `
+    -Properties @(
+        '-property:DSPReferenceMode=Hosted',
+        "-property:BepInExReferencePath=$(Join-Path $GameRoot 'BepInEx\core\BepInEx.dll')"
+    ) `
     -ExpectSuccess $true -ExpectedCode ''
+
+Invoke-MsBuildCase -Name 'Missing hosted BepInEx reference' `
+    -Properties @('-property:DSPReferenceMode=Hosted') `
+    -ExpectSuccess $false -ExpectedCode 'DRT1006'
 
 $outsideHostedRoot = Join-Path $repoRoot 'artifacts\external-compile-references'
 Invoke-MsBuildCase -Name 'Redirected hosted reference root' `
     -Properties @(
         '-property:DSPReferenceMode=Hosted',
+        "-property:BepInExReferencePath=$(Join-Path $GameRoot 'BepInEx\core\BepInEx.dll')",
         "-property:DSPRecipeTrackerCompileReferenceRoot=$outsideHostedRoot"
     ) `
     -ExpectSuccess $false -ExpectedCode 'DRT1005'
@@ -168,3 +176,4 @@ if ($script:FailureCount -gt 0) {
 }
 
 Write-Output 'S1-01 validation passed.'
+$global:LASTEXITCODE = 0

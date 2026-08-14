@@ -6,12 +6,12 @@ It will let players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
 The recovered product, implementation, and validation contracts are owner
-accepted. Sprint 1 implementation has started with story S1-01 Active and
-technically validated; owner acceptance is pending. Runtime execution and
+accepted. S1-01 is owner accepted, and S1-02 is implemented and technically
+validated pending owner acceptance. Runtime execution and
 runtime validation remain outside the current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
-installable plugin or supported release exists yet.
+installable package or supported release exists yet.
 
 ## Planned MVP
 
@@ -113,10 +113,11 @@ recorded binary hashes, accepted conclusions, and the fixed-version policy.
 The approved BepInEx plugin GUID is `dsprecipetracker`; its loader display name
 is `DSP-Recipe-Tracker`.
 
-## Build and install
+## Build
 
-Build and installation instructions will be added with the first working
-plugin skeleton. There is currently no functional DLL to build or install.
+S1-02 provides a minimal, nonfunctional BepInEx plugin skeleton. It establishes
+the approved identity, loader lifecycle/logging boundary, and versioned source
+build; it does not implement recipe tracking or authorize installation.
 
 The S1-01 repository and external-reference contract is validated with:
 
@@ -127,6 +128,23 @@ The S1-01 repository and external-reference contract is validated with:
 The command reads the explicitly supplied installation only to confirm the
 documented compile inputs exist. It does not copy, install, load, or execute
 them.
+
+Validate both the explicit local-reference build and the hosted shim build
+with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 1 `
+  -SourceRevision $revision
+```
+
+This produces ignored repository-local build output, runs deterministic
+identity tests, checks assembly/file/diagnostic versions, and validates the
+exact hosted Unity compile-reference surface. It does not install or load the
+plugin. Hosted CI supplies its own explicit BepInEx compile reference; S1-03
+will add package construction and workflow automation.
 
 The repository intentionally contains no placeholder DLL or dummy package
 pipeline. Sprint 1 will create the first package pipeline from the real plugin
@@ -150,14 +168,15 @@ single-DLL archive layout and static validation boundary.
 
 ## Project status
 
-S1-01, repository hygiene, is implemented and technically validated. It remains
-Active pending explicit owner acceptance; later stories remain Proposed.
+S1-01, repository hygiene, is complete and owner accepted. S1-02 has produced
+the minimal source build and is technically validated; it remains Active
+pending explicit owner acceptance, while later stories remain Proposed.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
-accepted conclusions do not authorize new runtime execution. No functional
-plugin exists yet; gameplay, layout, input, and display-scale behavior remains
-unvalidated.
+accepted conclusions do not authorize new runtime execution. The plugin
+skeleton contains no recipe-tracking behavior; gameplay, layout, input, and
+display-scale behavior remain unvalidated.
 
 ## Repository layout
 
@@ -168,9 +187,12 @@ unvalidated.
 |-- ci/
 |   `-- compile-references/
 |       |-- README.md
+|       |-- Unity.Reference/
+|       |   `-- UnityEngine/
 |       `-- surface-inventory.json
 |-- Directory.Build.props
 |-- Directory.Build.targets
+|-- DSPRecipeTracker.sln
 |-- docs/
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
@@ -185,9 +207,17 @@ unvalidated.
 |   |-- THUNDERSTORE-PACKAGE.md
 |   `-- VALIDATION-CONTRACT.md
 |-- scripts/
+|   |-- build/
+|   |   `-- Build-S1-02.ps1
 |   `-- validate/
+|       |-- CompileReferenceValidator/
 |       |-- S1-01.BuildContract.proj
-|       `-- Validate-S1-01.ps1
+|       |-- Validate-S1-01.ps1
+|       `-- Validate-S1-02.ps1
+|-- src/
+|   `-- DSPRecipeTracker/
+|-- tests/
+|   `-- DSPRecipeTracker.Tests/
 |-- VERSION
 |-- LICENSE
 `-- README.md

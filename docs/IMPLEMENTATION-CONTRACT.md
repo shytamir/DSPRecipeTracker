@@ -4,9 +4,9 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** Sprint 1 story S1-01 is implemented and technically
-validated. It remains Active pending owner acceptance. No functional plugin
-exists.
+**Implementation status:** S1-01 is owner accepted. S1-02 is implemented and
+technically validated, and remains Active pending owner acceptance. The source
+tree contains the minimal BepInEx identity/lifecycle/logging skeleton only.
 
 **Owner review:** Accepted on 2026-08-14.
 
@@ -210,7 +210,10 @@ the fixed repository-owned `ci/compile-references` root. Consuming projects set
 `DSPRecipeTrackerRequiresExternalReferences=true`; the shared target then fails
 with an ordinary MSBuild error when the mode, root, surface inventory, or any
 authorized local assembly is missing. The shared configuration contains no
-discovery, download, copy, installation, or process-execution behavior.
+discovery, download, copy, installation, or process-execution behavior. The
+S1-02 build script generates all version forms from `VERSION`, an explicit
+build number, and an explicit source revision, then builds without copying,
+installing, or loading the product assembly.
 
 Use only the BepInEx lifecycle, identity, logging, and explicitly required
 configuration surface documented in `BEPINEX-CONFORMANCE.md`. Do not target

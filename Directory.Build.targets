@@ -39,7 +39,13 @@
 
     <ItemGroup Condition="'$(DSPReferenceMode)' == 'Hosted'">
       <_DSPRecipeTrackerRequiredReference Include="$([MSBuild]::NormalizePath('$(_DSPRecipeTrackerExpectedCompileReferenceRoot)surface-inventory.json'))" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPBepInExReferencePath)" />
     </ItemGroup>
+
+    <Error
+      Condition="'$(DSPReferenceMode)' == 'Hosted' and '$(BepInExReferencePath)' == ''"
+      Code="DRT1006"
+      Text="Hosted builds require an explicit BepInExReferencePath." />
 
     <Error
       Condition="!Exists('%(_DSPRecipeTrackerRequiredReference.Identity)')"

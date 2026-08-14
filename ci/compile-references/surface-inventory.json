@@ -1,5 +1,22 @@
 {
   "schemaVersion": 1,
-  "status": "empty-no-production-source",
-  "assemblies": []
+  "assemblies": [
+    {
+      "name": "UnityEngine",
+      "shimProject": "Unity.Reference/UnityEngine/UnityEngine.Reference.csproj",
+      "types": [
+        {
+          "name": "UnityEngine.MonoBehaviour",
+          "usage": "transitive-bepinex-base-type",
+          "members": [
+            {
+              "kind": "method",
+              "name": ".ctor",
+              "signature": "System.Void()"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

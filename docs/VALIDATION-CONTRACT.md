@@ -4,9 +4,9 @@
 
 **Status:** Current validation contract
 
-**Implementation status:** Sprint 1 story S1-01 is implemented and technically
-validated. It remains Active pending owner acceptance. No functional plugin or
-supported release exists.
+**Implementation status:** S1-01 is owner accepted. S1-02 is implemented and
+technically validated, and remains Active pending owner acceptance. Its local
+and hosted-mode source build gates pass; no package or supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

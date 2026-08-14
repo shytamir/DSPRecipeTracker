@@ -3,10 +3,9 @@
 This directory is the fixed source root for declaration-only DSP and Unity
 compile-reference shims used by hosted builds.
 
-S1-01 establishes the boundary and its machine-readable surface inventory. It
-does not create placeholder shim projects. The consuming implementation story
-adds a shim project only when production source requires that external assembly
-identity.
+S1-02 adds only the Unity declaration needed to resolve BepInEx's
+`BaseUnityPlugin` inheritance chain. No production source directly consumes a
+game or Unity member yet, so no DSP game shim exists.
 
 Shims contain declarations only. They are never runtime substitutes, are never
 installed, and are excluded from every package. Every consumed DSP or Unity
