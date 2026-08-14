@@ -98,33 +98,37 @@ not the project's supported consumption surface.
 - Do not fork, patch, rebuild, replace, or redistribute the plugin manager.
 - Do not add multi-version adapters, loader abstraction, version probing, or
   compatibility fallbacks without a separate owner decision.
-- Compile against the installed or retained `BepInEx.dll`; reference
-  `0Harmony.dll` only if the implementation actually uses HarmonyX.
+- Local builds compile against the installed `BepInEx.dll`; hosted builds use
+  the exact documented Thunderstore dependency. Reference `0Harmony.dll` only
+  if the implementation actually uses HarmonyX.
 - Hosted CI may acquire the exact `xiaoye97-BepInEx-5.4.17` package only when
-  it verifies the consumed assembly hashes against this retained snapshot.
+  it verifies the consumed assembly identity against this accepted conformance
+  baseline.
 - Do not compile against the BepInEx 6 `master` checkout state.
 - Treat an installed BepInEx or relevant dependency hash change as a
-  conformance change requiring renewed source and runtime validation.
+  conformance change requiring renewed source validation and, only where the
+  change creates an otherwise-unprovable runtime claim, a later owner-performed
+  human check.
 - A compile-only result does not establish installed compatibility. Discovery,
   lifecycle, logging, configuration, patch ownership, shutdown cleanup, and
-  coexistence remain unvalidated until the owner separately authorizes a
-  controlled runtime procedure. This conformance record does not authorize
-  installing or loading the project plugin in the active game environment.
+  coexistence remain unvalidated until the owner performs the applicable
+  bounded human checks against a supplied testable build. Agents do not install
+  or load the project plugin in the game environment.
 
 The version in use is the version supported. If it stops satisfying project
 requirements, that is a new authority and product decision rather than an
 implicit loader upgrade.
 
-## Current installed observation
+## Recorded historical loader observation
 
-The active `BepInEx/LogOutput.log`, last written
-`2026-08-14T08:36:03.3471257Z`, reports:
+The removed historical `BepInEx/LogOutput.log`, recorded as last written at
+`2026-08-14T08:36:03.3471257Z`, reported:
 
 - BepInEx `5.4.17.0` starting for DSPGAME;
 - one patcher plugin loaded;
 - three plugins selected for loading; and
 - `Chainloader startup complete`.
 
-This establishes that the pinned loader currently starts and coexists with
-other installed plugins. It does not establish DSP Recipe Tracker behavior,
-because this project does not yet contain a functional plugin.
+The owner accepts the conclusion that the pinned loader started and coexisted
+with the observed installed plugins at that time. This does not establish a
+current environment state or any DSP Recipe Tracker behavior.

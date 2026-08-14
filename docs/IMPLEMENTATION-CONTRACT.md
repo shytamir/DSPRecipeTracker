@@ -251,16 +251,26 @@ Do not add empty placeholder projects or directories before their roadmap
 story is Active. The structure is a placement contract, not authorization to
 implement a later story.
 
-## 9. Open implementation decisions
+## 9. Implementor-owned presentation decisions
 
-The following require an owner or roadmap decision before the consuming story
-becomes Ready:
+The implementor selects and records:
 
-- exact fixed panel dimensions and calibrated cell-treatment opacity;
-- the icon and tracker-owned fallback text for the global Show/Hide control.
+- exact fixed panel dimensions when implementing panel geometry;
+- calibrated cell-treatment opacity when implementing Replicator treatment;
+  and
+- the native icon choice and tracker-owned fallback text when implementing the
+  global Show/Hide control.
 
-Do not recover these values from placeholder metadata, installed plugins, or
-historical probe code by inference.
+Each choice must preserve the product contract, reuse confirmed native
+resources where applicable, and receive all practical deterministic or static
+validation first. Visual clarity, native fit, and usability are then validated
+by the owner from a testable build DLL at a later meaningful human gate. These
+choices do not require advance owner selection and must not create isolated
+one-detail runtime checkpoints.
+
+Do not recover values from placeholder metadata, installed plugins, or
+historical probe code by inference. Record the selected value and concise
+rationale in the consuming story's implementation evidence.
 
 ## 10. Implementation change control
 

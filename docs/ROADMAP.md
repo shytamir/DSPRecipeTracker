@@ -57,20 +57,18 @@ tracked repository and repository-local build output.
 Passing a source build does not weaken this boundary. No agent may convert a
 compile result into permission to install or execute the output.
 
-## Separate future authorization
+## Owner-performed runtime validation
 
-Runtime validation is outside Sprint 1. It may be proposed later only as a
-separate owner-approved record that defines, before any execution:
+Runtime validation is outside Sprint 1 and is never performed by an agent or
+automation. Later roadmaps postpone human checks until a coherent testable DLL
+makes related in-game observations meaningful together. The implementor must
+first exhaust non-runtime validation, then provide the owner with the bounded,
+self-contained instructions required by `VALIDATION-CONTRACT.md`.
 
-- the exact target environment and permitted process;
-- isolation from the player's normal plugins, configuration, saves, and logs;
-- permitted filesystem reads and writes;
-- backup, cleanup, and recovery procedures;
-- the precise evidence to retain and its privacy review; and
-- stop conditions for unexpected plugins, data, prompts, errors, or writes.
-
-Until that record is approved, runtime validation is **not blocked work to work
-around**. It is work outside the authorized scope.
+There is no separate controlled-runtime validation plan. The owner alone runs
+the supplied DLL and reports the result. Procedures must not assume project
+knowledge or expand into broad matrices, repetitive cases, intricate setup, or
+evidence collection unrelated to the claim being judged.
 
 ## Authority reconciliation
 
@@ -218,6 +216,8 @@ is connected to Unity objects.
 
 - UI-independent types represent the panel rectangle, parent bounds, and drag
   delta without referencing live Unity state.
+- The implementor records fixed panel dimensions and a concise rationale
+  consistent with the three-row product contract.
 - A deterministic clamp keeps the full panel rectangle inside a parent that
   can contain it and defines explicit behavior when the parent is smaller.
 - Focused tests cover all four edges, corners, repeated drag deltas, and a
@@ -258,7 +258,8 @@ that do not disguise unvalidated runtime behavior as complete.
 - Version-sensitive members are isolated behind a narrow boundary and are
   supported by the accepted recovered feasibility conclusions.
 - Missing runtime members are designed to fail softly, but that behavior is
-  recorded as unverified until separately authorized runtime validation.
+  recorded as unverified until the owner performs an applicable later bounded
+  human check.
 - Source review confirms there is no startup fixture, automatic launch,
   installation, process attachment, file copy, or environment-data capture.
 - Pointer containment, native appearance, cleanup, and live visibility remain
@@ -313,18 +314,18 @@ implicitly activate or authorize a later story.
 
 ## Explicitly unavailable states
 
-This sprint cannot reach `Installed-ready`, `Runtime-validated`,
-`Visually-validated`, or `Publication-ready`. Those states require separate
-authorization and evidence. They must not be inferred from source readiness,
-package inspection, prior feasibility probes, or owner review of this sprint.
+This sprint cannot reach `Behavioral-ready`, installed, visual, interaction, or
+`Publication-ready` status because it produces no meaningful owner runtime
+gate. Those states must not be inferred from source readiness, package
+inspection, prior feasibility probes, or owner review of this sprint.
 
-## Remaining owner decisions
+## Remaining decisions
 
-- Decide the exact fixed panel dimensions and calibrated cell-treatment
-  opacity before S1-04 becomes Ready.
-- Decide the global Show/Hide icon and tracker-owned fallback text before a
-  story implements that production control.
-- Resolve the product decisions listed in `PROJECT.md` only before their
-  consuming stories become Ready.
-- Decide later whether to commission a separate controlled-runtime validation
-  plan. That decision is not required to begin safe source work.
+Panel dimensions, cell-treatment opacity, and the global Show/Hide icon and
+fallback text are implementor-owned choices governed by
+`IMPLEMENTATION-CONTRACT.md`. They receive practical non-runtime validation
+first and owner human validation only in a later meaningful testable build.
+
+The owner resolves only the product decisions listed in `PROJECT.md`, and only
+before their consuming stories become Ready. No runtime-validation planning
+decision is required during this sprint.

@@ -218,12 +218,14 @@ Run the narrowest relevant check first:
 
 A release build must complete with zero errors. Compilation alone does not
 prove in-game behavior, interaction, layout, performance, or compatibility.
-Do not run an installed or in-game checkpoint unless the current user prompt
-explicitly authorizes runtime execution and an owner-reviewed procedure
-defines the target environment, isolation, permitted writes, retained
-evidence, cleanup, and stop conditions. Without both, report runtime and
-visual behavior as unvalidated; do not launch DSP, install a plugin, open a
-save, or collect environment-derived logs or screenshots.
+Agents and automation never perform installed or in-game validation. Exhaust
+deterministic, static, build, and package checks first. When a remaining claim
+can only be judged in DSP, prepare a testable build DLL and a concise human
+procedure for the owner at a meaningful roadmap gate. The procedure must assume
+no project knowledge, give complete setup, action, expected-result, and result-
+reporting instructions, and contain only the smallest practical set of checks.
+Do not launch DSP, install a plugin, open a save, automate input, or collect
+environment-derived logs or screenshots on the owner's behalf.
 
 If a required tool or game state is unavailable, report the check as skipped
 or blocked rather than passed.

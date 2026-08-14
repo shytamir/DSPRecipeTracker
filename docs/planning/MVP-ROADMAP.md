@@ -13,9 +13,9 @@ The current Sprint 1 record is a sanitized source-only recovery plan with no
 broader runtime authorization. Implementation has started with S1-01,
 repository hygiene, Active and pending implementation. The active Sprint 1
 record overrides this planning baseline wherever this file mentions installed,
-loaded-game, visual, or interaction validation. Those activities require a
-separate owner-approved controlled-runtime record and are not authorized merely
-because they appear in this long-range plan.
+loaded-game, visual, or interaction validation. Agents do not perform those
+activities; the owner performs only the bounded human checks supplied at later
+meaningful testable-build gates.
 
 This record orders implementation; it does not create product authority.
 [`PROJECT.md`](../PROJECT.md) governs scope,
@@ -30,9 +30,10 @@ evidence. The original concept remains non-authoritative history.
 - Sprint closure checks are gates, not user stories.
 - Runtime collection, tracker state, presentation modeling, and Unity UI stay
   separate.
-- Compilation alone cannot establish runtime or visual behavior. Until a
-  separate controlled-runtime record is explicitly approved, those checks
-  remain unvalidated rather than becoming work for an agent to perform.
+- Compilation alone cannot establish runtime or visual behavior. Exhaust
+  non-runtime checks first, postpone human gates until they are meaningful, and
+  provide the owner with concise complete instructions that assume no project
+  knowledge.
 - Technical validation and owner acceptance remain separate states.
 - Deferred features enter a sprint only through an explicit owner decision.
 - Completed roadmaps are archived instead of remaining active work.
@@ -89,14 +90,15 @@ use minimal recipe identity presentation.
 ### Sprint 3 - Recipe presentation and prototype hardening
 
 **Goal:** Complete material presentation and prepare the MVP prototype for a
-separately authorized runtime-validation decision.
+bounded owner-performed human validation gate.
 
 **Epics:**
 
 1. Native-composed product and direct-ingredient rows.
 2. Inventory counts, sufficiency state, and machine-only warnings.
 3. Tracker navigation, only if promoted at the Sprint 3 entry gate.
-4. Controlled-runtime plan review, if separately commissioned by the owner.
+4. A concise owner-performed human validation gate for claims that cannot be
+   established another way.
 5. Final real-package construction and static inspection.
 
 **Exit result:** The source prototype implements the core loop:
@@ -111,9 +113,9 @@ Before Sprint 3 becomes Ready, the owner must include or exclude it. Inclusion
 adds a bounded navigation story; exclusion does not block the core tracker and
 must remain reflected in public documentation.
 
-This roadmap does not authorize executing that loop in DSP. Runtime, visual,
-interaction, cleanup, and compatibility claims remain unavailable unless a
-separate controlled-runtime record is approved and completed.
+Agents do not execute that loop in DSP. Runtime, visual, interaction, cleanup,
+and compatibility claims remain unavailable until the owner completes the
+applicable bounded human checks against the supplied testable DLL.
 
 ## Dependency chain
 
@@ -143,15 +145,16 @@ The source prototype is ready for owner review only when it:
 - passes deterministic source-level behavior tests without loading DSP,
   BepInEx, Unity, or a substitute harness;
 - changes no inventory, crafting, factory, or save state;
-- produces a real version-aligned package without incomplete compile shims;
-  and
+- produces a real version-aligned package using validated declaration-only
+  compile shims that are excluded from package output; and
 - retains technical evidence without treating it as owner acceptance or
   publication approval.
 
 Installed lifecycle, runtime behavior, native appearance, interaction,
-cleanup, coexistence, and supported display claims require their own
-owner-approved controlled-runtime record. They cannot be inferred from this
-source-prototype gate.
+cleanup, coexistence, and supported display claims require owner-performed
+human validation where non-runtime checks cannot prove them. Related checks are
+grouped at meaningful gates and cannot be inferred from this source-prototype
+gate.
 
 Persistence, quantity scaling, recursive ingredients, automatic replication,
 animation, resizing, speculative compatibility layers, and broader
@@ -163,12 +166,11 @@ No placeholder DLL or dummy package pipeline exists, and Sprint 1 must not
 create one. The first package path is introduced with real source and consumes
 the real versioned build output.
 
-If complete external references are lawfully available to GitHub-hosted
-runners, the hosted workflow may build and validate the real assembly.
-Otherwise it must report executable building as blocked and emit no mod
-package. It may continue source and documentation checks that do not claim
-executable or runtime validation. Partial game, Unity, or BepInEx shims are
-prohibited.
+GitHub-hosted runners build the real assembly against the declaration-only game
+and Unity compile-reference shims governed by
+[`THUNDERSTORE-PACKAGE.md`](../THUNDERSTORE-PACKAGE.md). Complete
+consumed-surface validation is mandatory, and shims are never packaged or
+treated as runtime evidence.
 
 Sprint 3 revalidates the completed feature package by static inspection; it
 does not install the package. This boundary follows

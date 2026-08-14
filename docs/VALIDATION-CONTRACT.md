@@ -25,17 +25,17 @@ as achieved.
 | --- | --- |
 | Source-ready | The implemented source scope builds and its deterministic checks pass. |
 | Package-inspected | A real package contains the intended version-aligned build output and passes static inspection. |
-| Behavioral-ready | Separately authorized evidence demonstrates applicable behavior through the real integration boundary. |
+| Behavioral-ready | The owner has completed the applicable bounded human checks through the real integration boundary. |
 | Owner-accepted | The owner explicitly accepts the demonstrated result and recorded limitations. |
 | Publication-ready | Every required technical, owner, metadata, and distribution gate is explicitly satisfied. |
 
 These states are independent. One state does not imply another.
 
-## 2. Current runtime authorization boundary
+## 2. Owner-performed runtime validation boundary
 
-The current Sprint 1 roadmap is source-only. Unless a later user prompt
-explicitly authorizes an owner-reviewed controlled-runtime procedure, no agent
-may:
+All installed and in-game validation is performed by the owner. Agents and
+automation may prepare a versioned testable DLL, complete human instructions,
+and non-runtime evidence, but may not:
 
 - launch DSP, BepInEx, Unity, Steam, or a substitute runtime harness;
 - copy or install a project assembly under the DSP installation;
@@ -44,13 +44,12 @@ may:
 - inspect the player's plugin inventory, configuration, saves, or logs; or
 - collect environment-derived logs, screenshots, paths, or other evidence.
 
-A controlled-runtime procedure must define its target environment, isolation,
-permitted reads and writes, evidence handling, backup and recovery, cleanup,
-and stop conditions before execution.
-
-Until such a procedure is approved, runtime, installed, visual, interaction,
-cleanup, coexistence, and compatibility behavior remains unvalidated. That is
-an unavailable state, not blocked work to work around.
+Human validation is used only for claims that deterministic tests, static
+inspection, compilation, package inspection, or source review cannot establish.
+It is postponed until a coherent testable build makes several related
+observations meaningful together. There is no separate controlled-runtime
+validation program and no requirement for an elaborate environment-isolation,
+evidence-retention, or recovery plan.
 
 ## 3. Source-ready contract
 
@@ -99,51 +98,36 @@ behavioral, owner-accepted, or publication-ready status.
 
 ## 5. Behavioral-ready contract
 
-Behavioral readiness is unavailable under the current source-only roadmap. If
-a controlled-runtime procedure is separately authorized, its evidence must
-exercise the real applicable integration boundary and demonstrate:
+Behavioral readiness becomes available only at a meaningful roadmap gate after
+all applicable non-runtime checks pass. The owner runs the supplied testable
+DLL and reports the result of the smallest representative procedure needed to
+judge the remaining claims.
 
-### 5.1 Pinning and state
+Human checks normally cover only matters such as:
 
-- left-click selects without toggling a pin;
-- right-click selects and toggles only an eligible native recipe cell;
-- toggling the same recipe off preserves other entries;
-- a fourth pin evicts the bottom entry and preserves remaining order; and
-- crafting does not remove a pin.
+- whether the real Replicator gesture integrates without breaking native
+  selection, hover, disabled, or machine-only presentation;
+- whether panel composition, cell-treatment opacity, icon choice, text,
+  dragging, input containment, and visibility are clear and usable in-game;
+- whether live recipe and inventory values appear and refresh through the real
+  integration boundary; and
+- whether ordinary load, close, reopen, and shutdown behavior exposes a
+  lifecycle or cleanup problem that source-level checks cannot establish.
 
-### 5.2 Material presentation
-
-- inventory changes refresh every displayed numerator;
-- sufficiency changes at the exact required threshold;
-- only direct ingredients are displayed; and
-- machine-only rows name the required facility without recursive ingredient
-  warnings.
-
-### 5.3 Native integration and panel behavior
-
-- native hover, selection, disabled, and machine-only states remain intact;
-- tracker cell treatment does not change DSP's original grid-state buffer;
-- the panel stays reachable after dragging and parent-size changes;
-- panel interaction does not activate the world or a covered HUD control;
-- the exact six-interface visibility rule is applied;
-- panel Hide and global Show/Hide preserve the player's manual choice; and
-- the normal empty state remains hidden.
-
-### 5.4 Failure and lifecycle
-
-- missing runtime evidence fails softly without blocking the Replicator or
-  corrupting remaining pin order;
-- diagnostics remain bounded; and
-- shutdown releases tracker-owned subscriptions and resources.
-
-Navigation evidence applies only if the owner explicitly promotes navigation
-into the active product and roadmap scope.
+Ordering, eviction, sufficiency arithmetic, visibility truth tables, package
+contents, version alignment, and other deterministic rules remain automated
+checks rather than human workload. A human procedure does not repeat them
+unless one short observation is necessary to confirm their real integration.
+Navigation is included only if the owner has promoted it into active scope.
 
 ## 6. Evidence rules
 
 - Use the narrowest check that proves the applicable contract.
-- Record the command, environment boundary, result, and known limitation for
-  every claimed check.
+- Prefer deterministic, static, build, and package validation over human
+  validation whenever either can prove the same claim.
+- Record the command or supplied human step set, result, and known limitation
+  for every claimed check. Owner-performed validation does not require an
+  environment inventory.
 - Compilation cannot prove runtime behavior, layout, interaction, cleanup,
   coexistence, or compatibility.
 - Historical feasibility probes establish only the facts explicitly recorded
@@ -153,6 +137,9 @@ into the active product and roadmap scope.
 - Technical evidence does not record owner acceptance by inference.
 - Evidence must not include save data, secrets, player diagnostics, unrelated
   plugin identifiers, or unnecessary machine-specific paths.
+- Owner-performed human validation may be recorded as a concise pass, fail, or
+  qualified result against the supplied steps. Screenshots or logs are requested
+  only when they are necessary to decide a specific otherwise-unprovable claim.
 
 ## 7. Owner acceptance and publication
 
@@ -165,16 +152,28 @@ into the active product and roadmap scope.
 - No package is described as supported, release-ready, or publishable before
   every required state is explicitly satisfied.
 
-## 8. Open validation decision
+## 8. Human validation procedure contract
 
-No controlled-runtime procedure is approved. Its target environment,
-isolation, permitted reads and writes, evidence set, privacy boundary, cleanup,
-recovery, and stop conditions remain an explicit future owner decision.
+Every owner-performed procedure must:
+
+- identify the exact test DLL or package version and the purpose of the gate;
+- assume no knowledge of the project, its architecture, or earlier discussions;
+- give complete prerequisites, setup, actions, expected observations, and a
+  simple way to report pass, fail, or an unexpected result;
+- group related observations into one meaningful session and avoid isolated
+  cosmetic checkpoints, broad matrices, repetitive cases, or intricate setup;
+- include only safety, cleanup, or diagnostic steps directly necessary for the
+  bounded test; and
+- distinguish what the owner observed from what automated validation already
+  proved.
+
+The implementor proposes the procedure with the testable build. The owner alone
+runs it and decides whether the human gate passes, needs repair, or is deferred.
 
 ## 9. Validation change control
 
 Changing an acceptance criterion requires product review when it weakens or
-changes a behavior in `PROJECT.md`. Changing runtime evidence collection
-requires a separately owner-approved operational procedure. A roadmap status
-change, successful command, or prior probe never supplies either approval by
-inference.
+changes a behavior in `PROJECT.md`. Adding human workload requires evidence
+that the claim cannot be established reasonably by non-runtime validation. A
+roadmap status change, successful command, owner-run observation, or prior probe
+never supplies owner acceptance or publication approval by inference.

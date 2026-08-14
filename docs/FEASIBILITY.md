@@ -262,16 +262,21 @@ documented fallback for any tracker-owned text. A cloned control must not keep
 an unrelated native localization key. A full translation table remains a
 feature-development decision.
 
-## Remaining runtime checkpoints
+## Remaining owner observations
 
-The feasibility phase did not replace the following in-game validation:
+The feasibility phase did not replace a small set of in-game judgments that
+cannot be established another way. They are not separate checkpoints. After
+all practical non-runtime validation, the implementor groups the applicable
+items into a meaningful testable build and the owner checks only:
 
-- calibrate the proven green/red layer's opacity and sibling placement over
-  live recipe icons and native hover, selection, and machine-only states;
-- construct tracker recipe presentation from native resources and verify that
-  it reads as an integrated clone rather than a custom control;
-- validate initialized layout, dragging, click capture, and the six-window
-  hide rule;
-- test exact-recipe navigation where multiple recipes share a product;
-- select the supported resolution and UI-scale matrix; and
-- investigate mod compatibility only when a concrete conflict is observed.
+- whether the selected green/red opacity and placement preserve live native
+  recipe states;
+- whether the composed tracker, icon/text choices, initialized layout,
+  dragging, input containment, and six-window behavior read and operate
+  coherently together;
+- exact-recipe navigation only if that feature is promoted; and
+- a small representative resolution/UI-scale set or a concrete compatibility
+  conflict only when the project intends to make the corresponding claim.
+
+The supplied procedure must be self-contained, bounded, and understandable to
+a tester with no project knowledge, as required by `VALIDATION-CONTRACT.md`.

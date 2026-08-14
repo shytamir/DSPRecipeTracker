@@ -8,8 +8,10 @@ direct material requirements with the contents of Icarus's inventory.
 The recovered product, implementation, and validation contracts are owner
 accepted. Sprint 1 implementation has started with story S1-01 Active and
 pending implementation. Runtime execution and runtime validation remain
-outside the current source-only authorization. No installable plugin or
-supported release exists yet.
+outside the current source-only authorization. Future in-game validation is
+performed only by the owner from testable builds, after non-runtime checks are
+exhausted and only at meaningful gates. No installable plugin or supported
+release exists yet.
 
 ## Planned MVP
 
