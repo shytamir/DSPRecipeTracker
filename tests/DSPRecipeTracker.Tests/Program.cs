@@ -35,6 +35,29 @@ CheckRect(PanelGeometry.Clamp(repeatedlyMoved, resizedParent), 460f, 278f, "pare
 var undersizedParent = new ParentBounds(20f, 30f, 300f, 200f);
 CheckRect(PanelGeometry.Clamp(panel, undersizedParent), 20f, 30f, "undersized parent anchors panel origin");
 
+var visibilityCases = new[]
+{
+    (HasRows: false, ManualRequested: false, MajorInterfaceActive: false, Expected: false),
+    (HasRows: false, ManualRequested: false, MajorInterfaceActive: true, Expected: false),
+    (HasRows: false, ManualRequested: true, MajorInterfaceActive: false, Expected: false),
+    (HasRows: false, ManualRequested: true, MajorInterfaceActive: true, Expected: false),
+    (HasRows: true, ManualRequested: false, MajorInterfaceActive: false, Expected: false),
+    (HasRows: true, ManualRequested: false, MajorInterfaceActive: true, Expected: false),
+    (HasRows: true, ManualRequested: true, MajorInterfaceActive: false, Expected: true),
+    (HasRows: true, ManualRequested: true, MajorInterfaceActive: true, Expected: false)
+};
+
+foreach (var visibilityCase in visibilityCases)
+{
+    var actual = VisibilityPolicy.IsVisible(
+        visibilityCase.HasRows,
+        visibilityCase.ManualRequested,
+        visibilityCase.MajorInterfaceActive);
+    Check(
+        actual == visibilityCase.Expected,
+        $"visibility truth table ({visibilityCase.HasRows}, {visibilityCase.ManualRequested}, {visibilityCase.MajorInterfaceActive})");
+}
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -45,7 +68,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity and panel geometry tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, panel geometry, and visibility tests passed.");
 return 0;
 
 void Check(bool condition, string name)

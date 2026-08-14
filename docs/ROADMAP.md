@@ -4,7 +4,7 @@
 
 **Status:** In progress
 
-**Active story:** S1-04 - Define panel geometry and clamping
+**Active story:** S1-05 - Define the visibility policy
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
@@ -323,8 +323,7 @@ S1-03 and activated S1-04.
 
 ### S1-04 - Define panel geometry and clamping
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - technically validated and owner accepted on 2026-08-14
 
 **User story:** As a maintainer, I want deterministic panel geometry before it
 is connected to Unity objects.
@@ -379,12 +378,13 @@ completed with zero warnings and zero errors, and compile-reference coverage
 remained valid. No visual, resolution, scale, live-drag, or runtime behavior
 was tested or inferred.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate another story.
+**Owner acceptance:** Passed on 2026-08-14. The owner explicitly accepted
+S1-04 and activated S1-05.
 
 ### S1-05 - Define the visibility policy
 
-**Status:** Proposed
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want one deterministic visibility rule that
 later UI code can consume without owning product state.
@@ -397,6 +397,38 @@ later UI code can consume without owning product state.
 - The policy does not inspect DSP, Unity objects, windows, saves, or input.
 - Sprint 1 provides no production Hide control, restore control, or
   major-window runtime adapter.
+
+**Implementation result:**
+
+- `VisibilityPolicy.IsVisible` is UI-independent and computes exactly
+  `hasRows && manualRequested && !majorInterfaceActive`.
+- The deterministic test executable covers all eight combinations of the
+  three boolean inputs and expects visibility only when rows and manual intent
+  are present while no major interface is active.
+- `Validate-S1-05.ps1` runs the policy tests through the dependency-free source
+  test gate. No production Hide/restore control, major-window adapter, runtime
+  inspection, or automatic mutation of player intent was introduced.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S1-05.ps1
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 4 `
+  -SourceRevision $revision
+```
+
+The complete truth table passed without loading Unity, DSP, BepInEx, the
+shipping plugin, or installed assemblies. Local and Hosted `Release` builds
+completed with zero warnings and zero errors, and compile-reference coverage
+remained valid. No live visibility or interaction behavior was tested or
+inferred.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate another story.
 
 ### S1-06 - Preserve the Unity UI boundary without executing it
 
