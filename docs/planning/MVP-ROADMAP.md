@@ -18,6 +18,10 @@ this file mentions installed, loaded-game, visual, or interaction validation.
 Agents do not perform those activities; the owner performs only the bounded
 human checks supplied at later meaningful testable-build gates.
 
+The Sprint 1 Source-ready and Package-inspected exit gates pass for commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`. S1-06 owner acceptance and the
+explicit Owner-reviewed sprint gate remain pending.
+
 This record orders implementation; it does not create product authority.
 [`PROJECT.md`](../PROJECT.md) governs scope,
 [`PRODUCT-PRINCIPLES.md`](../PRODUCT-PRINCIPLES.md) governs the native-extension

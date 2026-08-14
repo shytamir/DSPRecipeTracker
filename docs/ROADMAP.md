@@ -525,6 +525,9 @@ implicitly activate or authorize a later story.
 
 ### Source-ready
 
+**Status:** Passed on 2026-08-14 for commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`.
+
 - Every story explicitly promoted into Sprint 1 meets its definition of done.
 - Focused deterministic tests and the local authority-backed `Release` build
   pass from documented repository-local commands.
@@ -537,14 +540,60 @@ implicitly activate or authorize a later story.
 - Documentation distinguishes compiled behavior from runtime behavior that
   remains unknown.
 
+**Evidence:**
+
+- `Validate-S1-01.ps1` passed the repository hygiene, explicit-reference,
+  fail-fast, and non-mutating build-contract checks.
+- `Validate-S1-06.ps1` with build number `6` passed the focused deterministic
+  tests and Local/Hosted `Release` builds with zero warnings and zero errors.
+  Both products exposed the same 22 normalized Unity type/member references
+  and passed complete coverage against all three declaration-only shims.
+- GitHub Actions run
+  [`31835540912`](https://github.com/shytamir/DSPRecipeTracker/actions/runs/31835540912)
+  checked out the exact commit, built and inspected the hosted package, and
+  retained its artifact successfully.
+- A scoped static security review of the workflow, build scripts, build
+  targets, validators, tests, and package construction found no path that
+  writes to or executes from `GameRoot`. Local mutations are confined to
+  ignored repository `artifacts/`; CI mutations are confined to the ephemeral
+  runner. The workflow has read-only repository permission and pinned actions.
+- The tracked-file and credential-pattern scans found no dependency binary,
+  generated output, save, runtime evidence, player diagnostic, or secret.
+
+No source-ready evidence loaded or started DSP, BepInEx, Unity, Steam, a save,
+or a substitute runtime. This gate establishes no runtime behavior.
+
 ### Package-inspected
+
+**Status:** Passed on 2026-08-14 for package `0.1.6` built from commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`.
 
 - Local and hosted packages contain the intended managed build output and
   version-aligned metadata.
 - Static validators pass without installing or loading the package.
 - The artifact remains marked not release-ready and not runtime-validated.
 
+**Evidence:**
+
+- `Validate-S1-03.ps1` with build number `6` passed Local and Hosted package
+  construction and static inspection.
+- The archive contains exactly `manifest.json`, `README.md`, `icon.png`, and
+  `BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll`; its manifest,
+  assembly, file, plugin, and diagnostic versions are synchronized.
+- Static negative cases rejected an overlong description, zero-byte and
+  non-managed DLLs, version and plugin-metadata mismatches, a compile-reference
+  shim, and a dependency binary. Alternate in-limit README and manifest copy
+  remained accepted.
+- The package README states that the artifact has not been installed or
+  validated in-game and is not release-ready.
+
+Package inspection performed no installation or runtime load and establishes
+no behavioral, visual, compatibility, owner-accepted, publication-ready, or
+supported-release claim.
+
 ### Owner-reviewed
+
+**Status:** Pending S1-06 owner acceptance and explicit sprint review.
 
 - The owner reviews the source evidence, test results, package inspection,
   unknowns, and known limitations.

@@ -4,10 +4,11 @@
 
 **Status:** Current validation contract
 
-**Implementation status:** S1-01 and S1-02 are owner accepted. S1-03 is
+**Implementation status:** S1-01 through S1-05 are owner accepted. S1-06 is
 implemented and technically validated, and remains Active pending owner
-acceptance. Source-ready checks and the S1-03 Package-inspected gate pass; no
-supported release exists.
+acceptance. The Source-ready and Package-inspected Sprint 1 exit gates pass for
+commit `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`; Owner-reviewed remains
+pending and no supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

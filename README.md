@@ -183,6 +183,9 @@ for 30 days; the workflow does not publish it.
 S1-01 through S1-05 are complete and owner accepted. S1-06 has implemented and
 technically validated an inert compile-time Unity panel boundary and remains
 Active pending explicit owner acceptance.
+The Sprint 1 Source-ready and Package-inspected exit gates pass for commit
+`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`; explicit Owner-reviewed status
+remains pending.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
