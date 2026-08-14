@@ -6,7 +6,8 @@
 
 **Active story:** S1-04 - Define panel geometry and clamping
 
-**Active story state:** Active; implementation pending
+**Active story state:** Implemented and technically validated; owner acceptance
+pending
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -322,7 +323,8 @@ S1-03 and activated S1-04.
 
 ### S1-04 - Define panel geometry and clamping
 
-**Status:** Active - implementation pending
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want deterministic panel geometry before it
 is connected to Unity objects.
@@ -340,6 +342,45 @@ is connected to Unity objects.
 - Tests run without loading Unity, DSP, BepInEx, or installed assemblies into
   the test process.
 - No visual, resolution, scale, or live-drag claim is made from these tests.
+
+**Implementation result:**
+
+- `PanelGeometry` defines UI-independent immutable panel rectangles, parent
+  bounds, and drag deltas without a Unity, DSP, or BepInEx dependency.
+- The fixed panel size is `360 x 252` logical units. The width leaves room for
+  one product and its direct-ingredient summary without turning the tracker
+  into a broad HUD surface; the height budgets a compact header and three
+  consistent recipe rows.
+- Movement applies a drag delta and clamps each axis independently. When the
+  parent can contain the panel, the complete rectangle remains inside it. On
+  an undersized axis, the panel aligns to the parent's starting edge so its
+  origin remains reachable; overflow is unavoidable and deterministic.
+- The existing dependency-free test executable links the geometry source
+  directly and covers four edges, four corners, repeated drag deltas, a parent
+  size change, and an undersized parent.
+- `Validate-S1-04.ps1` runs those tests independently and rejects game, Unity,
+  BepInEx, product-assembly, or package dependencies in the test process.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+.\scripts\validate\Validate-S1-04.ps1
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 3 `
+  -SourceRevision $revision
+```
+
+The focused geometry gate passed without loading Unity, DSP, BepInEx, the
+shipping plugin, or installed assemblies. Local and Hosted `Release` builds
+completed with zero warnings and zero errors, and compile-reference coverage
+remained valid. No visual, resolution, scale, live-drag, or runtime behavior
+was tested or inferred.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate another story.
 
 ### S1-05 - Define the visibility policy
 

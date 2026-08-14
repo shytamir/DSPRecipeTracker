@@ -10,10 +10,10 @@
 [`Sprint 1 - Safe Source Foundation`](../ROADMAP.md)
 
 The current Sprint 1 record is a sanitized source-only recovery plan with no
-broader runtime authorization. S1-01 and S1-02 are owner accepted; S1-03 has
-constructed and statically inspected the first real package and remains Active
-pending owner acceptance. The active Sprint 1 record overrides this planning
-baseline wherever
+broader runtime authorization. S1-01 through S1-03 are owner accepted; S1-04
+has implemented and technically validated the UI-independent panel geometry
+and remains Active pending owner acceptance. The active Sprint 1 record
+overrides this planning baseline wherever
 this file mentions installed, loaded-game, visual, or interaction validation.
 Agents do not perform those activities; the owner performs only the bounded
 human checks supplied at later meaningful testable-build gates.
