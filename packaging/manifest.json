@@ -2,7 +2,7 @@
   "name": "DSPRecipeTracker",
   "version_number": "__VERSION__",
   "website_url": "https://github.com/shytamir/DSPRecipeTracker",
-  "description": "Development artifact for a planned Replicator recipe and inventory tracker; not release-ready.",
+  "description": "Pin recipes directly from the Replicator and track ingredient requirements from Icarus inventory in a flexible, native-style tracker.",
   "dependencies": [
     "xiaoye97-BepInEx-5.4.17"
   ]

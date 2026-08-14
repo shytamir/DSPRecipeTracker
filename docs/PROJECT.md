@@ -10,10 +10,10 @@
 
 **BepInEx display name:** `DSP-Recipe-Tracker`
 
-**Implementation status:** S1-01 and S1-02 are owner accepted. S1-03 is
-implemented and technically validated, and remains Active pending owner
-acceptance. The minimal plugin skeleton contains no recipe-tracking behavior;
-no supported release exists.
+**Implementation status:** S1-01 through S1-03 are owner accepted. S1-04 is
+Active pending implementation. The source contains the minimal plugin skeleton
+and inspected package pipeline, but no recipe-tracking behavior; no supported
+release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

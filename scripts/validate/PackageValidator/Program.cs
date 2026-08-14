@@ -28,9 +28,14 @@ var expectedEntries = new HashSet<string>(StringComparer.Ordinal)
     "BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll"
 };
 
+const long maximumPackageBytes = 5_242_880_000;
 if (!File.Exists(zipPath) || new FileInfo(zipPath).Length == 0)
 {
     failures.Add("Package ZIP is missing or empty.");
+}
+else if (new FileInfo(zipPath).Length > maximumPackageBytes)
+{
+    failures.Add($"Package ZIP exceeds the documented {maximumPackageBytes}-byte soft limit.");
 }
 else
 {
@@ -132,11 +137,11 @@ static void ValidateManifest(byte[]? bytes, string expectedVersion, List<string>
         var root = document.RootElement;
         CheckJsonString(root, "name", "DSPRecipeTracker", failures);
         CheckJsonString(root, "version_number", expectedVersion, failures);
-        CheckJsonString(root, "website_url", "https://github.com/shytamir/DSPRecipeTracker", failures);
+        ValidateWebsiteUrl(root, failures);
         var description = root.TryGetProperty("description", out var descriptionElement) ? descriptionElement.GetString() : null;
-        if (string.IsNullOrWhiteSpace(description) || !description.Contains("not release-ready", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(description) || description.Length > 250)
         {
-            failures.Add("Manifest description must state that the artifact is not release-ready.");
+            failures.Add("Manifest description must contain 1 to 250 characters.");
         }
         if (!root.TryGetProperty("dependencies", out var dependencies) || dependencies.ValueKind != JsonValueKind.Array ||
             dependencies.GetArrayLength() != 1 || dependencies[0].GetString() != "xiaoye97-BepInEx-5.4.17")
@@ -158,6 +163,20 @@ static void ValidateManifest(byte[]? bytes, string expectedVersion, List<string>
     }
 }
 
+static void ValidateWebsiteUrl(JsonElement root, List<string> failures)
+{
+    if (!root.TryGetProperty("website_url", out var element) || element.ValueKind != JsonValueKind.String)
+    {
+        failures.Add("Manifest website_url must be a string.");
+        return;
+    }
+    var value = element.GetString() ?? "";
+    if (value.Length != 0 && (!Uri.TryCreate(value, UriKind.Absolute, out var uri) || uri.Scheme is not "http" and not "https"))
+    {
+        failures.Add("Manifest website_url must be empty or an absolute HTTP(S) URL.");
+    }
+}
+
 static void CheckJsonString(JsonElement root, string property, string expected, List<string> failures)
 {
     if (!root.TryGetProperty(property, out var element) || element.ValueKind != JsonValueKind.String || element.GetString() != expected)
@@ -172,14 +191,13 @@ static void ValidateReadme(byte[]? bytes, List<string> failures)
     {
         return;
     }
-    var text = Encoding.UTF8.GetString(bytes);
-    if (!text.Contains("not been installed or validated in-game", StringComparison.OrdinalIgnoreCase))
+    try
     {
-        failures.Add("Package README must state that installed and in-game validation have not been performed.");
+        _ = new UTF8Encoding(false, true).GetString(bytes);
     }
-    if (!text.Contains("not release-ready", StringComparison.OrdinalIgnoreCase))
+    catch (DecoderFallbackException)
     {
-        failures.Add("Package README must state that the artifact is not release-ready.");
+        failures.Add("Package README must be valid UTF-8.");
     }
 }
 

@@ -32,8 +32,8 @@ $packageRoot = Join-Path $repoRoot "artifacts\package\$($buildInfo.semanticVersi
 $zipPath = Join-Path $packageRoot "DSPRecipeTracker-$($buildInfo.semanticVersion).zip"
 $pluginPath = Join-Path $repoRoot $buildInfo.pluginRelativePath
 $validatorProject = Join-Path $repoRoot 'scripts\validate\PackageValidator\PackageValidator.csproj'
-$negativeRoot = Join-Path $repoRoot 'artifacts\package\negative-tests'
-[IO.Directory]::CreateDirectory($negativeRoot) | Out-Null
+$caseRoot = Join-Path $repoRoot 'artifacts\package\validator-cases'
+[IO.Directory]::CreateDirectory($caseRoot) | Out-Null
 
 function Confirm-Rejected {
     param(
@@ -45,7 +45,7 @@ function Confirm-Rejected {
         [string]$ExpectedGuid,
         [string]$ExpectedDisplayName
     )
-    $report = Join-Path $negativeRoot ($Name + '.json')
+    $report = Join-Path $caseRoot ($Name + '.json')
     $previousErrorPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     $output = & dotnet run --project $validatorProject --configuration Release -- `
@@ -59,6 +59,21 @@ function Confirm-Rejected {
     Write-Output "PASS: Package validator rejected $Name."
 }
 
+function Confirm-Accepted {
+    param(
+        [string]$Name,
+        [string]$PackagePath
+    )
+    $report = Join-Path $caseRoot ($Name + '.json')
+    & dotnet run --project $validatorProject --configuration Release -- `
+        $PackagePath $pluginPath $buildInfo.semanticVersion $buildInfo.assemblyVersion $buildInfo.diagnosticLabel `
+        'dsprecipetracker' 'DSP-Recipe-Tracker' $report
+    if ($LASTEXITCODE -ne 0) {
+        throw "Valid package variation was rejected: $Name"
+    }
+    Write-Output "PASS: Package validator accepted $Name."
+}
+
 function New-MutatedPackage {
     param(
         [string]$Name,
@@ -69,7 +84,7 @@ function New-MutatedPackage {
     )
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
-    $destination = Join-Path $negativeRoot ($Name + '.zip')
+    $destination = Join-Path $caseRoot ($Name + '.zip')
     if (Test-Path -LiteralPath $destination) {
         Remove-Item -LiteralPath $destination -Force
     }
@@ -103,6 +118,24 @@ function New-MutatedPackage {
     return $destination
 }
 
+$alternateReadmePackage = New-MutatedPackage -Name 'alternate-readme' -TargetEntry 'README.md' -ReplacementBytes ([Text.Encoding]::UTF8.GetBytes("# Alternate package copy`n"))
+Confirm-Accepted -Name 'alternate README copy within package limits' -PackagePath $alternateReadmePackage
+
+$alternateManifest = Get-Content -LiteralPath (Join-Path $repoRoot 'packaging\manifest.json') -Raw | ConvertFrom-Json
+$alternateManifest.version_number = $buildInfo.semanticVersion
+$alternateManifest.description = 'Alternate package description within the documented limit.'
+$alternateManifest.website_url = ''
+$alternateManifestBytes = [Text.Encoding]::UTF8.GetBytes(($alternateManifest | ConvertTo-Json -Depth 5))
+$alternateManifestPackage = New-MutatedPackage -Name 'alternate-manifest-copy' -TargetEntry 'manifest.json' -ReplacementBytes $alternateManifestBytes
+Confirm-Accepted -Name 'alternate manifest copy within package limits' -PackagePath $alternateManifestPackage
+
+$overlongManifest = Get-Content -LiteralPath (Join-Path $repoRoot 'packaging\manifest.json') -Raw | ConvertFrom-Json
+$overlongManifest.version_number = $buildInfo.semanticVersion
+$overlongManifest.description = (('x' * 251) -join '')
+$overlongManifestBytes = [Text.Encoding]::UTF8.GetBytes(($overlongManifest | ConvertTo-Json -Depth 5))
+$overlongManifestPackage = New-MutatedPackage -Name 'overlong-description' -TargetEntry 'manifest.json' -ReplacementBytes $overlongManifestBytes
+Confirm-Rejected -Name 'description over 250 characters' -PackagePath $overlongManifestPackage -ExpectedVersion $buildInfo.semanticVersion -ExpectedAssemblyVersion $buildInfo.assemblyVersion -ExpectedDiagnostic $buildInfo.diagnosticLabel -ExpectedGuid 'dsprecipetracker' -ExpectedDisplayName 'DSP-Recipe-Tracker'
+
 $zeroDllPackage = New-MutatedPackage -Name 'zero-byte-dll' -TargetEntry 'BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll' -ReplacementBytes ([byte[]]@())
 Confirm-Rejected -Name 'zero-byte DLL' -PackagePath $zeroDllPackage -ExpectedVersion $buildInfo.semanticVersion -ExpectedAssemblyVersion $buildInfo.assemblyVersion -ExpectedDiagnostic $buildInfo.diagnosticLabel -ExpectedGuid 'dsprecipetracker' -ExpectedDisplayName 'DSP-Recipe-Tracker'
 
@@ -118,4 +151,4 @@ Confirm-Rejected -Name 'compile-reference shim in package' -PackagePath $shimPac
 $dependencyPackage = New-MutatedPackage -Name 'dependency-in-package' -TargetEntry 'BepInEx/plugins/DSPRecipeTracker/BepInEx.dll' -ReplacementBytes ([byte[]](1, 2, 3)) -AddEntry
 Confirm-Rejected -Name 'dependency binary in package' -PackagePath $dependencyPackage -ExpectedVersion $buildInfo.semanticVersion -ExpectedAssemblyVersion $buildInfo.assemblyVersion -ExpectedDiagnostic $buildInfo.diagnosticLabel -ExpectedGuid 'dsprecipetracker' -ExpectedDisplayName 'DSP-Recipe-Tracker'
 
-Write-Output 'S1-03 acceptance validation passed in Local and Hosted modes, including required rejection cases.'
+Write-Output 'S1-03 acceptance validation passed in Local and Hosted modes, including copy-flexibility and required rejection cases.'

@@ -4,10 +4,9 @@
 
 **Status:** In progress
 
-**Active story:** S1-03 - Construct and inspect a package
+**Active story:** S1-04 - Define panel geometry and clamping
 
-**Active story state:** Implemented and technically validated; owner acceptance
-pending
+**Active story state:** Active; implementation pending
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -248,8 +247,7 @@ and activated S1-03.
 
 ### S1-03 - Construct and inspect a package
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - technically validated and owner accepted on 2026-08-14
 
 **User story:** As a maintainer, I want package construction to describe the
 real build output without implying that the package has run successfully.
@@ -271,15 +269,18 @@ real build output without implying that the package has run successfully.
 
 **Implementation result:**
 
-- `packaging/` contains the tracked manifest template, readiness-limited
-  package README, and original 256x256 PNG icon. Generated versions replace the
-  manifest token only in ignored staging output.
+- `packaging/` contains the tracked manifest template, placeholder package
+  README pending owner-approved public copy, and owner-supplied 256x256 PNG
+  icon. Generated versions replace the manifest token only in ignored staging
+  output.
 - `scripts/build/Build-S1-03.ps1` consumes the real S1-02 `Release` DLL and
   creates the exact four-entry ZIP beneath `artifacts/package/`.
 - `PackageValidator` inspects the ZIP without loading the plugin. It verifies
-  portable exact-case paths, manifest shape and dependency, readiness text,
-  PNG format/dimensions, managed assembly identity, all version forms,
-  BepInEx GUID/display/version metadata, and the packaged DLL hash.
+  portable exact-case paths, package size, manifest field limits and
+  dependency, README encoding, PNG format/dimensions, managed assembly
+  identity, all version forms, BepInEx GUID/display/version metadata, and the
+  packaged DLL hash. Editorial manifest and README copy is not fixed by the
+  validator.
 - `Validate-S1-03.ps1` runs both Local and Hosted package paths and confirms
   rejection of zero-byte and non-managed DLLs, version and plugin-metadata
   mismatches, a compile-reference shim, and a dependency binary.
@@ -314,14 +315,14 @@ save, or a substitute runtime. Package inspection establishes no installed,
 behavioral, visual, compatibility, owner-accepted, publication-ready, or
 supported-release claim.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate another story.
+**Owner acceptance:** Passed on 2026-08-14. The owner explicitly accepted
+S1-03 and activated S1-04.
 
 ## Epic 2 - Testable panel logic
 
 ### S1-04 - Define panel geometry and clamping
 
-**Status:** Proposed
+**Status:** Active - implementation pending
 
 **User story:** As a maintainer, I want deterministic panel geometry before it
 is connected to Unity objects.
