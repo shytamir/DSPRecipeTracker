@@ -230,6 +230,11 @@ environment-derived logs or screenshots on the owner's behalf.
 If a required tool or game state is unavailable, report the check as skipped
 or blocked rather than passed.
 
+When polling GitHub Actions, make at most four total status checks, waiting 10,
+20, and 40 seconds before checks two through four. Do not use tight-loop
+watchers; if the run remains pending or becomes rate-limited, report that state
+instead of continuing to poll.
+
 ## 12. Tests and documentation
 
 Add or update tests when behavior changes and a focused deterministic test is
