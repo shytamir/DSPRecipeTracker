@@ -7,6 +7,7 @@
       "types": [
         {
           "name": "UnityEngine.MonoBehaviour",
+          "baseType": "System.Object",
           "usage": "transitive-bepinex-base-type",
           "members": [
             {
@@ -14,6 +15,124 @@
               "name": ".ctor",
               "signature": "System.Void()"
             }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UnityEngine.CoreModule",
+      "shimProject": "Unity.Reference/UnityEngine.CoreModule/UnityEngine.CoreModule.Reference.csproj",
+      "types": [
+        {
+          "name": "UnityEngine.Object",
+          "baseType": "System.Object",
+          "usage": "panel-object-lifecycle",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "Destroy", "signature": "System.Void(UnityEngine.Object)", "isStatic": true }
+          ]
+        },
+        {
+          "name": "UnityEngine.Component",
+          "baseType": "UnityEngine.Object",
+          "usage": "component-creation-return-type",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Behaviour",
+          "baseType": "UnityEngine.Component",
+          "usage": "ui-inheritance-chain",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
+        },
+        {
+          "name": "UnityEngine.MonoBehaviour",
+          "baseType": "UnityEngine.Behaviour",
+          "usage": "ui-inheritance-chain",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Transform",
+          "baseType": "UnityEngine.Component",
+          "usage": "panel-parent-attachment",
+          "members": [
+            { "kind": "method", "name": "SetParent", "signature": "System.Void(UnityEngine.Transform,System.Boolean)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.RectTransform",
+          "baseType": "UnityEngine.Transform",
+          "usage": "panel-layout",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "set_anchorMin", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "set_anchorMax", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "set_anchoredPosition", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "set_sizeDelta", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "set_pivot", "signature": "System.Void(UnityEngine.Vector2)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.GameObject",
+          "baseType": "UnityEngine.Object",
+          "usage": "panel-object-creation-and-visibility",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.String)" },
+            { "kind": "method", "name": "AddComponent", "signature": "UnityEngine.Component(System.Type)" },
+            { "kind": "method", "name": "SetActive", "signature": "System.Void(System.Boolean)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Vector2",
+          "baseType": "System.ValueType",
+          "usage": "panel-layout-values",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Single,System.Single)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Sprite",
+          "baseType": "UnityEngine.Object",
+          "usage": "native-supplied-panel-background",
+          "members": []
+        }
+      ]
+    },
+    {
+      "name": "UnityEngine.UI",
+      "shimProject": "Unity.Reference/UnityEngine.UI/UnityEngine.UI.Reference.csproj",
+      "types": [
+        {
+          "name": "UnityEngine.EventSystems.UIBehaviour",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "ui-inheritance-chain",
+          "members": []
+        },
+        {
+          "name": "UnityEngine.UI.Graphic",
+          "baseType": "UnityEngine.EventSystems.UIBehaviour",
+          "usage": "raycast-containment",
+          "members": [
+            { "kind": "method", "name": "set_raycastTarget", "signature": "System.Void(System.Boolean)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.UI.MaskableGraphic",
+          "baseType": "UnityEngine.UI.Graphic",
+          "usage": "image-inheritance-chain",
+          "members": []
+        },
+        {
+          "name": "UnityEngine.UI.Image",
+          "baseType": "UnityEngine.UI.MaskableGraphic",
+          "usage": "panel-background-and-raycast-target",
+          "members": [
+            { "kind": "method", "name": "set_sprite", "signature": "System.Void(UnityEngine.Sprite)" }
           ]
         }
       ]

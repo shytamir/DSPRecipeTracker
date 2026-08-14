@@ -4,7 +4,7 @@
 
 **Status:** In progress
 
-**Active story:** S1-05 - Define the visibility policy
+**Active story:** S1-06 - Preserve the Unity UI boundary without executing it
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
@@ -383,8 +383,7 @@ S1-04 and activated S1-05.
 
 ### S1-05 - Define the visibility policy
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - technically validated and owner accepted on 2026-08-14
 
 **User story:** As a maintainer, I want one deterministic visibility rule that
 later UI code can consume without owning product state.
@@ -427,12 +426,13 @@ completed with zero warnings and zero errors, and compile-reference coverage
 remained valid. No live visibility or interaction behavior was tested or
 inferred.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate another story.
+**Owner acceptance:** Passed on 2026-08-14. The owner explicitly accepted
+S1-05 and activated S1-06.
 
 ### S1-06 - Preserve the Unity UI boundary without executing it
 
-**Status:** Proposed
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a maintainer, I want compile-time UI ownership boundaries
 that do not disguise unvalidated runtime behavior as complete.
@@ -452,6 +452,57 @@ that do not disguise unvalidated runtime behavior as complete.
   installation, process attachment, file copy, or environment-data capture.
 - Pointer containment, native appearance, cleanup, and live visibility remain
   explicitly unvalidated.
+
+**Implementation result:**
+
+- `TrackerPanelUiBoundary` owns initialization, clamped drag application,
+  visibility application, fail-soft disablement, and bounded release through
+  the narrow `ITrackerPanelUiAdapter` port. Runtime collection, product state,
+  and presentation values remain outside it.
+- `UnityTrackerPanelAdapter` is the real compile-time Unity implementation. It
+  requires a caller-supplied native parent and sprite, creates one tracker-owned
+  `GameObject` with `RectTransform` and `Image`, applies top-left layout, enables
+  its raycast target, applies only the visibility result it receives, and
+  destroys only its owned root.
+- The adapter is not connected to plugin startup. It performs no discovery,
+  reflection, game-state access, input polling, file operation, process action,
+  installation, or environment capture.
+- Hash-matched metadata inspection established every consumed Unity signature.
+  `surface-inventory.json` and the declaration-only `UnityEngine`,
+  `UnityEngine.CoreModule`, and `UnityEngine.UI` shims preserve those type,
+  inheritance, constructor, method, static/instance, parameter, and return
+  shapes.
+- `CompileReferenceValidator` validates all listed shims in one invocation and
+  rejects missing shim assemblies, extra or missing public declarations, base-
+  type disagreements, static/instance disagreements, and unlisted production
+  type or member references.
+- Deterministic adapter doubles cover successful ownership flow, clamped drag,
+  visibility pass-through, one-time release, missing creation, thrown layout,
+  and inert behavior after failure without loading the product or runtime.
+
+**Technical validation:** Passed on 2026-08-14 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BuildNumber 5 `
+  -SourceRevision $revision
+```
+
+The focused deterministic tests passed. Hosted and Local `Release` builds
+completed with zero warnings and zero errors. Both compiled products passed
+complete consumed-surface validation against all three shims, and their reports
+contained the same 22 normalized type/member entries with no failure. Source
+review confirmed no startup wiring or prohibited runtime/environment behavior.
+
+No game, loader, Unity runtime, save, or substitute harness was started. Static
+compilation and deterministic doubles do not validate native appearance,
+pointer containment, live dragging, cleanup, live visibility, runtime member
+availability, resolution, or UI scale.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate another story.
 
 ## Sequence and dependencies
 

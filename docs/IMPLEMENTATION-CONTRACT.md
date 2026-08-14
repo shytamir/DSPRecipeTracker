@@ -4,11 +4,11 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** S1-01 through S1-04 are owner accepted. S1-05 is
+**Implementation status:** S1-01 through S1-05 are owner accepted. S1-06 is
 implemented and technically validated, and remains Active pending owner
 acceptance. The source tree contains the minimal BepInEx identity/lifecycle/
 logging skeleton, static package pipeline, UI-independent panel geometry, and
-visibility policy.
+visibility policy plus an inert compile-time Unity panel boundary.
 
 **Owner review:** Accepted on 2026-08-14.
 

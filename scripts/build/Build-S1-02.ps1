@@ -66,9 +66,16 @@ if ($ReferenceMode -eq 'Hosted' -and [string]::IsNullOrWhiteSpace($BepInExRefere
 }
 
 if ($ReferenceMode -eq 'Hosted') {
-    & dotnet build (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\UnityEngine.Reference.csproj') --configuration Release --no-incremental
-    if ($LASTEXITCODE -ne 0) {
-        throw "Hosted compile-reference build failed with exit code $LASTEXITCODE."
+    $shimProjects = @(
+        'ci\compile-references\Unity.Reference\UnityEngine\UnityEngine.Reference.csproj',
+        'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\UnityEngine.CoreModule.Reference.csproj',
+        'ci\compile-references\Unity.Reference\UnityEngine.UI\UnityEngine.UI.Reference.csproj'
+    )
+    foreach ($shimProject in $shimProjects) {
+        & dotnet build (Join-Path $repoRoot $shimProject) --configuration Release --no-incremental
+        if ($LASTEXITCODE -ne 0) {
+            throw "Hosted compile-reference build failed for $shimProject with exit code $LASTEXITCODE."
+        }
     }
 }
 
@@ -115,9 +122,14 @@ if ($fileInfo.ProductVersion -ne $diagnosticLabel) {
 }
 
 if ($ReferenceMode -eq 'Hosted') {
-    $shimPath = Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'
+    $shimPaths = @(
+        (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'),
+        (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'),
+        (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll')
+    )
     $compileReferenceReport = Join-Path $repoRoot 'artifacts\build\compile-reference-validation.json'
-    & dotnet run --project (Join-Path $repoRoot 'scripts\validate\CompileReferenceValidator\CompileReferenceValidator.csproj') --configuration Release -- $pluginPath $shimPath (Join-Path $repoRoot 'ci\compile-references\surface-inventory.json') $compileReferenceReport
+    & dotnet run --project (Join-Path $repoRoot 'scripts\validate\CompileReferenceValidator\CompileReferenceValidator.csproj') --configuration Release -- `
+        $pluginPath (Join-Path $repoRoot 'ci\compile-references\surface-inventory.json') $compileReferenceReport @shimPaths
     if ($LASTEXITCODE -ne 0) {
         throw "Compile-reference validation failed with exit code $LASTEXITCODE."
     }

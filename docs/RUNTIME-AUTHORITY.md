@@ -139,6 +139,38 @@ without copying or redistributing them. This authority record does not
 authorize copying a plugin into the game installation or launching DSP,
 BepInEx, Unity, or a substitute runtime harness.
 
+### S1-06 exact Unity UI compile surface
+
+On 2026-08-14, the six installed hashes above were rechecked and matched this
+record before S1-06 metadata inspection. Mono.Cecil read the matching assembly
+definitions without loading DSP, Unity, BepInEx, or the product assembly as a
+runtime. The resulting compile surface is:
+
+| Assembly | Declaring type | Exact consumed member |
+| --- | --- | --- |
+| `UnityEngine.CoreModule` | `UnityEngine.Object` | static `System.Void Destroy(UnityEngine.Object)` |
+| `UnityEngine.CoreModule` | `UnityEngine.GameObject` | instance `System.Void .ctor(System.String)` |
+| `UnityEngine.CoreModule` | `UnityEngine.GameObject` | instance `UnityEngine.Component AddComponent(System.Type)` |
+| `UnityEngine.CoreModule` | `UnityEngine.GameObject` | instance `System.Void SetActive(System.Boolean)` |
+| `UnityEngine.CoreModule` | `UnityEngine.Transform` | instance `System.Void SetParent(UnityEngine.Transform, System.Boolean)` |
+| `UnityEngine.CoreModule` | `UnityEngine.RectTransform` | instance setters for `anchorMin`, `anchorMax`, `pivot`, `anchoredPosition`, and `sizeDelta`, each `System.Void(UnityEngine.Vector2)` |
+| `UnityEngine.CoreModule` | `UnityEngine.Vector2` | instance `System.Void .ctor(System.Single, System.Single)` |
+| `UnityEngine.UI` | `UnityEngine.UI.Graphic` | instance `System.Void set_raycastTarget(System.Boolean)` |
+| `UnityEngine.UI` | `UnityEngine.UI.Image` | instance `System.Void set_sprite(UnityEngine.Sprite)` |
+
+The inventory also preserves the exact type identities and inheritance needed
+to compile those calls: `Object -> Component -> Behaviour -> MonoBehaviour`,
+`Component -> Transform -> RectTransform`, and
+`MonoBehaviour -> UIBehaviour -> Graphic -> MaskableGraphic -> Image`.
+`Sprite` and `Component` are consumed as parameter/return identities. The
+legacy `UnityEngine` facade continues to supply only the transitive
+`MonoBehaviour` identity expected by BepInEx.
+
+S1-06 consumes no `Assembly-CSharp` member, performs no reflection or dynamic
+lookup, and adds no Unity member outside this recorded surface. The tracked
+shims are declarations derived from these signatures, not runtime substitutes
+or authority sources.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

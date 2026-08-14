@@ -58,6 +58,38 @@ foreach (var visibilityCase in visibilityCases)
         $"visibility truth table ({visibilityCase.HasRows}, {visibilityCase.ManualRequested}, {visibilityCase.MajorInterfaceActive})");
 }
 
+var uiAdapter = new RecordingPanelUiAdapter();
+using (var uiBoundary = new TrackerPanelUiBoundary(uiAdapter))
+{
+    Check(uiBoundary.TryInitialize(PanelGeometry.Create(100f, 100f)), "UI boundary initializes");
+    Check(uiBoundary.IsAvailable, "UI boundary reports availability");
+    Check(uiAdapter.CreateCalls == 1, "UI boundary creates once");
+    Check(uiAdapter.RaycastCalls == 1, "UI boundary enables raycast containment once");
+    Check(uiBoundary.TryApplyDrag(new DragDelta(2000f, 2000f), parent), "UI boundary accepts drag");
+    CheckRect(uiAdapter.LastRectangle, 920f, 468f, "UI boundary applies clamped drag");
+    Check(uiBoundary.TryApplyVisibility(true), "UI boundary applies visible result");
+    Check(uiAdapter.LastVisibility == true, "UI boundary preserves visible result");
+    Check(uiBoundary.TryApplyVisibility(false), "UI boundary applies hidden result");
+    Check(uiAdapter.LastVisibility == false, "UI boundary preserves hidden result");
+}
+Check(uiAdapter.ReleaseCalls == 1, "UI boundary releases once");
+
+var missingAdapter = new RecordingPanelUiAdapter { CreateResult = false };
+using (var missingBoundary = new TrackerPanelUiBoundary(missingAdapter))
+{
+    Check(!missingBoundary.TryInitialize(PanelGeometry.Create(0f, 0f)), "missing UI adapter fails softly");
+    Check(!missingBoundary.IsAvailable, "missing UI adapter remains unavailable");
+}
+Check(missingAdapter.ReleaseCalls == 1, "missing UI adapter release is bounded");
+
+var throwingAdapter = new RecordingPanelUiAdapter { ThrowDuringLayout = true };
+using (var throwingBoundary = new TrackerPanelUiBoundary(throwingAdapter))
+{
+    Check(!throwingBoundary.TryInitialize(PanelGeometry.Create(0f, 0f)), "throwing UI adapter fails softly");
+    Check(!throwingBoundary.TryApplyVisibility(true), "failed UI adapter remains inert");
+}
+Check(throwingAdapter.ReleaseCalls == 1, "throwing UI adapter release is bounded");
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -68,7 +100,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, panel geometry, and visibility tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -85,4 +117,55 @@ void CheckRect(PanelRectangle actual, float expectedLeft, float expectedTop, str
     Check(actual.Top == expectedTop, name + " top");
     Check(actual.Width == PanelGeometry.FixedWidth, name + " width");
     Check(actual.Height == PanelGeometry.FixedHeight, name + " height");
+}
+
+internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
+{
+    public bool CreateResult { get; set; } = true;
+
+    public bool ThrowDuringLayout { get; set; }
+
+    public int CreateCalls { get; private set; }
+
+    public int RaycastCalls { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public PanelRectangle LastRectangle { get; private set; }
+
+    public bool? LastVisibility { get; private set; }
+
+    public bool TryCreate()
+    {
+        CreateCalls++;
+        return CreateResult;
+    }
+
+    public bool TryApplyLayout(PanelRectangle rectangle)
+    {
+        if (ThrowDuringLayout)
+        {
+            throw new InvalidOperationException("Unavailable layout member.");
+        }
+
+        LastRectangle = rectangle;
+        return true;
+    }
+
+    public bool TryEnableRaycastContainment()
+    {
+        RaycastCalls++;
+        return true;
+    }
+
+    public bool TryApplyVisibility(bool visible)
+    {
+        LastVisibility = visible;
+        return true;
+    }
+
+    public void Release()
+    {
+        ReleaseCalls++;
+    }
 }

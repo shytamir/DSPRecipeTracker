@@ -19,5 +19,7 @@
   <PropertyGroup Condition="'$(DSPReferenceMode)' == 'Hosted' and '$(BepInExReferencePath)' != ''">
     <DSPBepInExReferencePath>$([MSBuild]::NormalizePath('$(BepInExReferencePath)'))</DSPBepInExReferencePath>
     <DSPUnityEngineHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'))</DSPUnityEngineHostedReferencePath>
+    <DSPUnityCoreModuleHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'))</DSPUnityCoreModuleHostedReferencePath>
+    <DSPUnityUIHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll'))</DSPUnityUIHostedReferencePath>
   </PropertyGroup>
 </Project>

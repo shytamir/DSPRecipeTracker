@@ -10,11 +10,12 @@
 
 **BepInEx display name:** `DSP-Recipe-Tracker`
 
-**Implementation status:** S1-01 through S1-04 are owner accepted. S1-05 is
+**Implementation status:** S1-01 through S1-05 are owner accepted. S1-06 is
 implemented and technically validated, and remains Active pending owner
 acceptance. The source contains the minimal plugin skeleton, inspected package
-pipeline, UI-independent panel geometry, and visibility policy, but no recipe-
-tracking behavior; no supported release exists.
+pipeline, UI-independent panel geometry and visibility policy, and an inert
+compile-time Unity panel boundary, but no recipe-tracking behavior; no supported
+release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

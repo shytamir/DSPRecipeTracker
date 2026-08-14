@@ -180,15 +180,16 @@ for 30 days; the workflow does not publish it.
 
 ## Project status
 
-S1-01 and S1-02 are complete and owner accepted. S1-03 has produced and
-statically inspected the first real development package; it remains Active
-pending explicit owner acceptance, while later stories remain Proposed.
+S1-01 through S1-05 are complete and owner accepted. S1-06 has implemented and
+technically validated an inert compile-time Unity panel boundary and remains
+Active pending explicit owner acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
 accepted conclusions do not authorize new runtime execution. The plugin
-skeleton contains no recipe-tracking behavior; gameplay, layout, input, and
-display-scale behavior remain unvalidated.
+skeleton contains no recipe-tracking behavior and does not activate the panel
+boundary at startup; gameplay, native appearance, live layout, input, cleanup,
+and display-scale behavior remain unvalidated.
 
 ## Repository layout
 
@@ -203,7 +204,9 @@ display-scale behavior remain unvalidated.
 |   `-- compile-references/
 |       |-- README.md
 |       |-- Unity.Reference/
-|       |   `-- UnityEngine/
+|       |   |-- UnityEngine/
+|       |   |-- UnityEngine.CoreModule/
+|       |   `-- UnityEngine.UI/
 |       `-- surface-inventory.json
 |-- Directory.Build.props
 |-- Directory.Build.targets
@@ -232,7 +235,10 @@ display-scale behavior remain unvalidated.
 |       |-- S1-01.BuildContract.proj
 |       |-- Validate-S1-01.ps1
 |       |-- Validate-S1-02.ps1
-|       `-- Validate-S1-03.ps1
+|       |-- Validate-S1-03.ps1
+|       |-- Validate-S1-04.ps1
+|       |-- Validate-S1-05.ps1
+|       `-- Validate-S1-06.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

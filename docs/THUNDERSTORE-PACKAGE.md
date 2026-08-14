@@ -132,8 +132,9 @@ and type identities, base types and interfaces, constructors, methods, fields,
 properties, events, and the parameter and return types needed by those members.
 
 The validator extracts the external DSP and Unity type/member references from
-the production `Release` assembly and compares them with both the inventory and
-the declarations exported by the shim assemblies. It fails when:
+both real-reference and hosted-reference production `Release` assemblies and
+compares them with the inventory and every declared shim assembly together. It
+fails when:
 
 - a consumed external reference is absent from either source;
 - a declared name, containing type, static/instance form, parameter list,

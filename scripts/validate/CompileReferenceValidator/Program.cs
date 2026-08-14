@@ -3,43 +3,60 @@ using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Text.Json;
 
-if (args.Length is not 3 and not 4)
+if (args.Length < 4)
 {
-    Console.Error.WriteLine("Usage: CompileReferenceValidator <production.dll> <shim.dll> <surface-inventory.json> [report.json]");
+    Console.Error.WriteLine("Usage: CompileReferenceValidator <production.dll> <surface-inventory.json> <report.json> <shim.dll> [shim.dll ...]");
     return 2;
 }
 
-var inventory = JsonSerializer.Deserialize<Inventory>(File.ReadAllText(args[2]), new JsonSerializerOptions
+var inventory = JsonSerializer.Deserialize<Inventory>(File.ReadAllText(args[1]), new JsonSerializerOptions
 {
     PropertyNameCaseInsensitive = true
 }) ?? throw new InvalidDataException("Surface inventory is empty.");
 
 var failures = new List<string>();
-var assembly = inventory.Assemblies.SingleOrDefault(item => item.Name == Path.GetFileNameWithoutExtension(args[1]));
-if (assembly is null)
+var validatedAssemblies = new HashSet<string>(StringComparer.Ordinal);
+foreach (var shimPath in args.Skip(3))
 {
-    failures.Add("Shim assembly is absent from the surface inventory: " + Path.GetFileNameWithoutExtension(args[1]));
-}
-else
-{
-    ValidateShim(args[1], assembly, failures);
-    ValidateProduction(args[0], inventory, failures);
+    var shimName = Path.GetFileNameWithoutExtension(shimPath);
+    var assembly = inventory.Assemblies.SingleOrDefault(item => item.Name == shimName);
+    if (assembly is null)
+    {
+        failures.Add("Shim assembly is absent from the surface inventory: " + shimName);
+        continue;
+    }
+
+    if (!validatedAssemblies.Add(shimName))
+    {
+        failures.Add("Shim assembly was supplied more than once: " + shimName);
+        continue;
+    }
+
+    ValidateShim(shimPath, assembly, failures);
 }
 
-if (args.Length == 4)
+foreach (var missingShim in inventory.Assemblies
+    .Where(item => !string.IsNullOrWhiteSpace(item.ShimProject))
+    .Select(item => item.Name)
+    .Except(validatedAssemblies, StringComparer.Ordinal))
 {
-    var reportPath = Path.GetFullPath(args[3]);
-    Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
-    var report = new
-    {
-        schemaVersion = 1,
-        productionAssembly = Path.GetFileName(args[0]),
-        shimAssembly = Path.GetFileName(args[1]),
-        passed = failures.Count == 0,
-        failures
-    };
-    File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
+    failures.Add("Inventory shim assembly was not supplied for validation: " + missingShim);
 }
+
+var consumedSurface = ValidateProduction(args[0], inventory, failures);
+
+var reportPath = Path.GetFullPath(args[2]);
+Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+var report = new
+{
+    schemaVersion = 1,
+    productionAssembly = Path.GetFileName(args[0]),
+    shimAssemblies = validatedAssemblies.OrderBy(name => name).ToArray(),
+    consumedSurface = consumedSurface.OrderBy(item => item).ToArray(),
+    passed = failures.Count == 0,
+    failures
+};
+File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 
 if (failures.Count != 0)
 {
@@ -76,7 +93,7 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
     var expectedTypes = expectedAssembly.Types.Select(item => item.Name).ToHashSet(StringComparer.Ordinal);
     var actualTypes = new HashSet<string>(StringComparer.Ordinal);
     var expectedMembers = expectedAssembly.Types
-        .SelectMany(type => type.Members.Select(member => MemberKey(type.Name, member.Kind, member.Name, member.Signature)))
+        .SelectMany(type => type.Members.Select(member => MemberKey(type.Name, member.Kind, member.Name, member.Signature, member.IsStatic)))
         .ToHashSet(StringComparer.Ordinal);
     var actualMembers = new HashSet<string>(StringComparer.Ordinal);
     var provider = new TypeNameProvider();
@@ -92,6 +109,15 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
 
         var typeName = FullTypeDefinitionName(reader, definition);
         actualTypes.Add(typeName);
+        var expectedType = expectedAssembly.Types.SingleOrDefault(item => item.Name == typeName);
+        if (expectedType is not null)
+        {
+            var actualBaseType = definition.BaseType.IsNil ? "" : FullEntityTypeName(reader, definition.BaseType);
+            if (actualBaseType != expectedType.BaseType)
+            {
+                failures.Add($"Shim base type mismatch for {typeName}: {actualBaseType}, expected {expectedType.BaseType}.");
+            }
+        }
 
         foreach (var methodHandle in definition.GetMethods())
         {
@@ -104,7 +130,8 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
             var signature = method.DecodeSignature(provider, genericContext: null);
             var signatureText = signature.ReturnType + "(" + string.Join(",", signature.ParameterTypes) + ")";
             var methodName = reader.GetString(method.Name);
-            actualMembers.Add(MemberKey(typeName, "method", methodName, signatureText));
+            var isStatic = (method.Attributes & MethodAttributes.Static) != 0;
+            actualMembers.Add(MemberKey(typeName, "method", methodName, signatureText, isStatic));
         }
     }
 
@@ -129,13 +156,14 @@ static void ValidateShim(string path, AssemblyInventory expectedAssembly, List<s
     }
 }
 
-static void ValidateProduction(string path, Inventory inventory, List<string> failures)
+static HashSet<string> ValidateProduction(string path, Inventory inventory, List<string> failures)
 {
     using var stream = File.OpenRead(path);
     using var pe = new PEReader(stream);
     var reader = pe.GetMetadataReader();
     var inventoryAssemblies = inventory.Assemblies.ToDictionary(item => item.Name, StringComparer.Ordinal);
     var provider = new TypeNameProvider();
+    var consumedSurface = new HashSet<string>(StringComparer.Ordinal);
 
     foreach (var handle in reader.TypeReferences)
     {
@@ -147,6 +175,7 @@ static void ValidateProduction(string path, Inventory inventory, List<string> fa
         }
 
         var typeName = FullTypeReferenceName(reader, type);
+        consumedSurface.Add($"{assemblyName}|type|{typeName}");
         if (!expectedAssembly.Types.Any(item => item.Name == typeName))
         {
             failures.Add($"Production consumes unlisted external type: {assemblyName}:{typeName}.");
@@ -172,16 +201,19 @@ static void ValidateProduction(string path, Inventory inventory, List<string> fa
         var memberName = reader.GetString(member.Name);
         var signature = member.DecodeMethodSignature(provider, genericContext: null);
         var signatureText = signature.ReturnType + "(" + string.Join(",", signature.ParameterTypes) + ")";
-        var key = MemberKey(typeName, "method", memberName, signatureText);
+        var key = MemberKey(typeName, "method", memberName, signatureText, !signature.Header.IsInstance);
+        consumedSurface.Add($"{assemblyName}|member|{key}");
         var expected = expectedAssembly.Types
             .Where(item => item.Name == typeName)
             .SelectMany(item => item.Members)
-            .Any(item => MemberKey(typeName, item.Kind, item.Name, item.Signature) == key);
+            .Any(item => MemberKey(typeName, item.Kind, item.Name, item.Signature, item.IsStatic) == key);
         if (!expected)
         {
             failures.Add($"Production consumes unlisted external member: {assemblyName}:{key}.");
         }
     }
+
+    return consumedSurface;
 }
 
 static string? ResolveAssemblyName(MetadataReader reader, EntityHandle scope)
@@ -222,7 +254,18 @@ static string FullTypeReferenceName(MetadataReader reader, TypeReference referen
     return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
 }
 
-static string MemberKey(string type, string kind, string name, string signature) => $"{type}|{kind}|{name}|{signature}";
+static string FullEntityTypeName(MetadataReader reader, EntityHandle handle)
+{
+    return handle.Kind switch
+    {
+        HandleKind.TypeDefinition => FullTypeDefinitionName(reader, reader.GetTypeDefinition((TypeDefinitionHandle)handle)),
+        HandleKind.TypeReference => FullTypeReferenceName(reader, reader.GetTypeReference((TypeReferenceHandle)handle)),
+        _ => handle.Kind.ToString()
+    };
+}
+
+static string MemberKey(string type, string kind, string name, string signature, bool isStatic) =>
+    $"{type}|{kind}|{name}|{(isStatic ? "static" : "instance")}|{signature}";
 
 sealed class TypeNameProvider : ISignatureTypeProvider<string, object?>
 {
@@ -288,6 +331,7 @@ sealed class AssemblyInventory
 sealed class TypeInventory
 {
     public string Name { get; set; } = "";
+    public string BaseType { get; set; } = "";
     public string Usage { get; set; } = "";
     public List<MemberInventory> Members { get; set; } = new();
 }
@@ -297,4 +341,5 @@ sealed class MemberInventory
     public string Kind { get; set; } = "";
     public string Name { get; set; } = "";
     public string Signature { get; set; } = "";
+    public bool IsStatic { get; set; }
 }
