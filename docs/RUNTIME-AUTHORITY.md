@@ -295,6 +295,36 @@ reinterpretation and interaction paths. Exhaustive Local and Hosted coverage
 passed. This establishes static source compatibility and ownership boundaries,
 not live icon composition, dragging, containment, or cleanup behavior.
 
+### S2-06 startup and visibility-control surface
+
+On 2026-08-15, S2-06 reused the same hash-matched installed game and Unity
+assemblies as read-only metadata authorities. Inspection confirmed the exact
+startup and native-control chain below:
+
+| Declaring type | Member | Exact shape |
+| --- | --- | --- |
+| `UIRoot` | `instance` | public static getter returning `UIRoot` |
+| `UIRoot` | `uiGame` | public `UIGame` field; its transform is the panel host |
+| `UIGame` | `gameMenu` | public `UIGameMenu` field |
+| `UIGameMenu` | `buttonS` | public `Button` field; 46-by-46 screenshot template |
+| `UIGameMenu` | `button3` | public `Button` field whose callback maps to `UIGame.On_F_Switch`, the Replicator action |
+| `Button` | `onClick` | public get/set `ButtonClickedEvent` property |
+| `Graphic` | `raycastTarget` | public getter used to identify the non-raycasting native icon image |
+| `UIButton` | `tips` and format fields | public tracker-reset tooltip surface |
+| `Component` | `GetComponentsInChildren<T>(bool)` | public localization-removal surface |
+
+Production waits until `UIRoot.instance.uiGame` is available, then caches the
+native hosts and resources. It clones `buttonS`, replaces the entire inherited
+`onClick` event, removes cloned `Localizer` components, resets the exposed
+tooltip content, and assigns tracker-owned listeners. The chosen global-control
+icon is the sprite on `button3`'s non-raycasting descendant image, avoiding an
+asset-name dependency and the raycasting background/circle images.
+
+`Validate-S2-06.ps1` verifies these signatures and the source ownership rules;
+the exhaustive validator covers every additional public external member in
+the declaration-only shims. This establishes source compatibility and cleanup
+paths, not live icon suitability, interaction, layout, or shutdown behavior.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

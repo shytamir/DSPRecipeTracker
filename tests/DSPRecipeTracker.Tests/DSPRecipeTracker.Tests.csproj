@@ -17,6 +17,8 @@
     <Compile Include="..\..\src\DSPRecipeTracker\MajorInterfaceVisibility.cs" Link="Product\MajorInterfaceVisibility.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\PluginMetadata.cs" Link="Product\PluginMetadata.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\TrackerPanelUiBoundary.cs" Link="Product\TrackerPanelUiBoundary.cs" />
+    <Compile Include="..\..\src\DSPRecipeTracker\TrackerOrchestrator.cs" Link="Product\TrackerOrchestrator.cs" />
+    <Compile Include="..\..\src\DSPRecipeTracker\TrackerVisibilityControls.cs" Link="Product\TrackerVisibilityControls.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\VisibilityPolicy.cs" Link="Product\VisibilityPolicy.cs" />
     <Compile Include="$(GeneratedVersionSource)" Link="Generated\BuildIdentity.g.cs" />
   </ItemGroup>

@@ -13,16 +13,17 @@
 **Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
 complete and owner accepted. Its Source-ready, Package-inspected, and
 Owner-reviewed exit gates passed. The owner-authorized Sprint 2 roadmap is
-active, implementation is under way, S2-01 through S2-04 are owner accepted,
-and S2-05 is implemented and technically validated pending owner acceptance.
+active, implementation is under way, S2-01 through S2-05 are owner accepted,
+and S2-06 is implemented and technically validated pending owner acceptance.
 The source contains the minimal plugin
 skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic
 transient pin state, an isolated native Replicator input adapter, and an
 independent native recipe-grid treatment adapter, the exact fail-closed
-six-interface visibility input, and three ordered native recipe-icon panel
-slots. They are not yet connected to plugin startup; no supported release
-exists.
+six-interface visibility input, three ordered native recipe-icon panel slots,
+paired tracker-owned visibility controls, and plain orchestration connected to
+plugin startup. Installed and in-game behavior remains unvalidated; no
+supported release exists.
 
 **Owner review:** Accepted on 2026-08-14.
 

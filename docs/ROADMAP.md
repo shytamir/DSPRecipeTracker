@@ -4,12 +4,12 @@
 
 **Status:** In progress - owner authorized on 2026-08-14
 
-**Active story:** S2-05 - Connect native recipe-icon slots to the panel
+**Active story:** S2-06 - Add paired visibility controls and complete orchestration
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S2-05 only
+**Implementation authorization:** S2-06 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,7 +17,7 @@ pending
 **Previous roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](archive/BOOTSTRAP-ROADMAP.md)
 
-The owner accepted S2-04 and activated S2-05 on 2026-08-15. Only the story
+The owner accepted S2-05 and activated S2-06 on 2026-08-15. Only the story
 identified above is authorized for implementation.
 
 **Goal:** Connect the existing panel boundary to the native Replicator and HUD
@@ -56,13 +56,13 @@ set of observations that cannot be established another way.
 
 ## Entry gates
 
-The entry gates required to activate S2-05 are satisfied:
+The entry gates required to activate S2-06 are satisfied:
 
 - the owner accepted this roadmap;
-- every decision required by S2-05 is recorded;
+- every decision required by S2-06 is recorded;
 - the repository begins from the accepted bootstrap state; and
-- S2-01 through S2-04 are owner accepted; and
-- exactly S2-05 is marked Active.
+- S2-01 through S2-05 are owner accepted; and
+- exactly S2-06 is marked Active.
 
 Later stories become Active one at a time only after the preceding dependency
 is technically validated and explicitly owner accepted. Completion never
@@ -548,13 +548,13 @@ navigation, click listeners, Harmony, and Unity dependencies in the slot
 synchronizer. No game, loader, save, plugin, or substitute runtime was started
 or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S2-06. Live icon composition, dragging, containment, and cleanup
-remain unvalidated until the later meaningful owner gate.
+**Owner acceptance:** Granted on 2026-08-15. Live icon composition, dragging,
+containment, and cleanup remain unvalidated until the later meaningful owner
+gate.
 
 ### S2-06 - Add paired visibility controls and complete orchestration
 
-**Status:** Proposed - depends on S2-01 through S2-05
+**Status:** Implemented and technically validated - owner acceptance pending
 
 **User story:** As a player, I want explicit controls for hiding and restoring
 the integrated tracker without automatic conditions changing my choice.
@@ -590,6 +590,68 @@ the integrated tracker without automatic conditions changing my choice.
 validation, package construction, and static inspection pass. Architecture
 separation is reviewed. A testable development DLL and deferred human-only
 claim list are prepared; no runtime procedure is run in Sprint 2.
+
+**Implementation:** Completed on 2026-08-15.
+
+- `DSPRecipeTrackerPlugin` waits for the native UI root, then resolves the
+  in-game UI host, Replicator, major-interface, game-menu template, and icon resources
+  once. It composes the existing plain state and presentation boundaries; its
+  frame callback only asks the orchestrator to refresh cached integrations.
+- `TrackerOrchestrator` owns session-only `manualRequested`, starts it true,
+  applies the existing visibility policy, and keeps automatic or unavailable
+  UI conditions from rewriting player intent. Feature initialization and
+  cleanup remain independent and one-time.
+- The panel Hide control and global control are tracker-owned clones of
+  `UIGame.gameMenu.buttonS`. Their inherited click event is replaced, inherited
+  localization components are removed, and tooltip content is reset before
+  tracker behavior is attached.
+- Both controls use the non-raycasting icon sprite within the live native
+  Replicator `UIGame.gameMenu.button3` control. Tracker-owned fallback copy is `Recipe Tracker`,
+  `Hide Recipe Tracker`, and `Show Recipe Tracker`; no localization table or
+  persistence was added.
+- Debug diagnostics report orchestration initialization/release, manual
+  actions, and changed computed visibility with the required bounded fields.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+.\scripts\validate\Validate-S2-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>'
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 13 `
+  -SourceRevision $revision
+```
+
+Focused tests covered initial intent, panel Hide, global toggling while
+automatically hidden, empty-state retention, exact major-interface hiding and
+recovery, unavailable-state hiding, visibility pass-through, unchanged-state
+suppression, partial initialization, inert released callbacks, one-time
+cleanup, and bounded Debug diagnostics. Local and Hosted Release builds
+completed with zero warnings and zero errors; exhaustive consumed-surface
+coverage passed against declaration-only shims. Read-only authority validation
+confirmed `UIRoot.instance`, the in-game and game-menu hosts, `buttonS`, the
+native Replicator `button3` sprite path, click-event replacement, tooltip
+fields, localization removal, and the consumed Unity control members. Static
+inspection confirmed that Unity owns only lifecycle, resource binding, and UI
+callbacks while stored intent and visibility composition remain plain C#.
+
+The real version-aligned development DLL and package were constructed under
+ignored `artifacts/` and passed static package inspection. No game, loader,
+save, plugin, or substitute runtime was started, installed, or changed.
+
+**Deferred human-only claims:** Native gesture coexistence, recipe-grid opacity,
+icon and fallback-copy suitability, live panel composition, dragging and input
+containment, exact six-interface behavior, paired Show/Hide interaction, and
+live cleanup remain for the coherent Sprint 3 owner gate. The development DLL
+is testable but is not installed, behaviorally ready, or publication-ready.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or complete a Sprint 2 exit gate.
 
 ## Sequence and dependencies
 

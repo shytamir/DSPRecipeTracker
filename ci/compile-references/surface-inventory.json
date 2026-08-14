@@ -29,6 +29,8 @@
           "usage": "panel-object-lifecycle",
           "members": [
             { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "get_name", "signature": "System.String()" },
+            { "kind": "method", "name": "set_name", "signature": "System.Void(System.String)" },
             { "kind": "method", "name": "Destroy", "signature": "System.Void(UnityEngine.Object)", "isStatic": true },
             { "kind": "method", "name": "Instantiate", "signature": "!!0(!!0,UnityEngine.Transform,System.Boolean)", "isStatic": true }
           ]
@@ -41,7 +43,8 @@
             { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
             { "kind": "method", "name": "get_transform", "signature": "UnityEngine.Transform()" },
             { "kind": "method", "name": "get_gameObject", "signature": "UnityEngine.GameObject()" },
-            { "kind": "method", "name": "GetComponent", "signature": "!!0()" }
+            { "kind": "method", "name": "GetComponent", "signature": "!!0()" },
+            { "kind": "method", "name": "GetComponentsInChildren", "signature": "!!0[](System.Boolean)" }
           ]
         },
         {
@@ -87,6 +90,7 @@
             { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
             { "kind": "method", "name": "set_anchorMin", "signature": "System.Void(UnityEngine.Vector2)" },
             { "kind": "method", "name": "set_anchorMax", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "get_anchoredPosition", "signature": "UnityEngine.Vector2()" },
             { "kind": "method", "name": "set_anchoredPosition", "signature": "System.Void(UnityEngine.Vector2)" },
             { "kind": "method", "name": "set_sizeDelta", "signature": "System.Void(UnityEngine.Vector2)" },
             { "kind": "method", "name": "set_pivot", "signature": "System.Void(UnityEngine.Vector2)" }
@@ -107,7 +111,8 @@
           "baseType": "System.ValueType",
           "usage": "panel-layout-values",
           "members": [
-            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Single,System.Single)" }
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Single,System.Single)" },
+            { "kind": "method", "name": "op_Addition", "signature": "UnityEngine.Vector2(UnityEngine.Vector2,UnityEngine.Vector2)", "isStatic": true }
           ]
         },
         {
@@ -145,6 +150,27 @@
           ]
         },
         {
+          "name": "UnityEngine.Events.UnityAction",
+          "baseType": "System.MulticastDelegate",
+          "usage": "tracker-control-listeners",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Object,System.IntPtr)" },
+            { "kind": "method", "name": "Invoke", "signature": "System.Void()" },
+            { "kind": "method", "name": "BeginInvoke", "signature": "System.IAsyncResult(System.AsyncCallback,System.Object)" },
+            { "kind": "method", "name": "EndInvoke", "signature": "System.Void(System.IAsyncResult)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Events.UnityEvent",
+          "baseType": "System.Object",
+          "usage": "tracker-control-listener-lifecycle",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
+            { "kind": "method", "name": "AddListener", "signature": "System.Void(UnityEngine.Events.UnityAction)" },
+            { "kind": "method", "name": "RemoveListener", "signature": "System.Void(UnityEngine.Events.UnityAction)" }
+          ]
+        },
+        {
           "name": "UnityEngine.Events.UnityAction`1",
           "baseType": "System.MulticastDelegate",
           "usage": "replicator-pointer-listener",
@@ -172,6 +198,29 @@
       "shimProject": "Unity.Reference/UnityEngine.UI/UnityEngine.UI.Reference.csproj",
       "types": [
         {
+          "name": "UnityEngine.UI.Selectable",
+          "baseType": "UnityEngine.EventSystems.UIBehaviour",
+          "usage": "native-control-inheritance",
+          "members": []
+        },
+        {
+          "name": "UnityEngine.UI.Button",
+          "baseType": "UnityEngine.UI.Selectable",
+          "usage": "native-control-template-and-click-event",
+          "members": [
+            { "kind": "method", "name": "get_onClick", "signature": "UnityEngine.UI.Button+ButtonClickedEvent()" },
+            { "kind": "method", "name": "set_onClick", "signature": "System.Void(UnityEngine.UI.Button+ButtonClickedEvent)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.UI.Button+ButtonClickedEvent",
+          "baseType": "UnityEngine.Events.UnityEvent",
+          "usage": "tracker-owned-click-event",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
+        },
+        {
           "name": "UnityEngine.EventSystems.UIBehaviour",
           "baseType": "UnityEngine.MonoBehaviour",
           "usage": "ui-inheritance-chain",
@@ -182,6 +231,7 @@
           "baseType": "UnityEngine.EventSystems.UIBehaviour",
           "usage": "raycast-containment",
           "members": [
+            { "kind": "method", "name": "get_raycastTarget", "signature": "System.Boolean()" },
             { "kind": "method", "name": "set_raycastTarget", "signature": "System.Void(System.Boolean)" },
             { "kind": "method", "name": "set_color", "signature": "System.Void(UnityEngine.Color)" },
             { "kind": "method", "name": "get_material", "signature": "UnityEngine.Material()" },
@@ -199,6 +249,7 @@
           "baseType": "UnityEngine.UI.MaskableGraphic",
           "usage": "panel-background-and-raycast-target",
           "members": [
+            { "kind": "method", "name": "get_sprite", "signature": "UnityEngine.Sprite()" },
             { "kind": "method", "name": "set_sprite", "signature": "System.Void(UnityEngine.Sprite)" }
           ]
         },
@@ -336,7 +387,69 @@
             { "kind": "field", "name": "replicator", "signature": "UIReplicatorWindow" },
             { "kind": "field", "name": "statWindow", "signature": "UIStatisticsWindow" },
             { "kind": "field", "name": "dashboard", "signature": "UIDashboard" }
+            ,{ "kind": "field", "name": "gameMenu", "signature": "UIGameMenu" }
           ]
+        },
+        {
+          "name": "UIRoot",
+          "baseType": "ManualBehaviour",
+          "usage": "startup-ui-root-and-game-host",
+          "members": [
+            { "kind": "method", "name": "get_instance", "signature": "UIRoot()", "isStatic": true },
+            { "kind": "field", "name": "uiGame", "signature": "UIGame" }
+          ]
+        },
+        {
+          "name": "UIGameMenu",
+          "baseType": "ManualBehaviour",
+          "usage": "global-control-host-template-and-native-icon",
+          "members": [
+            { "kind": "field", "name": "button3", "signature": "UnityEngine.UI.Button" },
+            { "kind": "field", "name": "buttonS", "signature": "UnityEngine.UI.Button" }
+          ]
+        },
+        {
+          "name": "UIButton",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "tracker-owned-control-tooltip-copy",
+          "members": [
+            { "kind": "field", "name": "tips", "signature": "UIButton+TipSettings" },
+            { "kind": "field", "name": "tipTitleFormatString", "signature": "System.String" },
+            { "kind": "field", "name": "tipTextFormatString", "signature": "System.String" }
+          ]
+        },
+        {
+          "name": "UIButton+ItemTipType",
+          "baseType": "System.Enum",
+          "usage": "tracker-control-tooltip-content-reset",
+          "members": [
+            { "kind": "field", "name": "value__", "signature": "System.Int32" },
+            { "kind": "field", "name": "None", "signature": "UIButton+ItemTipType", "isStatic": true },
+            { "kind": "field", "name": "Item", "signature": "UIButton+ItemTipType", "isStatic": true },
+            { "kind": "field", "name": "Recipe", "signature": "UIButton+ItemTipType", "isStatic": true },
+            { "kind": "field", "name": "Other", "signature": "UIButton+ItemTipType", "isStatic": true },
+            { "kind": "field", "name": "IgnoreIncPoint", "signature": "UIButton+ItemTipType", "isStatic": true }
+          ]
+        },
+        {
+          "name": "UIButton+TipSettings",
+          "baseType": "System.ValueType",
+          "usage": "tracker-control-tooltip-content",
+          "members": [
+            { "kind": "field", "name": "itemId", "signature": "System.Int32" },
+            { "kind": "field", "name": "itemCount", "signature": "System.Int32" },
+            { "kind": "field", "name": "itemInc", "signature": "System.Int32" },
+            { "kind": "field", "name": "tipSprite", "signature": "UnityEngine.Sprite" },
+            { "kind": "field", "name": "tipTitle", "signature": "System.String" },
+            { "kind": "field", "name": "tipText", "signature": "System.String" },
+            { "kind": "field", "name": "type", "signature": "UIButton+ItemTipType" }
+          ]
+        },
+        {
+          "name": "Localizer",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "cloned-control-localization-removal",
+          "members": []
         },
         {
           "name": "UITechTree",

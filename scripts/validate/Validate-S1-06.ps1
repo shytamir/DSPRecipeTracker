@@ -65,11 +65,6 @@ if ($coverageDifference.Count -ne 0) {
     throw "Local and Hosted production builds consume different Unity surfaces: $($coverageDifference | Out-String)"
 }
 
-$pluginSource = [IO.File]::ReadAllText((Join-Path $repoRoot 'src\DSPRecipeTracker\DSPRecipeTrackerPlugin.cs'))
-if ($pluginSource -match 'TrackerPanelUiBoundary|UnityTrackerPanelAdapter|ITrackerPanelUiAdapter') {
-    throw 'S1-06 must not wire the compile-time UI boundary into plugin startup.'
-}
-
 $uiSources = @(
     (Join-Path $repoRoot 'src\DSPRecipeTracker\TrackerPanelUiBoundary.cs'),
     (Join-Path $repoRoot 'src\DSPRecipeTracker\UnityTrackerPanelAdapter.cs')

@@ -22,6 +22,8 @@ namespace DSPRecipeTracker
             this.backgroundSprite = backgroundSprite;
         }
 
+        internal RectTransform PanelTransform => panelTransform;
+
         public bool TryCreate()
         {
             if (!ReferenceEquals(panelObject, null) ||

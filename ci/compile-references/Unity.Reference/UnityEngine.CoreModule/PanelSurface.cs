@@ -2,7 +2,24 @@ using System;
 
 namespace UnityEngine.Events
 {
+    public delegate void UnityAction();
+
     public delegate void UnityAction<in T0>(T0 arg0);
+
+    public class UnityEvent
+    {
+        public UnityEvent()
+        {
+        }
+
+        public void AddListener(UnityAction call)
+        {
+        }
+
+        public void RemoveListener(UnityAction call)
+        {
+        }
+    }
 
     public class UnityEvent<T0>
     {
@@ -26,6 +43,12 @@ namespace UnityEngine
     {
         public Object()
         {
+        }
+
+        public string name
+        {
+            get { return null; }
+            set { }
         }
 
         public static void Destroy(Object value)
@@ -56,6 +79,11 @@ namespace UnityEngine
         }
 
         public T GetComponent<T>() where T : Component
+        {
+            return null;
+        }
+
+        public T[] GetComponentsInChildren<T>(bool includeInactive) where T : Component
         {
             return null;
         }
@@ -125,6 +153,7 @@ namespace UnityEngine
 
         public Vector2 anchoredPosition
         {
+            get { return default(Vector2); }
             set { }
         }
 
@@ -159,6 +188,11 @@ namespace UnityEngine
     {
         public Vector2(float x, float y)
         {
+        }
+
+        public static Vector2 operator +(Vector2 left, Vector2 right)
+        {
+            return default(Vector2);
         }
     }
 
@@ -205,4 +239,5 @@ namespace UnityEngine
         {
         }
     }
+
 }

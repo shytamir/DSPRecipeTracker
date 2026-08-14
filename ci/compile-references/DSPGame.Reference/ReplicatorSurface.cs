@@ -74,6 +74,65 @@ public class UIGame : ManualBehaviour
     public UIReplicatorWindow replicator;
     public UIStatisticsWindow statWindow;
     public UIDashboard dashboard;
+    public UIGameMenu gameMenu;
+}
+
+public class UIRoot : ManualBehaviour
+{
+    private UIRoot()
+    {
+    }
+
+    public static UIRoot instance { get { return null; } }
+    public UIGame uiGame;
+}
+
+public class UIGameMenu : ManualBehaviour
+{
+    private UIGameMenu()
+    {
+    }
+
+    public UnityEngine.UI.Button button3;
+    public UnityEngine.UI.Button buttonS;
+}
+
+public class UIButton : UnityEngine.MonoBehaviour
+{
+    private UIButton()
+    {
+    }
+
+    public enum ItemTipType
+    {
+        None,
+        Item,
+        Recipe,
+        Other,
+        IgnoreIncPoint
+    }
+
+    public struct TipSettings
+    {
+        public int itemId;
+        public int itemCount;
+        public int itemInc;
+        public UnityEngine.Sprite tipSprite;
+        public string tipTitle;
+        public string tipText;
+        public ItemTipType type;
+    }
+
+    public TipSettings tips;
+    public string tipTitleFormatString;
+    public string tipTextFormatString;
+}
+
+public class Localizer : UnityEngine.MonoBehaviour
+{
+    private Localizer()
+    {
+    }
 }
 
 public class UITechTree : ManualBehaviour

@@ -73,6 +73,34 @@ namespace UnityEngine.EventSystems
 
 namespace UnityEngine.UI
 {
+    public abstract class Selectable : UnityEngine.EventSystems.UIBehaviour
+    {
+        protected Selectable()
+        {
+        }
+
+    }
+
+    public class Button : Selectable
+    {
+        protected Button()
+        {
+        }
+
+        public sealed class ButtonClickedEvent : UnityEngine.Events.UnityEvent
+        {
+            public ButtonClickedEvent()
+            {
+            }
+        }
+
+        public ButtonClickedEvent onClick
+        {
+            get { return null; }
+            set { }
+        }
+    }
+
     public abstract class Graphic : UnityEngine.EventSystems.UIBehaviour
     {
         protected Graphic()
@@ -81,6 +109,7 @@ namespace UnityEngine.UI
 
         public virtual bool raycastTarget
         {
+            get { return false; }
             set { }
         }
 
@@ -111,6 +140,7 @@ namespace UnityEngine.UI
 
         public UnityEngine.Sprite sprite
         {
+            get { return null; }
             set { }
         }
     }

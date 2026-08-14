@@ -493,6 +493,117 @@ Check(slotRecords.Any(record => record.Message == "recipe-icon-slots action=rele
 Check(slotRecords.All(record => record.Level == TrackerDiagnosticLevel.Debug), "recipe-icon diagnostics use Debug level");
 Check(slotRecords.All(record => record.Message.Length < 128), "recipe-icon diagnostics remain bounded");
 
+var orchestrationDiagnostics = new RecordingDiagnosticSink();
+var orchestrationState = new PinnedRecipeState(orchestrationDiagnostics);
+orchestrationState.Toggle(808);
+var orchestrationPanelAdapter = new RecordingPanelUiAdapter();
+var orchestrationPanel = new TrackerPanelUiBoundary(orchestrationPanelAdapter);
+var orchestrationInputAdapter = new RecordingReplicatorPinInputAdapter();
+var orchestrationInput = new ReplicatorPinInput(orchestrationInputAdapter, orchestrationState, orchestrationDiagnostics);
+var orchestrationTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter();
+var orchestrationTreatment = new RecipeGridTreatment(orchestrationTreatmentAdapter, orchestrationDiagnostics);
+var orchestrationResolver = new RecordingRecipeIconResolver();
+orchestrationResolver.Add(808);
+var orchestrationIcons = new RecipeIconSlotPresentation(orchestrationState, orchestrationResolver, orchestrationPanel, orchestrationDiagnostics);
+var orchestrationMajorAdapter = new RecordingMajorInterfaceStateAdapter();
+var orchestrationMajor = new MajorInterfaceVisibilityInput(orchestrationMajorAdapter, orchestrationDiagnostics);
+var orchestrationControlAdapter = new RecordingVisibilityControlAdapter();
+var orchestrationControls = new TrackerVisibilityControls(orchestrationControlAdapter);
+var orchestration = new TrackerOrchestrator(
+    orchestrationState,
+    orchestrationInput,
+    orchestrationTreatment,
+    orchestrationIcons,
+    orchestrationMajor,
+    orchestrationPanel,
+    orchestrationControls,
+    orchestrationDiagnostics);
+
+Check(orchestration.ManualRequested, "orchestration manual intent starts true");
+Check(orchestration.TryInitialize(PanelGeometry.Create(24f, 84f)), "orchestration initializes");
+Check(orchestrationPanelAdapter.LastVisibility == true, "initial visible state passes through");
+Check(orchestrationControlAdapter.LastManualRequested == true, "initial global control reflects stored intent");
+
+orchestrationMajorAdapter.Signals = new MajorInterfaceSignals(false, false, true, false, false, false);
+orchestration.Refresh();
+Check(orchestrationPanelAdapter.LastVisibility == false, "major interface hides orchestrated panel");
+orchestrationControlAdapter.RaiseGlobalToggle();
+Check(!orchestration.ManualRequested, "global toggle changes stored intent while automatically hidden");
+orchestrationControlAdapter.RaiseGlobalToggle();
+Check(orchestration.ManualRequested, "global toggle restores stored intent while automatically hidden");
+orchestrationMajorAdapter.Signals = default(MajorInterfaceSignals);
+orchestration.Refresh();
+Check(orchestrationPanelAdapter.LastVisibility == true, "automatic condition clearing restores requested visibility");
+
+orchestrationControlAdapter.RaisePanelHide();
+Check(!orchestration.ManualRequested, "panel Hide clears stored intent");
+Check(orchestrationPanelAdapter.LastVisibility == false, "panel Hide applies hidden state");
+orchestrationState.Toggle(808);
+orchestration.Refresh();
+Check(!orchestration.ManualRequested, "empty state preserves manual intent");
+orchestrationControlAdapter.RaiseGlobalToggle();
+Check(orchestration.ManualRequested, "empty-state global toggle updates stored intent");
+Check(orchestrationPanelAdapter.LastVisibility == false, "empty state remains computed hidden");
+
+orchestrationState.Toggle(808);
+orchestration.Refresh();
+Check(orchestrationPanelAdapter.LastVisibility == true, "row recovery restores requested visibility");
+orchestrationMajorAdapter.Available = false;
+orchestration.Refresh();
+Check(orchestrationPanelAdapter.LastVisibility == false, "unavailable major-interface state hides orchestrated panel");
+Check(orchestration.ManualRequested, "unavailable major-interface state preserves stored intent");
+orchestrationMajorAdapter.Available = true;
+orchestration.Refresh();
+Check(orchestrationPanelAdapter.LastVisibility == true, "available major-interface recovery restores requested visibility");
+
+var visibilityRecordCount = orchestrationDiagnostics.Records.Count(record => record.Message.StartsWith("tracker-orchestration visibility=", StringComparison.Ordinal));
+orchestration.Refresh();
+Check(orchestrationDiagnostics.Records.Count(record => record.Message.StartsWith("tracker-orchestration visibility=", StringComparison.Ordinal)) == visibilityRecordCount, "unchanged orchestrated visibility is diagnostically silent");
+var orchestrationRecords = orchestrationDiagnostics.Records.Where(record => record.Message.StartsWith("tracker-orchestration ", StringComparison.Ordinal)).ToList();
+Check(orchestrationRecords.Any(record => record.Message.StartsWith("tracker-orchestration action=initialize panel=true input=true treatment=true icons=true controls=true", StringComparison.Ordinal)), "orchestration initialization diagnostic records feature availability");
+Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration action=panel-hide manualRequested=false"), "panel action diagnostic records stored intent");
+Check(orchestrationRecords.Count(record => record.Message.StartsWith("tracker-orchestration action=global-toggle", StringComparison.Ordinal)) == 3, "global actions are diagnosed once each");
+Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration visibility=true hasRows=true manualRequested=true majorAvailable=true majorActive=false"), "visible diagnostic records all policy inputs");
+Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration visibility=false hasRows=true manualRequested=true majorAvailable=false majorActive=unavailable"), "unavailable diagnostic records fail-closed policy inputs");
+Check(orchestrationRecords.All(record => record.Level == TrackerDiagnosticLevel.Debug), "orchestration diagnostics use Debug level");
+Check(orchestrationRecords.All(record => record.Message.Length < 128), "orchestration diagnostics remain bounded");
+
+orchestration.Dispose();
+orchestration.Dispose();
+Check(orchestrationControlAdapter.ReleaseCalls == 1, "orchestration control cleanup is one-time");
+Check(orchestrationPanelAdapter.ReleaseCalls == 1, "orchestration panel cleanup is one-time");
+Check(orchestrationInputAdapter.ReleaseCalls == 1, "orchestration input cleanup is one-time");
+Check(orchestrationTreatmentAdapter.ReleaseCalls == 1, "orchestration treatment cleanup is one-time");
+Check(orchestrationDiagnostics.Records.Count(record => record.Message == "tracker-orchestration action=release") == 1, "orchestration release diagnostic is one-time");
+orchestrationControlAdapter.RaiseGlobalToggle();
+orchestrationControlAdapter.RaisePanelHide();
+Check(orchestration.ManualRequested, "released orchestration callbacks are inert");
+
+var partialDiagnostics = new RecordingDiagnosticSink();
+var partialState = new PinnedRecipeState(partialDiagnostics);
+var partialPanelAdapter = new RecordingPanelUiAdapter { CreateResult = false };
+var partialPanel = new TrackerPanelUiBoundary(partialPanelAdapter);
+var partialInputAdapter = new RecordingReplicatorPinInputAdapter { AttachResult = false };
+var partialTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter { InitializeResult = false };
+var partialControlsAdapter = new RecordingVisibilityControlAdapter { CreateResult = false };
+using (var partial = new TrackerOrchestrator(
+    partialState,
+    new ReplicatorPinInput(partialInputAdapter, partialState, partialDiagnostics),
+    new RecipeGridTreatment(partialTreatmentAdapter, partialDiagnostics),
+    new RecipeIconSlotPresentation(partialState, new RecordingRecipeIconResolver(), partialPanel, partialDiagnostics),
+    new MajorInterfaceVisibilityInput(new RecordingMajorInterfaceStateAdapter { Available = false }, partialDiagnostics),
+    partialPanel,
+    new TrackerVisibilityControls(partialControlsAdapter),
+    partialDiagnostics))
+{
+    Check(partial.TryInitialize(PanelGeometry.Create(0f, 0f)), "partial orchestration initialization completes safely");
+    partial.Refresh();
+}
+Check(partialPanelAdapter.ReleaseCalls == 1, "partial panel cleanup is bounded");
+Check(partialInputAdapter.ReleaseCalls == 1, "partial input cleanup is bounded");
+Check(partialTreatmentAdapter.ReleaseCalls == 1, "partial treatment cleanup is bounded");
+Check(partialControlsAdapter.ReleaseCalls == 1, "partial control cleanup is bounded");
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -503,7 +614,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -805,5 +916,48 @@ internal sealed class RecordingMajorInterfaceStateAdapter : IMajorInterfaceState
 
         signals = Signals;
         return Available;
+    }
+}
+
+internal sealed class RecordingVisibilityControlAdapter : ITrackerVisibilityControlAdapter
+{
+    private Action? hidePanel;
+    private Action? toggleGlobal;
+
+    public bool CreateResult { get; set; } = true;
+
+    public bool ApplyResult { get; set; } = true;
+
+    public bool? LastManualRequested { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public bool TryCreate(Action hidePanel, Action toggleGlobal, bool manualRequested)
+    {
+        this.hidePanel = hidePanel;
+        this.toggleGlobal = toggleGlobal;
+        LastManualRequested = manualRequested;
+        return CreateResult;
+    }
+
+    public bool TryApplyManualRequested(bool manualRequested)
+    {
+        LastManualRequested = manualRequested;
+        return ApplyResult;
+    }
+
+    public void Release()
+    {
+        ReleaseCalls++;
+    }
+
+    public void RaisePanelHide()
+    {
+        hidePanel?.Invoke();
+    }
+
+    public void RaiseGlobalToggle()
+    {
+        toggleGlobal?.Invoke();
     }
 }
