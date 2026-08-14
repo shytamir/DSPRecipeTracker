@@ -266,6 +266,35 @@ and inheritance edge consumed by production; exhaustive validation passed for
 both Local and Hosted builds. This establishes source compatibility with the
 recorded surface, not live window behavior.
 
+### S2-05 direct recipe-icon lookup surface
+
+On 2026-08-15, S2-05 reused the same hash-matched installed
+`Assembly-CSharp.dll` and documented Unity assemblies as read-only metadata
+authorities. Inspection confirmed this exact lookup chain:
+
+| Declaring type | Member or inheritance | Exact shape |
+| --- | --- | --- |
+| `LDB` | `recipes` | public static getter returning `RecipeProtoSet` |
+| `RecipeProtoSet` | base type | `ProtoSet<RecipeProto>` |
+| `ProtoSet<T>` | `Select` | public instance `T Select(System.Int32)` |
+| `RecipeProto` | `iconSprite` | public instance getter returning `UnityEngine.Sprite` |
+| `ProtoTable` | base type | `UnityEngine.ScriptableObject` |
+| `UnityEngine.ScriptableObject` | base type | `UnityEngine.Object` |
+
+Production performs `LDB.recipes.Select(recipeId)` and then reads the returned
+recipe's `iconSprite`. It does not consume `RecipeProto.Results`,
+`ResultCounts`, `Items`, or `ItemCounts`; does not select an `ItemProto`; and
+does not attach navigation or pinning behavior to the panel icon.
+
+The Unity slot layer reuses the already recorded `GameObject`, `RectTransform`,
+`Image`, `Image.sprite`, `Graphic.raycastTarget`, and object-destruction
+surfaces. The declaration-only shims add the exact recipe-set and
+`ScriptableObject` inheritance needed to compile the direct lookup.
+`Validate-S2-05.ps1` verifies the runtime signatures and rejects output/item
+reinterpretation and interaction paths. Exhaustive Local and Hosted coverage
+passed. This establishes static source compatibility and ownership boundaries,
+not live icon composition, dragging, containment, or cleanup behavior.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

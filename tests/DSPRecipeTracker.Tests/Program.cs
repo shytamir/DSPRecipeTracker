@@ -357,6 +357,142 @@ using (var throwingBoundary = new TrackerPanelUiBoundary(throwingAdapter))
 }
 Check(throwingAdapter.ReleaseCalls == 1, "throwing UI adapter release is bounded");
 
+var slotDiagnostics = new RecordingDiagnosticSink();
+var slotState = new PinnedRecipeState(slotDiagnostics);
+slotState.Toggle(101);
+slotState.Toggle(202);
+slotState.Toggle(303);
+var slotResolver = new RecordingRecipeIconResolver();
+slotResolver.Add(101);
+slotResolver.Add(202);
+slotResolver.Add(303);
+var slotPanelAdapter = new RecordingPanelUiAdapter();
+using (var slotPanel = new TrackerPanelUiBoundary(slotPanelAdapter))
+{
+    Check(slotPanel.TryInitialize(PanelGeometry.Create(40f, 50f)), "recipe-icon panel boundary initializes");
+    using (var slots = new RecipeIconSlotPresentation(slotState, slotResolver, slotPanel, slotDiagnostics))
+    {
+        Check(slots.TryInitialize(), "recipe-icon slots initialize against available panel");
+        Check(slots.TryRefresh(), "recipe-icon slots synchronize three pins");
+        Check(slotPanelAdapter.IconApplyCalls == 1, "recipe-icon slots apply once");
+        CheckRecipeOrder(slotPanelAdapter.LastRecipeIconIds, "recipe-icon slots preserve pin order", 303, 202, 101);
+        Check(slotPanelAdapter.LastRecipeIconCount == PinnedRecipeState.Capacity, "recipe-icon slots enforce maximum three");
+        Check(slots.TryRefresh(), "unchanged recipe-icon refresh succeeds");
+        Check(slotPanelAdapter.IconApplyCalls == 1, "unchanged recipe-icon order suppresses UI work");
+
+        slotState.Toggle(202);
+        Check(slots.TryRefresh(), "recipe-icon slots synchronize unpin");
+        CheckRecipeOrder(slotPanelAdapter.LastRecipeIconIds, "recipe-icon slots preserve order after unpin", 303, 101);
+        Check(slotPanel.TryApplyDrag(new DragDelta(2000f, 2000f), new ParentBounds(0f, 0f, 1280f, 720f)), "recipe-icon panel preserves drag pass-through");
+        CheckRect(slotPanelAdapter.LastRectangle, 920f, 468f, "recipe-icon panel drag remains clamped");
+        Check(slotPanelAdapter.RaycastCalls == 1, "recipe-icon panel retains input containment");
+    }
+    Check(slotPanelAdapter.IconReleaseCalls == 1, "recipe-icon slots release owned UI once");
+    Check(slotPanel.IsAvailable, "recipe-icon cleanup leaves panel shell available");
+}
+
+var multipleOutputDiagnostics = new RecordingDiagnosticSink();
+var multipleOutputState = new PinnedRecipeState(multipleOutputDiagnostics);
+multipleOutputState.Toggle(700);
+var multipleOutputResolver = new RecordingRecipeIconResolver();
+multipleOutputResolver.Add(700);
+var multipleOutputPanelAdapter = new RecordingPanelUiAdapter();
+using (var multipleOutputPanel = new TrackerPanelUiBoundary(multipleOutputPanelAdapter))
+using (var slots = new RecipeIconSlotPresentation(multipleOutputState, multipleOutputResolver, multipleOutputPanel, multipleOutputDiagnostics))
+{
+    Check(multipleOutputPanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "multiple-output panel initializes");
+    Check(slots.TryInitialize() && slots.TryRefresh(), "multiple-output recipe uses recipe identity icon directly");
+    CheckRecipeOrder(multipleOutputPanelAdapter.LastRecipeIconIds, "multiple-output identity is not reinterpreted", 700);
+}
+
+var invalidIconDiagnostics = new RecordingDiagnosticSink();
+var invalidIconState = new PinnedRecipeState(invalidIconDiagnostics);
+invalidIconState.Toggle(1);
+invalidIconState.Toggle(2);
+invalidIconState.Toggle(3);
+var invalidIconResolver = new RecordingRecipeIconResolver();
+invalidIconResolver.Add(1);
+invalidIconResolver.AddUnavailableIcon(2);
+invalidIconResolver.Add(3);
+var invalidIconPanelAdapter = new RecordingPanelUiAdapter();
+using (var invalidIconPanel = new TrackerPanelUiBoundary(invalidIconPanelAdapter))
+using (var slots = new RecipeIconSlotPresentation(invalidIconState, invalidIconResolver, invalidIconPanel, invalidIconDiagnostics))
+{
+    Check(invalidIconPanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "invalid-icon panel initializes");
+    Check(slots.TryInitialize() && slots.TryRefresh(), "missing recipe icon is removed without disabling slots");
+    CheckRecipeOrder(invalidIconState.RecipeIds, "missing icon removal preserves pin order", 3, 1);
+    CheckRecipeOrder(invalidIconPanelAdapter.LastRecipeIconIds, "missing icon is absent from presentation", 3, 1);
+    invalidIconState.Toggle(2);
+    Check(slots.TryRefresh(), "reintroduced invalid icon fails softly");
+    CheckRecipeOrder(invalidIconState.RecipeIds, "reintroduced invalid icon preserves valid order", 3, 1);
+}
+Check(invalidIconDiagnostics.Records.Count(record => record.Message.StartsWith("recipe-icon-slots action=remove-unavailable recipeId=2", StringComparison.Ordinal)) == 1, "invalid icon diagnostic is once per identity");
+
+var missingRecipeDiagnostics = new RecordingDiagnosticSink();
+var missingRecipeState = new PinnedRecipeState(missingRecipeDiagnostics);
+missingRecipeState.Toggle(404);
+var missingRecipePanelAdapter = new RecordingPanelUiAdapter();
+using (var missingRecipePanel = new TrackerPanelUiBoundary(missingRecipePanelAdapter))
+using (var slots = new RecipeIconSlotPresentation(missingRecipeState, new RecordingRecipeIconResolver(), missingRecipePanel, missingRecipeDiagnostics))
+{
+    Check(missingRecipePanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "missing-recipe panel initializes");
+    Check(slots.TryInitialize() && slots.TryRefresh(), "missing recipe fails softly");
+    CheckRecipeOrder(missingRecipeState.RecipeIds, "missing recipe is removed");
+}
+
+var throwingResolverDiagnostics = new RecordingDiagnosticSink();
+var throwingResolverState = new PinnedRecipeState(throwingResolverDiagnostics);
+throwingResolverState.Toggle(606);
+var throwingResolver = new RecordingRecipeIconResolver();
+throwingResolver.ThrowFor(606);
+var throwingResolverPanelAdapter = new RecordingPanelUiAdapter();
+using (var throwingResolverPanel = new TrackerPanelUiBoundary(throwingResolverPanelAdapter))
+using (var slots = new RecipeIconSlotPresentation(throwingResolverState, throwingResolver, throwingResolverPanel, throwingResolverDiagnostics))
+{
+    Check(throwingResolverPanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "throwing-resolver panel initializes");
+    Check(slots.TryInitialize() && slots.TryRefresh(), "throwing recipe resolver fails softly");
+    CheckRecipeOrder(throwingResolverState.RecipeIds, "throwing recipe resolver removes invalid identity");
+}
+
+var unavailableSlotPanelAdapter = new RecordingPanelUiAdapter { CreateResult = false };
+var unavailableSlotDiagnostics = new RecordingDiagnosticSink();
+using (var unavailableSlotPanel = new TrackerPanelUiBoundary(unavailableSlotPanelAdapter))
+using (var slots = new RecipeIconSlotPresentation(new PinnedRecipeState(unavailableSlotDiagnostics), new RecordingRecipeIconResolver(), unavailableSlotPanel, unavailableSlotDiagnostics))
+{
+    Check(!unavailableSlotPanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "unavailable slot host fails softly");
+    Check(!slots.TryInitialize(), "recipe-icon slots remain unavailable without panel host");
+    Check(!slots.TryRefresh(), "unavailable recipe-icon slots remain inert");
+}
+Check(unavailableSlotDiagnostics.Records.Count(record => record.Message == "recipe-icon-slots action=disable reason=panel-unavailable") == 1, "unavailable slot host is diagnosed once");
+
+var failedSlotDiagnostics = new RecordingDiagnosticSink();
+var failedSlotState = new PinnedRecipeState(failedSlotDiagnostics);
+failedSlotState.Toggle(505);
+var failedSlotResolver = new RecordingRecipeIconResolver();
+failedSlotResolver.Add(505);
+var failedSlotPanelAdapter = new RecordingPanelUiAdapter { IconApplyResult = false };
+using (var failedSlotPanel = new TrackerPanelUiBoundary(failedSlotPanelAdapter))
+{
+    Check(failedSlotPanel.TryInitialize(PanelGeometry.Create(0f, 0f)), "failed-slot panel initializes");
+    using (var slots = new RecipeIconSlotPresentation(failedSlotState, failedSlotResolver, failedSlotPanel, failedSlotDiagnostics))
+    {
+        Check(slots.TryInitialize(), "failed-slot presentation initializes");
+        Check(!slots.TryRefresh(), "slot UI failure disables only slot presentation");
+        Check(!slots.IsAvailable, "failed slot presentation becomes inert");
+        Check(!slots.TryRefresh(), "released slot presentation remains inert");
+    }
+    Check(failedSlotPanelAdapter.IconReleaseCalls == 1, "failed slot resources release once");
+    Check(failedSlotPanel.IsAvailable, "failed slots do not disable panel shell");
+    Check(failedSlotPanel.TryApplyVisibility(true), "panel shell remains usable after slot failure");
+}
+
+var slotRecords = slotDiagnostics.Records.Where(record => record.Message.StartsWith("recipe-icon-slots action=", StringComparison.Ordinal)).ToList();
+Check(slotRecords.Any(record => record.Message == "recipe-icon-slots action=initialize"), "recipe-icon diagnostics record initialization");
+Check(slotRecords.Any(record => record.Message == "recipe-icon-slots action=refresh order=[303,202,101]"), "recipe-icon diagnostics record bounded slot order");
+Check(slotRecords.Any(record => record.Message == "recipe-icon-slots action=release"), "recipe-icon diagnostics record release");
+Check(slotRecords.All(record => record.Level == TrackerDiagnosticLevel.Debug), "recipe-icon diagnostics use Debug level");
+Check(slotRecords.All(record => record.Message.Length < 128), "recipe-icon diagnostics remain bounded");
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -367,7 +503,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -432,6 +568,16 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
 
     public bool? LastVisibility { get; private set; }
 
+    public bool IconApplyResult { get; set; } = true;
+
+    public int IconApplyCalls { get; private set; }
+
+    public int IconReleaseCalls { get; private set; }
+
+    public int LastRecipeIconCount { get; private set; }
+
+    public IReadOnlyList<int> LastRecipeIconIds { get; private set; } = Array.Empty<int>();
+
     public bool TryCreate()
     {
         CreateCalls++;
@@ -461,9 +607,64 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
         return true;
     }
 
+    public bool TryApplyRecipeIcons(RecipeIconSlot[] slots, int count)
+    {
+        IconApplyCalls++;
+        if (!IconApplyResult)
+        {
+            return false;
+        }
+
+        LastRecipeIconCount = count;
+        var ids = new int[count];
+        for (var index = 0; index < count; index++)
+        {
+            ids[index] = slots[index].RecipeId;
+        }
+
+        LastRecipeIconIds = ids;
+        return true;
+    }
+
+    public void ReleaseRecipeIcons()
+    {
+        IconReleaseCalls++;
+    }
+
     public void Release()
     {
         ReleaseCalls++;
+    }
+}
+
+internal sealed class RecordingRecipeIconResolver : IRecipeIconResolver
+{
+    private readonly Dictionary<int, RecipeIconHandle> icons = new Dictionary<int, RecipeIconHandle>();
+    private readonly HashSet<int> throwingRecipeIds = new HashSet<int>();
+
+    public void Add(int recipeId)
+    {
+        icons[recipeId] = new RecipeIconHandle(new object());
+    }
+
+    public void AddUnavailableIcon(int recipeId)
+    {
+        icons[recipeId] = new RecipeIconHandle(null!);
+    }
+
+    public void ThrowFor(int recipeId)
+    {
+        throwingRecipeIds.Add(recipeId);
+    }
+
+    public bool TryResolve(int recipeId, out RecipeIconHandle icon)
+    {
+        if (throwingRecipeIds.Contains(recipeId))
+        {
+            throw new InvalidOperationException("Unavailable recipe lookup.");
+        }
+
+        return icons.TryGetValue(recipeId, out icon);
     }
 }
 

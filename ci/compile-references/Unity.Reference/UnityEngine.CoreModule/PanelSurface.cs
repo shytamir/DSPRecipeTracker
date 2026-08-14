@@ -61,6 +61,13 @@ namespace UnityEngine
         }
     }
 
+    public class ScriptableObject : Object
+    {
+        public ScriptableObject()
+        {
+        }
+    }
+
     public class Behaviour : Component
     {
         public Behaviour()

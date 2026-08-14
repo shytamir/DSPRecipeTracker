@@ -12,6 +12,45 @@ public class RecipeProto : Proto
     private RecipeProto()
     {
     }
+
+    public UnityEngine.Sprite iconSprite
+    {
+        get { return null; }
+    }
+}
+
+public class ProtoTable : UnityEngine.ScriptableObject
+{
+    protected ProtoTable()
+    {
+    }
+}
+
+public class ProtoSet<T> : ProtoTable where T : Proto
+{
+    protected ProtoSet()
+    {
+    }
+
+    public T Select(int id)
+    {
+        return null;
+    }
+}
+
+public class RecipeProtoSet : ProtoSet<RecipeProto>
+{
+    private RecipeProtoSet()
+    {
+    }
+}
+
+public static class LDB
+{
+    public static RecipeProtoSet recipes
+    {
+        get { return null; }
+    }
 }
 
 public class ManualBehaviour : UnityEngine.MonoBehaviour

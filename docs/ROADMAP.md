@@ -4,12 +4,12 @@
 
 **Status:** In progress - owner authorized on 2026-08-14
 
-**Active story:** S2-04 - Supply the exact major-interface visibility input
+**Active story:** S2-05 - Connect native recipe-icon slots to the panel
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S2-04 only
+**Implementation authorization:** S2-05 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,7 +17,7 @@ pending
 **Previous roadmap:**
 [`Bootstrap Roadmap - Safe Source Foundation`](archive/BOOTSTRAP-ROADMAP.md)
 
-The owner accepted S2-03 and activated S2-04 on 2026-08-14. Only the story
+The owner accepted S2-04 and activated S2-05 on 2026-08-15. Only the story
 identified above is authorized for implementation.
 
 **Goal:** Connect the existing panel boundary to the native Replicator and HUD
@@ -56,13 +56,13 @@ set of observations that cannot be established another way.
 
 ## Entry gates
 
-The entry gates required to activate S2-04 are satisfied:
+The entry gates required to activate S2-05 are satisfied:
 
 - the owner accepted this roadmap;
-- every decision required by S2-04 is recorded;
+- every decision required by S2-05 is recorded;
 - the repository begins from the accepted bootstrap state; and
-- S2-01 through S2-03 are owner accepted; and
-- exactly S2-04 is marked Active.
+- S2-01 through S2-04 are owner accepted; and
+- exactly S2-05 is marked Active.
 
 Later stories become Active one at a time only after the preceding dependency
 is technically validated and explicitly owner accepted. Completion never
@@ -378,8 +378,7 @@ authorized S2-04; it does not infer acceptance of later work.
 
 ### S2-04 - Supply the exact major-interface visibility input
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want the tracker hidden during the six agreed
 major interfaces without unrelated windows changing my choice.
@@ -452,13 +451,14 @@ both products passed exhaustive consumed-surface coverage against exact
 declaration-only shims. No game, loader, save, plugin, or substitute runtime
 was started or changed.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S2-05. Live window state remains unvalidated until the later
-meaningful owner gate.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+authorized S2-05; it does not infer acceptance of later work. Live window
+state remains unvalidated until the later meaningful owner gate.
 
 ### S2-05 - Connect native recipe-icon slots to the panel
 
-**Status:** Proposed - depends on S2-01
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want my ordered pins represented by recognizable
 native recipe icons in the tracker shell.
@@ -490,6 +490,67 @@ native recipe icons in the tracker shell.
 and source review pass. Review confirms direct `RecipeProto.iconSprite` use and
 separation of resolution, tracker state, and Unity ownership. Live composition,
 dragging, containment, and cleanup remain unvalidated.
+
+**Implementation result:**
+
+- `UnityRecipeIconResolver` performs the exact direct lookup
+  `LDB.recipes.Select(recipeId)` and reads only `RecipeProto.iconSprite`. It
+  does not inspect recipe outputs, choose an output item, navigate, or attach
+  input behavior.
+- `RecipeIconSlotPresentation` resolves the current ordered pins into at most
+  three opaque icon handles. The UI-independent synchronizer owns no Unity
+  object and delegates invalid-identity removal to `PinnedRecipeState`.
+- A missing recipe, missing sprite, or failed lookup removes only that identity
+  through `RemoveUnavailable`, preserves valid relative order, and reports the
+  identity once. Unchanged slot order suppresses UI work and refresh logging.
+- `TrackerPanelUiBoundary` accepts the resolved slot frame without taking over
+  recipe resolution. Slot application or cleanup failure is isolated from the
+  panel shell, its visibility, and its existing clamped drag boundary.
+- `UnityTrackerPanelAdapter` lazily creates three tracker-owned 52-by-52
+  non-raycasting `Image` slots in fixed ordered rows. The panel background
+  remains the raycasting containment surface, and the panel boundary retains
+  its clamped drag-application path. Slot UI cannot pin, unpin, navigate, or
+  pass clicks through independently.
+- Partial creation and normal shutdown destroy only slot-owned objects once.
+  A failed slot layer becomes inert while the panel shell remains available.
+- Bounded Debug diagnostics record initialize/release, changed recipe-ID order,
+  one failure per invalid identity, and isolated slot disablement. They contain
+  no names, recipe payloads, icon data, or other large dumps.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+.\scripts\validate\Validate-S2-05.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>'
+
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S1-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 11 `
+  -SourceRevision $revision
+```
+
+Focused tests covered ordered three-slot synchronization, unchanged
+suppression, unpinning, direct identity treatment for a multiple-output recipe,
+missing recipe and sprite removal, preserved valid order, repeated invalid
+identity suppression, resolver exceptions, unavailable panel hosts, isolated
+slot-UI failure, inert post-release behavior, one-time cleanup, clamped drag
+pass-through, input containment, and bounded Debug diagnostics. Read-only
+metadata validation confirmed the hash-matched static `LDB.recipes` getter,
+`RecipeProtoSet -> ProtoSet<RecipeProto>` inheritance,
+`ProtoSet<T>.Select(int)`, and the public `RecipeProto.iconSprite` getter.
+Local and Hosted Release builds completed with zero warnings and zero errors;
+both products passed exhaustive consumed-surface coverage against exact
+declaration-only shims. Static review rejected output arrays, item lookup,
+navigation, click listeners, Harmony, and Unity dependencies in the slot
+synchronizer. No game, loader, save, plugin, or substitute runtime was started
+or changed.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S2-06. Live icon composition, dragging, containment, and cleanup
+remain unvalidated until the later meaningful owner gate.
 
 ### S2-06 - Add paired visibility controls and complete orchestration
 

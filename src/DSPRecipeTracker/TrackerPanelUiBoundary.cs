@@ -12,6 +12,10 @@ namespace DSPRecipeTracker
 
         bool TryApplyVisibility(bool visible);
 
+        bool TryApplyRecipeIcons(RecipeIconSlot[] slots, int count);
+
+        void ReleaseRecipeIcons();
+
         void Release();
     }
 
@@ -93,6 +97,40 @@ namespace DSPRecipeTracker
             catch (Exception)
             {
                 return FailSoftly();
+            }
+        }
+
+        public bool TryApplyRecipeIcons(RecipeIconSlot[] slots, int count)
+        {
+            if (!available || slots == null || count < 0 || count > PinnedRecipeState.Capacity)
+            {
+                return false;
+            }
+
+            try
+            {
+                return adapter.TryApplyRecipeIcons(slots, count);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public void ReleaseRecipeIcons()
+        {
+            if (released)
+            {
+                return;
+            }
+
+            try
+            {
+                adapter.ReleaseRecipeIcons();
+            }
+            catch (Exception)
+            {
+                // Slot cleanup remains isolated from the panel shell.
             }
         }
 

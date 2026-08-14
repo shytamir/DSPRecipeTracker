@@ -45,6 +45,14 @@
           ]
         },
         {
+          "name": "UnityEngine.ScriptableObject",
+          "baseType": "UnityEngine.Object",
+          "usage": "recipe-proto-set-inheritance",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
+        },
+        {
           "name": "UnityEngine.Behaviour",
           "baseType": "UnityEngine.Component",
           "usage": "ui-inheritance-chain",
@@ -276,8 +284,38 @@
         {
           "name": "RecipeProto",
           "baseType": "Proto",
-          "usage": "native-populated-recipe-array-element",
+          "usage": "native-populated-recipe-and-icon-source",
+          "members": [
+            { "kind": "method", "name": "get_iconSprite", "signature": "UnityEngine.Sprite()" }
+          ]
+        },
+        {
+          "name": "ProtoTable",
+          "baseType": "UnityEngine.ScriptableObject",
+          "usage": "recipe-proto-set-inheritance",
           "members": []
+        },
+        {
+          "name": "ProtoSet`1",
+          "baseType": "ProtoTable",
+          "usage": "recipe-identity-lookup",
+          "members": [
+            { "kind": "method", "name": "Select", "signature": "!0(System.Int32)" }
+          ]
+        },
+        {
+          "name": "RecipeProtoSet",
+          "baseType": "ProtoSet`1<RecipeProto>",
+          "usage": "recipe-identity-lookup",
+          "members": []
+        },
+        {
+          "name": "LDB",
+          "baseType": "System.Object",
+          "usage": "recipe-proto-set-access",
+          "members": [
+            { "kind": "method", "name": "get_recipes", "signature": "RecipeProtoSet()", "isStatic": true }
+          ]
         },
         {
           "name": "ManualBehaviour",
