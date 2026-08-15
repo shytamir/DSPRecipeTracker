@@ -13,9 +13,10 @@ Use these exact development artifacts produced by the Sprint 3 package gate:
 - package: `artifacts/package/0.1.306/DSPRecipeTracker-0.1.306.zip`
 - build identity: `artifacts/package/0.1.306/build-info.json`
 
-Confirm that `build-info.json` reports semantic version `0.1.306`, the source
-revision supplied with the handoff, and `referenceMode` `Local`. This is a
-development test build, not a supported release or publication candidate.
+Confirm that `build-info.json` reports semantic version `0.1.306`, source
+revision `ffd18688a3eff41d776204ebfcdcd4de21e15ab1`, diagnostic label
+`0.1.306.ffd18688a3ef`, and `referenceMode` `Local`. This is a development test
+build, not a supported release or publication candidate.
 
 ## Prerequisites and safe setup
 

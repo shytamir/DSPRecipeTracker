@@ -9,10 +9,11 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 through S3-05 are owner accepted, while S3-06 is
-Active with implementation complete and exact-revision technical validation
-pending. Runtime execution and runtime validation remain outside the current
-source-only authorization.
+owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus the
+Source-ready and Package-inspected gates pass for source revision
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains pending
+owner-performed runtime validation and later explicit owner review. Runtime
+execution remains outside the current agent authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
@@ -190,10 +191,11 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 through S3-05 are owner accepted, while S3-06 is
-Active with implementation complete and exact-revision technical validation
-pending. Sprint completion remains unavailable pending the technical handoff
-and owner-performed exit gates.
+is owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus
+the Source-ready and Package-inspected gates pass for source revision
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains
+unavailable pending the owner-performed Behavioral-ready gate and explicit
+Owner-reviewed acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those

@@ -15,11 +15,12 @@ complete and owner accepted. Its Source-ready, Package-inspected, and
 Owner-reviewed exit gates passed. Sprint 2, S2-01 through S2-06, and its three
 exit gates are complete and owner accepted. Its Source-ready and Package-
 inspected gates pass for commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`.
-The Sprint 3 roadmap is owner authorized and implementation is underway.
-S3-01 through S3-05 are owner accepted. S3-06 is the only Active story; its
-implementation is complete and exact-revision technical validation is pending.
-Sprint completion remains unavailable pending the technical handoff, owner-
-performed Behavioral-ready gate, and explicit owner review.
+The Sprint 3 roadmap is owner authorized and implementation is complete.
+S3-01 through S3-05 are owner accepted. S3-06 and the Source-ready and Package-
+inspected gates pass for source revision
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains
+unavailable pending the owner-performed Behavioral-ready gate and explicit
+Owner-reviewed acceptance.
 The source contains the minimal plugin
 skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic

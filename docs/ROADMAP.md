@@ -2,14 +2,14 @@
 
 ## Status and authority
 
-**Status:** Authorized - implementation underway
+**Status:** Implementation complete - owner validation pending
 
-**Active story:** S3-06 - Complete orchestration and prepare the owner checkpoint
+**Active story:** None - S3-06 technical handoff complete
 
-**Active story state:** Implementation complete; exact-revision technical
-validation pending
+**Active story state:** Source-ready and Package-inspected passed;
+Behavioral-ready pending owner validation
 
-**Implementation authorization:** S3-06 only
+**Implementation authorization:** None - technical handoff complete
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -18,9 +18,11 @@ validation pending
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
 The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-05
-are owner accepted. Implementation is underway with S3-06 as the only Active
-story. Sprint completion remains unavailable pending its technical handoff,
-the owner-performed Behavioral-ready gate, and explicit owner review.
+are owner accepted. S3-06 and the Source-ready and Package-inspected gates are
+technically complete for source revision
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains
+unavailable pending the owner-performed Behavioral-ready gate and explicit
+Owner-reviewed acceptance.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -608,8 +610,7 @@ activated S3-06; it does not complete Sprint 3 or satisfy a sprint exit gate.
 
 ### S3-06 - Complete orchestration and prepare the owner checkpoint
 
-**Status:** Active - implementation complete; exact-revision technical
-validation pending
+**Status:** Complete - technical acceptance gate passed on 2026-08-15
 
 **User story:** As the owner, I want one coherent testable prototype and a
 small, complete procedure for judging only the remaining live behavior.
@@ -675,6 +676,29 @@ procedure are ready for owner review. Agents do not run the procedure.
 
 **Owner procedure:** [`Sprint 3 Owner Validation Procedure`](OWNER-VALIDATION.md)
 
+**Technical validation:** Passed on 2026-08-15 for source revision
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1` with:
+
+```powershell
+.\scripts\validate\Validate-S3-06.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 306 `
+  -SourceRevision ffd18688a3eff41d776204ebfcdcd4de21e15ab1
+```
+
+The complete S3-01 through S3-06 chain passed. Deterministic integration tests
+covered each feature unavailable in isolation, exact availability reporting,
+ordered one-time cleanup, and inert callbacks. Local and Hosted Release builds
+completed with zero warnings and zero errors, and exhaustive consumed-surface
+coverage passed. Static review confirmed the accepted architecture, read-only
+game-state boundary, bounded diagnostics, and complete owner procedure. No
+plugin was installed or executed, and no game or substitute runtime was
+started.
+
+**Owner acceptance:** Not inferred. S3-06 hands the testable build into the
+pending owner-performed Behavioral-ready gate; Sprint 3 remains incomplete.
+
 ## Sequence and dependencies
 
 ```text
@@ -702,7 +726,8 @@ integration. Tracker-icon navigation remains outside the MVP.
 
 ### Source-ready
 
-**Status:** Pending implementation
+**Status:** Passed on 2026-08-15 for
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`
 
 - Every included Sprint 3 story meets its definition of done. S3-01 through
   S3-05 are explicitly owner accepted; S3-06 is the technical handoff into the
@@ -719,9 +744,15 @@ integration. Tracker-icon navigation remains outside the MVP.
   behavior, excludes tracker navigation, and limits display claims to the
   recorded automated and owner-performed cases.
 
+Validated with `Validate-Sprint3-SourceReady.ps1` using build number 306. The
+complete focused chain, Local/Hosted Release builds, exact shim coverage,
+architecture/static checks, clean-revision check, and tracked-output audit
+passed. This gate does not establish live behavior.
+
 ### Package-inspected
 
-**Status:** Pending implementation
+**Status:** Passed on 2026-08-15 for
+`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`
 
 - The real version-aligned Release output passes Local and Hosted static
   package inspection.
@@ -731,6 +762,13 @@ integration. Tracker-icon navigation remains outside the MVP.
   screenshot, secret, or player-specific path enters the archive.
 - Metadata truthfully describes the development artifact and makes no
   unsupported installed, compatibility, publication, or release claim.
+
+Validated with `Validate-Sprint3-PackageInspected.ps1` using build number 306.
+Hosted and Local package construction and static inspection passed. The final
+retained owner-test files are `artifacts/package/0.1.306/DSPRecipeTracker.dll`
+and `artifacts/package/0.1.306/DSPRecipeTracker-0.1.306.zip`; `build-info.json`
+records `referenceMode` `Local` and the validated source revision. The archive
+contains only the three root package assets and the intended plugin DLL.
 
 ### Behavioral-ready
 
