@@ -33,6 +33,7 @@
       <_DSPRecipeTrackerRequiredReference Include="$(DSPBepInExReferencePath)" />
       <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityEngineReferencePath)" />
       <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityCoreModuleReferencePath)" />
+      <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityTextRenderingModuleReferencePath)" />
       <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityUIModuleReferencePath)" />
       <_DSPRecipeTrackerRequiredReference Include="$(DSPUnityUIReferencePath)" />
     </ItemGroup>

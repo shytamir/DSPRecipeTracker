@@ -4,12 +4,12 @@
 
 **Status:** Authorized - implementation underway
 
-**Active story:** S3-02 - Bind read-only DSP recipe and inventory data
+**Active story:** S3-03 - Render complete product and direct-ingredient rows
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S3-02 only
+**Implementation authorization:** S3-03 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,9 +17,9 @@ pending
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 is owner
-accepted. Implementation is underway with S3-02 as the only Active story;
-later stories remain blocked until separately activated.
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 and S3-02 are
+owner accepted. Implementation is underway with S3-03 as the only Active
+story; later stories remain blocked until separately activated.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -212,8 +212,7 @@ activated S3-02; it does not activate any later story.
 
 ### S3-02 - Bind read-only DSP recipe and inventory data
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted
 
 **User story:** As a player, I want tracker values to come from the current DSP
 recipe and Icarus inventory state without the mod changing either.
@@ -311,14 +310,15 @@ selection, navigation, reflection, crafting, inventory mutation, persistence,
 Unity layout, or visibility ownership. No plugin was installed or executed,
 and no game or substitute runtime was started.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S3-03.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+activated S3-03; it does not activate any later story.
 
 ## Epic 2 - Native-composed tracker rows
 
 ### S3-03 - Render complete product and direct-ingredient rows
 
-**Status:** Proposed - blocked by S3-02
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want each pinned recipe shown with its native
 product icon, direct ingredients, counts, sufficiency, and any machine-only
@@ -366,6 +366,55 @@ shim validation, and source review pass. Static inspection confirms native-
 resource reuse, non-interactive row behavior, fixed-panel containment, and
 separation of runtime data, presentation modeling, and Unity composition.
 Visual suitability remains deferred to the final owner gate.
+
+**Implementation result:**
+
+- `RecipeRowPresentation` converts complete S3-01 frames into ordered row
+  views with invariant `current / required` text, numeric red/green treatment,
+  and machine-only copy beneath the product.
+- `UnityRecipeRowUiAdapter` owns three fixed rows inside the accepted tracker
+  panel. Each row contains one non-raycasting native product sprite and one
+  through six non-raycasting native ingredient sprites with native-font count
+  text; unused cells remain inactive.
+- The six-input layout remains inside the fixed 360 by 252 panel. The exact
+  recipe-75 input order and every supported ingredient count from one through
+  six are covered deterministically.
+- Unsupported or malformed row shapes and missing product, ingredient, font,
+  or host resources suppress the affected presentation without changing pin
+  state. Initialization, row failures, retries, and one-time cleanup are
+  isolated and bounded.
+- Changed frames emit concise recipe/count and sufficiency summaries; unchanged
+  frames are silent and resource failures are reported once per bounded recipe
+  and resource class.
+- The row composition boundary is source-ready but is not yet connected to
+  live adapter collection or refresh orchestration; that connection remains
+  the explicit scope of S3-04.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S3-03.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 309 `
+  -SourceRevision $revision
+```
+
+The deterministic suite covers three-row and ingredient ordering, invariant
+comparison text, treatment state, machine-only copy, every one-through-six
+ingredient shape, exact recipe-75 inputs, containment, unsupported and
+malformed shapes, missing resources, failure isolation, retry recovery,
+cleanup, bounded diagnostics, unchanged-frame silence, and inert release.
+Local and Hosted Release builds completed with zero warnings and zero errors;
+the exact consumed `UnityEngine.UI.Text` and `UnityEngine.Font` signatures and
+all declaration-only shim coverage passed. Static review found no navigation,
+pinning, crafting, inventory mutation, runtime collection, reflection, or
+Harmony ownership in the Unity row adapter. No plugin was installed or
+executed, and no game or substitute runtime was started.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S3-04.
 
 ### S3-04 - Refresh live ingredient and inventory presentation
 

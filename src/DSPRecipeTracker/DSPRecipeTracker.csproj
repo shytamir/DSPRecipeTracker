@@ -15,11 +15,13 @@
     <Reference Include="BepInEx" HintPath="$(DSPBepInExReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine" HintPath="$(DSPUnityEngineReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine.CoreModule" HintPath="$(DSPUnityCoreModuleReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine.TextRenderingModule" HintPath="$(DSPUnityTextRenderingModuleReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine.UIModule" HintPath="$(DSPUnityUIModuleReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="UnityEngine.UI" HintPath="$(DSPUnityUIReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Local'" Include="Assembly-CSharp" HintPath="$(DSPAssemblyCSharpReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine" HintPath="$(DSPUnityEngineHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.CoreModule" HintPath="$(DSPUnityCoreModuleHostedReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.TextRenderingModule" HintPath="$(DSPUnityTextRenderingModuleHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.UI" HintPath="$(DSPUnityUIHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="Assembly-CSharp" HintPath="$(DSPAssemblyCSharpHostedReferencePath)" Private="false" />
   </ItemGroup>

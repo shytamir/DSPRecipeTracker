@@ -194,6 +194,18 @@
       ]
     },
     {
+      "name": "UnityEngine.TextRenderingModule",
+      "shimProject": "Unity.Reference/UnityEngine.TextRenderingModule/UnityEngine.TextRenderingModule.Reference.csproj",
+      "types": [
+        {
+          "name": "UnityEngine.Font",
+          "baseType": "UnityEngine.Object",
+          "usage": "native-tracker-row-text-font",
+          "members": []
+        }
+      ]
+    },
+    {
       "name": "UnityEngine.UI",
       "shimProject": "Unity.Reference/UnityEngine.UI/UnityEngine.UI.Reference.csproj",
       "types": [
@@ -251,6 +263,16 @@
           "members": [
             { "kind": "method", "name": "get_sprite", "signature": "UnityEngine.Sprite()" },
             { "kind": "method", "name": "set_sprite", "signature": "System.Void(UnityEngine.Sprite)" }
+          ]
+        },
+        {
+          "name": "UnityEngine.UI.Text",
+          "baseType": "UnityEngine.UI.MaskableGraphic",
+          "usage": "tracker-row-count-and-machine-warning-copy",
+          "members": [
+            { "kind": "method", "name": "set_font", "signature": "System.Void(UnityEngine.Font)" },
+            { "kind": "method", "name": "set_text", "signature": "System.Void(System.String)" },
+            { "kind": "method", "name": "set_fontSize", "signature": "System.Void(System.Int32)" }
           ]
         },
         {

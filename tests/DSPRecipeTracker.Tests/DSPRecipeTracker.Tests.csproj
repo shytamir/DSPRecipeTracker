@@ -15,6 +15,7 @@
     <Compile Include="..\..\src\DSPRecipeTracker\RecipeGridTreatment.cs" Link="Product\RecipeGridTreatment.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\RecipeIconSlots.cs" Link="Product\RecipeIconSlots.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\RecipePresentation.cs" Link="Product\RecipePresentation.cs" />
+    <Compile Include="..\..\src\DSPRecipeTracker\RecipeRowPresentation.cs" Link="Product\RecipeRowPresentation.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\RecipeDataSource.cs" Link="Product\RecipeDataSource.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\MajorInterfaceVisibility.cs" Link="Product\MajorInterfaceVisibility.cs" />
     <Compile Include="..\..\src\DSPRecipeTracker\PluginMetadata.cs" Link="Product\PluginMetadata.cs" />

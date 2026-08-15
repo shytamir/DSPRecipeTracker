@@ -9,11 +9,11 @@ complete and owner accepted. Its three exit gates passed. Sprint 2, S2-01
 through S2-06, and its three exit gates are also complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
-authorized and implementation is underway. S3-01 is owner accepted. S3-02 is
-implemented and technically validated and remains the only Active story pending
-owner acceptance; no later Sprint 3 story is authorized. The source tree
-contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
-pipeline, UI-independent panel geometry and visibility policy, an inert
+authorized and implementation is underway. S3-01 and S3-02 are owner accepted.
+S3-03 is implemented and technically validated and remains the only Active
+story pending owner acceptance; no later Sprint 3 story is authorized. The
+source tree contains the minimal BepInEx identity/lifecycle/logging skeleton,
+static package pipeline, UI-independent panel geometry and visibility policy, an inert
 compile-time Unity panel boundary, deterministic transient pin state, and an
 isolated native Replicator input adapter, independent native recipe-grid
 treatment model and adapter, exact fail-closed major-interface visibility

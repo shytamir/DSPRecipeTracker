@@ -9,10 +9,10 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 is owner accepted, while S3-02 is implemented and
-technically validated and remains Active pending owner acceptance. Runtime
-execution and runtime validation remain outside the current source-only
-authorization.
+owner authorized; S3-01 and S3-02 are owner accepted, while S3-03 is
+implemented and technically validated and remains Active pending owner
+acceptance. Runtime execution and runtime validation remain outside the
+current source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
@@ -190,8 +190,9 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 is owner accepted, while S3-02 is implemented and
-technically validated and remains Active pending owner acceptance.
+is owner authorized; S3-01 and S3-02 are owner accepted, while S3-03 is
+implemented and technically validated and remains Active pending owner
+acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -230,6 +231,7 @@ Installed behavior remains unvalidated.
 |       |-- Unity.Reference/
 |       |   |-- UnityEngine/
 |       |   |-- UnityEngine.CoreModule/
+|       |   |-- UnityEngine.TextRenderingModule/
 |       |   `-- UnityEngine.UI/
 |       `-- surface-inventory.json
 |-- Directory.Build.props
@@ -272,7 +274,8 @@ Installed behavior remains unvalidated.
 |       |-- Validate-S2-05.ps1
 |       |-- Validate-S2-06.ps1
 |       |-- Validate-S3-01.ps1
-|       `-- Validate-S3-02.ps1
+|       |-- Validate-S3-02.ps1
+|       `-- Validate-S3-03.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

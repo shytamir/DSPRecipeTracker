@@ -145,6 +145,28 @@ namespace UnityEngine.UI
         }
     }
 
+    public class Text : MaskableGraphic
+    {
+        protected Text()
+        {
+        }
+
+        public UnityEngine.Font font
+        {
+            set { }
+        }
+
+        public string text
+        {
+            set { }
+        }
+
+        public int fontSize
+        {
+            set { }
+        }
+    }
+
     public class RawImage : MaskableGraphic
     {
         protected RawImage()

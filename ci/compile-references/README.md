@@ -4,12 +4,10 @@ This directory is the fixed source root for declaration-only DSP and Unity
 compile-reference shims used by hosted builds.
 
 The `UnityEngine` facade supplies the transitive `MonoBehaviour` declaration
-required by BepInEx. The Unity shims declare the exact panel and Replicator
-event and rendering surface consumed by production. `DSPGame.Reference`
-declares only the Replicator host, populated recipe type, recipe identity,
-public native background/icon fields, the exact six-window active-state
-surface, and direct recipe identity-to-icon lookup needed by S2-02 through
-S2-05.
+required by BepInEx. The Unity shims declare the exact panel, Replicator,
+image, text, and font surface consumed by production. `DSPGame.Reference`
+declares only the consumed Replicator, visibility, recipe, item-icon, player,
+and Icarus-inventory surface needed through S3-03.
 Private reflection bindings are inventoried separately and confirmed through
 bounded read-only inspection; they are not misrepresented as public
 compile-time members.
