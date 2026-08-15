@@ -43,6 +43,8 @@ Preserve these invariants unless the task explicitly changes one:
 - only unlocked recipes may be pinned;
 - at most three recipes are pinned, and a fourth replaces the bottom entry;
 - crafting does not remove a pin;
+- tracker product and ingredient representations remain non-interactive in the
+  MVP; tracker navigation is out of scope;
 - unavailable or renamed runtime evidence fails softly;
 - runtime collection, tracker state, presentation modeling, and Unity UI stay
   separate;

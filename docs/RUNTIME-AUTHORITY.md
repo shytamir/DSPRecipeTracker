@@ -325,6 +325,97 @@ the exhaustive validator covers every additional public external member in
 the declaration-only shims. This establishes source compatibility and cleanup
 paths, not live icon suitability, interaction, layout, or shutdown behavior.
 
+### Sprint 3 planning authority refresh
+
+On 2026-08-15, the owner-supplied
+`dsp_phase1_end_products_v1_0.zip` was available for read-only reinspection.
+Its SHA-256 was
+`282720387dffc1e5fea4bffd72f0aa405392c545c05989e554603059e45ee3ae`,
+matching the recorded bundle identity. Its canonical dataset again reported a
+passing validation and assembly SHA-256
+`ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85`.
+The installed `Assembly-CSharp.dll` and the recorded Unity module set were also
+rehashed and matched this document before metadata and IL inspection. No game,
+Unity, BepInEx, plugin, or substitute runtime was loaded.
+This reinspection does not reinstate the bundle as a retained repository or
+shared project input.
+
+The 161 recipe nodes and 441 exact `recipe_input` edges establish this direct-
+ingredient cardinality for the supported snapshot:
+
+| Direct inputs | Recipe count |
+| ---: | ---: |
+| 1 | 27 |
+| 2 | 43 |
+| 3 | 42 |
+| 4 | 44 |
+| 5 | 4 |
+| 6 | 1 |
+
+All 161 recipes have at least one direct input and no recipe/item pair is
+duplicated. The sole six-input maximum is recipe ID `75`, Universe Matrix,
+with exact quantity-one inputs `6001`, `6002`, `6003`, `6004`, `6005`, and
+`1122`. The four five-input recipes are IDs `39`, `72`, `119`, and `128`.
+Sprint 3 row modeling and layout must therefore cover one through six inputs;
+four is not the supported maximum.
+
+Read-only metadata inspection confirmed the proposed presentation-data surface:
+
+| Declaring type | Exact public member |
+| --- | --- |
+| `RecipeProto` | fields `ERecipeType Type`, `System.Boolean Handcraft`, `System.Int32[] Items`, and `System.Int32[] ItemCounts` |
+| `RecipeProto` | getters `UnityEngine.Sprite iconSprite` and `System.String madeFromString` |
+| `LDB` | static getter `ItemProtoSet items` |
+| `ItemProtoSet` | base type `ProtoSet<ItemProto>` |
+| `ItemProto` | getter `UnityEngine.Sprite iconSprite` |
+| `GameMain` | static getter `Player mainPlayer` |
+| `Player` | getter `StorageComponent package` |
+| `StorageComponent` | `System.Int32 GetItemCount(System.Int32)` |
+
+`RecipeProto.madeFromString` switches on `RecipeProto.Type`, returns `"-"` for
+the none value, returns localized labels for Smelt, Chemical, Refine, Assemble,
+Particle, Exchange, PhotonStore, Fractionate, and Research, and returns a
+localized Unknown label for other values. Every machine-only recipe in the
+Phase 1 dataset uses one of Smelt, Chemical, Refine, Assemble, Particle,
+Fractionate, or Research. The supported baseline therefore needs no independent
+production-category table or tracker-owned machine-category fallback.
+
+The matching assembly exposes public static
+`UICanvasScalerHandler.GetSuggestUILayoutHeight()` and
+`GetSuggestUILayoutHeight(System.Int32)`. Inspection of the integer overload's
+IL confirms these selected Auto cases:
+
+| Resolution height | Auto UI layout height | Resulting height scale |
+| ---: | ---: | ---: |
+| 1080 | 1080 | 1 |
+| 1440 | 1440 | 1 |
+| 2160 | 1080 | 2 |
+
+`UICanvasScalerHandler.SetCanvas()` applies the selected layout height to a
+height-matched `CanvasScaler` reference resolution. The retained feasibility
+probe independently recorded `Screen.height = 2160` and
+`UIRoot.overlayCanvas.scaleFactor = 2`, consistent with the inspected Auto
+calculation.
+
+The narrow drag and bounds surface is public and requires no new private DSP
+binding or Harmony patch:
+
+| Assembly | Declaring type | Exact member |
+| --- | --- | --- |
+| `UnityEngine.UI` | `PointerEventData` | getter `UnityEngine.Vector2 delta` |
+| `UnityEngine.UI` | `EventTriggerType` | literal `Drag = 5` |
+| `UnityEngine.UI` | `EventTrigger.Entry` | public constructor and public fields `EventTriggerType eventID` and `EventTrigger.TriggerEvent callback` |
+| `UnityEngine.UI` | `EventTrigger.TriggerEvent` | public constructor; inherits `UnityEvent<BaseEventData>` |
+| `UnityEngine.UIModule` | `Canvas` | getter `System.Single scaleFactor` |
+| `UnityEngine.CoreModule` | `RectTransform` | getter `UnityEngine.Rect rect` |
+| `UnityEngine.CoreModule` | `Rect` | getters `System.Single width` and `System.Single height` |
+
+Production can convert screen-pixel pointer deltas through the live overlay-
+canvas scale factor and clamp against the actual parent rectangle in UI-layout
+units. It does not need to reproduce DSP's Auto algorithm or subscribe to a
+global resolution event. The existing tracker-owned panel object can own and
+release its drag callback with the rest of its Unity resources.
+
 ## Repository boundary
 
 The former retained authority inputs were removed. Tracked documentation may

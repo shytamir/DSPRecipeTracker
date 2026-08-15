@@ -8,8 +8,9 @@
 complete and owner accepted. Its three exit gates passed. Sprint 2, S2-01
 through S2-06, and its three exit gates are also complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
-`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The repository is planning
-pending with no active implementation authorization. The source tree
+`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
+authorized and implementation is underway. S3-01 is the only Active story and
+is pending implementation; no later Sprint 3 story is authorized. The source tree
 contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
 pipeline, UI-independent panel geometry and visibility policy, an inert
 compile-time Unity panel boundary, deterministic transient pin state, and an
@@ -141,6 +142,8 @@ Replicator integration and tracker UI
   refreshes.
 - Read direct ingredient IDs and counts only.
 - Read Icarus inventory counts without moving or reserving items.
+- The supported baseline contains one through six direct ingredients per
+  recipe; deterministic modeling and fixed-row layout cover that full range.
 - Use the game's hand-craftability and localized production-category values
   for machine-only presentation.
 - Reuse live recipe and item icons rather than copying game art.
@@ -180,10 +183,13 @@ Replicator integration and tracker UI
 
 ## 6. Failure and cleanup contract
 
-- Missing recipes, output items, icons, resources, UI hosts, or members fail
-  softly.
-- Skip or remove an invalid row while preserving the relative order of valid
-  pins.
+- A missing recipe, inconsistent direct-input arrays, or missing required
+  item/icon removes that invalid pin while preserving the relative order of
+  valid pins, consistent with the accepted Sprint 2 failure rule.
+- An unavailable player/package, production-category value, presentation
+  resource, UI host, or member fails softly. Retain the pin and suppress the
+  complete affected row until valid data returns rather than showing partial or
+  invented requirements.
 - Bound repeated diagnostics by failure identity; do not emit unbounded log
   noise during refresh.
 - An unavailable integration hides or skips only the affected presentation.

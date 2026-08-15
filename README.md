@@ -8,8 +8,9 @@ direct material requirements with the contents of Icarus's inventory.
 The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
-its exit gates are also complete and owner accepted. The repository is now
-planning pending with no active implementation story. Runtime
+its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
+owner authorized; implementation is underway with S3-01 as the only Active
+story, pending implementation. Runtime
 execution and runtime validation remain outside the current source-only
 authorization.
 Future in-game validation is performed only by the owner from testable builds,
@@ -32,8 +33,8 @@ supported or published release exists yet.
   threshold.
 - Keep pins after crafting for the current play session.
 - Identify the required production building for a pinned machine-only recipe.
-- If promoted during feature development, navigate from product and ingredient
-  icons to their Replicator recipes without creating another pinning surface.
+- Keep product and ingredient icons non-interactive; tracker navigation is
+  outside the MVP.
 - Provide a fixed-size, draggable, screen-bounded tracker that captures its
   own pointer input.
 - Hide the panel when empty, when the player requests it, and while major game
@@ -81,10 +82,12 @@ The planned runtime requires:
 
 The initial feasibility baseline is DSP `0.10.34.28529`, Steam build
 `23109513`, Unity `2022.3.62f3c1`, and the exact game-assembly hash recorded in
-the runtime authority contract. Supported resolutions and UI scales will be
-selected through later initialized in-game validation. Game, Unity, and
-BepInEx assemblies remain external dependencies and are not redistributed in
-this repository.
+the runtime authority contract. Automated geometry validation covers
+1920-by-1080/Auto at UI layout height 1080 and 2560-by-1440/Auto at UI layout
+height 1440. Owner-performed runtime display validation is limited to
+3840-by-2160/Auto, which calculates to a 1080-pixel UI layout height. Game,
+Unity, and BepInEx assemblies remain external dependencies and are not
+redistributed in this repository.
 
 ## Runtime authority
 
@@ -189,8 +192,9 @@ The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
-inspected, and Owner-reviewed gates are complete and owner accepted. The
-repository is planning pending with no active implementation authorization.
+inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
+is owner authorized and implementation is underway with S3-01 as the only
+Active story, pending implementation.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those

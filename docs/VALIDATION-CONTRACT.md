@@ -10,11 +10,12 @@ pass for commit `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and the
 Owner-reviewed gate passed by explicit owner acceptance. Sprint 2, S2-01
 through S2-06, and its three exit gates are also complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
-`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The repository is planning
-pending with no active implementation authorization, and no supported release
-exists.
+`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
+authorized and implementation is underway. S3-01 is the only Active story and
+is pending implementation; no later Sprint 3 story is authorized. No supported
+release exists.
 
-**Owner review:** Accepted on 2026-08-14.
+**Owner review:** Accepted through 2026-08-15.
 
 This file governs readiness states, validation evidence, runtime authorization,
 owner acceptance, and publication claims. Product behavior comes from
@@ -124,7 +125,11 @@ Ordering, eviction, sufficiency arithmetic, visibility truth tables, package
 contents, version alignment, and other deterministic rules remain automated
 checks rather than human workload. A human procedure does not repeat them
 unless one short observation is necessary to confirm their real integration.
-Navigation is included only if the owner has promoted it into active scope.
+Tracker-icon navigation is excluded from the MVP and from its human procedure.
+Automated geometry validation covers 1920-by-1080/Auto at UI layout height
+1080 and 2560-by-1440/Auto at UI layout height 1440. The human display check is
+limited to 3840-by-2160/Auto at its calculated 1080-pixel UI layout height; no
+broader resolution or UI-scale support is inferred.
 
 ## 6. Evidence rules
 

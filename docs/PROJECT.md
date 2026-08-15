@@ -15,8 +15,9 @@ complete and owner accepted. Its Source-ready, Package-inspected, and
 Owner-reviewed exit gates passed. Sprint 2, S2-01 through S2-06, and its three
 exit gates are complete and owner accepted. Its Source-ready and Package-
 inspected gates pass for commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`.
-The repository is planning pending with no active implementation story or
-implementation authorization.
+The Sprint 3 roadmap is owner authorized and implementation is underway.
+S3-01 is the only Active story and is pending implementation; no later Sprint
+3 story is authorized.
 The source contains the minimal plugin
 skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic
@@ -27,7 +28,7 @@ paired tracker-owned visibility controls, and plain orchestration connected to
 plugin startup. Installed and in-game behavior remains unvalidated; no
 supported release exists.
 
-**Owner review:** Accepted on 2026-08-14.
+**Owner review:** Accepted through 2026-08-15.
 
 This file is the normative authority for settled product behavior and scope.
 It consolidates the product direction in
@@ -180,29 +181,26 @@ visible = hasRows && manualRequested && !majorInterfaceActive
 ### 2.9 Tracker-icon navigation
 
 Navigation from product or ingredient icons to the corresponding Replicator
-recipe has a confirmed native integration path, but it is not part of the
-current MVP baseline. It remains decision-gated for the presentation sprint.
+recipe has a confirmed native integration path, but tracker navigation is
+excluded from the MVP. Product and ingredient icons remain non-interactive
+presentation and cannot navigate, pin, or unpin.
 
-If the owner promotes navigation:
-
-- exact pinned-recipe identity is preserved when products have multiple
-  recipes;
-- the game's native Replicator navigation and unlock behavior remain
-  authoritative;
-- tracker representations may navigate but may not pin or unpin; and
-- navigation receives focused acceptance criteria.
-
-Excluding navigation does not block the core tracker MVP and must be reflected
-in public documentation and package metadata.
+The confirmed native path remains feasibility evidence for possible later
+work. Promoting navigation requires an explicit post-MVP product and roadmap
+change with focused interaction and identity criteria.
 
 ## 3. Product safety and failure behavior
 
 - DSP, Icarus inventory, crafting, factory, and save state are read-only.
 - The mod does not craft, replicate, move items, place buildings, or write
   product data to a save.
-- Missing recipes, icons, resources, or game integration fail softly.
-- An unavailable row or presentation is skipped or removed without corrupting
-  remaining pin order or blocking the Replicator.
+- A missing recipe, inconsistent direct-input data, or missing required
+  item/icon removes only that invalid pin while preserving remaining order.
+- Temporary player/package, production-category, presentation-resource, host,
+  or integration unavailability retains pins and suppresses only affected rows
+  until recovery.
+- Failure never presents partial or invented requirements, corrupts remaining
+  pin order, or blocks the Replicator.
 - Compatibility claims begin from observed evidence. The MVP promises no
   speculative support for untested game, loader, or UI-mod versions.
 
@@ -264,16 +262,18 @@ fingerprint require an explicit owner decision.
 - Automatic miner placement, geothermal placement, or other unrelated mod
   concepts retained in the historical discussion.
 
-## 7. Open product decisions and entry gates
+## 7. MVP presentation validation boundary
 
-The following are not decided by this contract:
+- Tracker-icon navigation is excluded from the MVP.
+- Deterministic geometry and scale validation covers 1920-by-1080 at Auto UI
+  layout height 1080 and 2560-by-1440 at Auto UI layout height 1440.
+- Owner-performed runtime display validation covers only 3840-by-2160 with
+  Auto scale, which calculates to a 1080-pixel UI layout height.
+- The MVP makes no resolution or UI-scale support claim beyond those explicit
+  automated and owner-performed boundaries.
 
-- inclusion or exclusion of tracker-icon navigation;
-- supported resolution and UI-scale matrix.
-
-These decisions must be recorded in the applicable roadmap story before that
-story becomes Ready. No implementation agent may invent them from installed
-plugins, historical probes, placeholder metadata, or personal preference.
+No implementation agent may broaden these boundaries from installed plugins,
+historical probes, placeholder metadata, or personal preference.
 
 ## 8. Product change control
 

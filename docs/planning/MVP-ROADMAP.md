@@ -7,7 +7,7 @@
 **Planning horizon:** Concept to working MVP prototype
 
 **Current delivery state:**
-[`Planning pending`](../ROADMAP.md)
+[`Sprint 3 - implementation underway; S3-01 active`](../ROADMAP.md)
 
 **Completed Sprint 2 roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](../archive/UI_INTEGRATION_ROADMAP.md)
@@ -20,9 +20,10 @@ Its Source-ready and Package-inspected exit gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its three exit gates are complete
 and owner accepted. Its Source-ready and Package-inspected gates pass for
-commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The repository is planning
-pending with no active implementation authorization. No broader runtime
-authorization exists.
+commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3 is owner authorized
+and implementation is underway with S3-01 as the only Active story, pending
+implementation. No later Sprint 3 story or broader runtime authorization
+exists.
 
 Agents do not perform installed, loaded-game, visual, or interaction
 validation. The owner performs only bounded human checks supplied at later
@@ -105,12 +106,13 @@ bounded owner-performed human validation gate.
 
 **Epics:**
 
-1. Native-composed product and direct-ingredient rows.
-2. Inventory counts, sufficiency state, and machine-only warnings.
-3. Tracker navigation, only if promoted at the Sprint 3 entry gate.
-4. A concise owner-performed human validation gate for claims that cannot be
+1. Normalized direct-ingredient and Icarus-inventory presentation data.
+2. Native-composed product and one-through-six direct-ingredient rows.
+3. Changed-only live inventory refresh and recovery.
+4. Real dragging, effective Auto-layout bounds, clamping, and containment.
+5. A concise owner-performed human validation gate for claims that cannot be
    established another way.
-5. Final real-package construction and static inspection.
+6. Final real-package construction and static inspection.
 
 **Exit result:** The source prototype implements the core loop:
 
@@ -119,10 +121,12 @@ right-click recipe -> pin state -> recipe row -> inventory comparison
                    -> visibility controls -> unpin or FILO eviction
 ```
 
-Tracker navigation has a confirmed native path but remains decision-gated.
-Before Sprint 3 becomes Ready, the owner must include or exclude it. Inclusion
-adds a bounded navigation story; exclusion does not block the core tracker and
-must remain reflected in public documentation.
+Tracker navigation is excluded from the MVP. Tracker product and ingredient
+icons remain non-interactive presentation. Automated display validation covers
+1920-by-1080/Auto at UI layout height 1080 and 2560-by-1440/Auto at UI layout
+height 1440. The only owner-performed runtime display case is
+3840-by-2160/Auto at UI layout height 1080; no broader display-support claim is
+included.
 
 Agents do not execute that loop in DSP. Runtime, visual, interaction, cleanup,
 and compatibility claims remain unavailable until the owner completes the

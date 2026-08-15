@@ -94,9 +94,11 @@ When exact recipe identity matters, use `UIGame.OpenReplicatorWindow()` and
 recipe's grid position and applies the game's own unlock check. This avoids
 substituting an item's main recipe when a pinned product has multiple recipes.
 
-Navigation requires no new Harmony patch. Whether tracker representations are
-interactive remains deferred to feature development; they must never become
-another pinning surface.
+Navigation requires no new Harmony patch. The owner subsequently excluded
+tracker navigation from the MVP, so tracker representations remain non-
+interactive. This confirmed path is retained only as feasibility evidence for
+possible post-MVP work; tracker representations must never become another
+pinning surface.
 
 ### 3. Authoritative recipe and inventory members
 
@@ -204,11 +206,23 @@ Tracker state should retain integer recipe IDs, resolve them at refresh, and
 fail softly if a recipe, output item, icon, or parallel recipe array is absent
 or inconsistent.
 
-The failure policy is to skip or evict the invalid row, preserve the relative
-order of remaining pins, and log the identity once rather than throw during UI
-refresh. A modded recipe should work when it is registered in LDB and conforms
-to the same structural invariants, but that is an informed expectation rather
-than a tested compatibility promise.
+The hash-verified Phase 1 dataset contains 161 recipes and 441 exact direct-
+input edges. Direct-input cardinality is 27 recipes with one input, 43 with
+two, 42 with three, 44 with four, four with five, and one with six. Recipe 75,
+Universe Matrix, is the sole six-input maximum. The supported tracker layout
+must therefore represent one through six direct ingredients; four is not the
+runtime maximum.
+
+The informed failure policy distinguishes invalid identity from temporary
+presentation unavailability. A missing recipe, inconsistent direct-input
+arrays, or missing required item/icon removes that invalid pin while preserving
+remaining order, consistent with the accepted Sprint 2 icon failure rule. An
+unavailable player/package or production-category value retains the pin and
+suppresses the complete affected row until valid data returns. Neither case
+presents partial requirements or throws during refresh; each bounded failure
+identity is logged once. A modded recipe should work when it is registered in
+LDB and conforms to the same structural invariants, but that is an informed
+expectation rather than a tested compatibility promise.
 
 ### 8. Initial compatibility boundary
 
@@ -217,10 +231,22 @@ and Harmony versions recorded above. The isolated probe at 1280-by-720
 reported an overlay-canvas scale factor of approximately `0.8108108`, but a
 main-menu observation does not establish in-game layout correctness.
 
-Supported resolutions, UI scales, and interaction behavior must be selected
-and validated during the presentation sprint. Compatibility with
-Replicator-altering mods remains evidence-driven; no inspected installed
-plugin currently established a conflict.
+The owner selected automated geometry coverage at 1920-by-1080/Auto and
+2560-by-1440/Auto, plus one owner-performed runtime display case at
+3840-by-2160/Auto, which calculates to a 1080-pixel UI layout height. The MVP
+makes no broader resolution or UI-scale support claim. Compatibility with
+Replicator-altering mods remains evidence-driven; no inspected installed plugin
+currently established a conflict.
+
+The matching assembly's public static
+`UICanvasScalerHandler.GetSuggestUILayoutHeight(int)` maps the selected
+resolution heights 1080, 1440, and 2160 to Auto UI layout heights 1080, 1440,
+and 1080. The retained 4K probe recorded overlay-canvas scale factor 2. A drag
+adapter can therefore consume `PointerEventData.delta`, divide by the live
+`UIRoot.overlayCanvas.scaleFactor`, and clamp against the parent
+`RectTransform.rect` dimensions. These members are public; this path requires
+no private DSP binding, global resolution hook, or duplicate Auto-scale
+algorithm.
 
 ### 9. Possible future automatic replication
 
@@ -274,9 +300,10 @@ items into a meaningful testable build and the owner checks only:
 - whether the composed tracker, icon/text choices, initialized layout,
   dragging, input containment, and six-window behavior read and operate
   coherently together;
-- exact-recipe navigation only if that feature is promoted; and
-- a small representative resolution/UI-scale set or a concrete compatibility
-  conflict only when the project intends to make the corresponding claim.
+- the selected 3840-by-2160/Auto runtime case at its calculated 1080-pixel UI
+  layout height; and
+- a concrete compatibility conflict only when the project intends to make the
+  corresponding claim.
 
 The supplied procedure must be self-contained, bounded, and understandable to
 a tester with no project knowledge, as required by `VALIDATION-CONTRACT.md`.
