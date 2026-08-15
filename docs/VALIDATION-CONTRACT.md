@@ -11,9 +11,9 @@ Owner-reviewed gate passed by explicit owner acceptance. Sprint 2, S2-01
 through S2-06, and its three exit gates are also complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
-authorized and implementation is underway. S3-01 and S3-02 are owner accepted.
-S3-03 is implemented and technically validated and remains the only Active
-story pending owner acceptance; no later Sprint 3 story is authorized.
+authorized and implementation is underway. S3-01 through S3-03 are owner
+accepted. S3-04 is implemented and technically validated and remains the only
+Active story pending owner acceptance; no later Sprint 3 story is authorized.
 Installed behavior remains unvalidated and no supported release exists.
 
 **Owner review:** Accepted through 2026-08-15.

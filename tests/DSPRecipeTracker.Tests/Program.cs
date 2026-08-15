@@ -502,9 +502,7 @@ var orchestrationInputAdapter = new RecordingReplicatorPinInputAdapter();
 var orchestrationInput = new ReplicatorPinInput(orchestrationInputAdapter, orchestrationState, orchestrationDiagnostics);
 var orchestrationTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter();
 var orchestrationTreatment = new RecipeGridTreatment(orchestrationTreatmentAdapter, orchestrationDiagnostics);
-var orchestrationResolver = new RecordingRecipeIconResolver();
-orchestrationResolver.Add(808);
-var orchestrationIcons = new RecipeIconSlotPresentation(orchestrationState, orchestrationResolver, orchestrationPanel, orchestrationDiagnostics);
+var orchestrationPresentation = new RecordingLiveRecipePresentation();
 var orchestrationMajorAdapter = new RecordingMajorInterfaceStateAdapter();
 var orchestrationMajor = new MajorInterfaceVisibilityInput(orchestrationMajorAdapter, orchestrationDiagnostics);
 var orchestrationControlAdapter = new RecordingVisibilityControlAdapter();
@@ -513,7 +511,7 @@ var orchestration = new TrackerOrchestrator(
     orchestrationState,
     orchestrationInput,
     orchestrationTreatment,
-    orchestrationIcons,
+    orchestrationPresentation,
     orchestrationMajor,
     orchestrationPanel,
     orchestrationControls,
@@ -523,6 +521,8 @@ Check(orchestration.ManualRequested, "orchestration manual intent starts true");
 Check(orchestration.TryInitialize(PanelGeometry.Create(24f, 84f)), "orchestration initializes");
 Check(orchestrationPanelAdapter.LastVisibility == true, "initial visible state passes through");
 Check(orchestrationControlAdapter.LastManualRequested == true, "initial global control reflects stored intent");
+Check(orchestrationPresentation.InitializeCalls == 1 && orchestrationPresentation.RefreshCalls == 1,
+    "orchestration initializes and immediately refreshes live presentation");
 
 orchestrationMajorAdapter.Signals = new MajorInterfaceSignals(false, false, true, false, false, false);
 orchestration.Refresh();
@@ -560,7 +560,7 @@ var visibilityRecordCount = orchestrationDiagnostics.Records.Count(record => rec
 orchestration.Refresh();
 Check(orchestrationDiagnostics.Records.Count(record => record.Message.StartsWith("tracker-orchestration visibility=", StringComparison.Ordinal)) == visibilityRecordCount, "unchanged orchestrated visibility is diagnostically silent");
 var orchestrationRecords = orchestrationDiagnostics.Records.Where(record => record.Message.StartsWith("tracker-orchestration ", StringComparison.Ordinal)).ToList();
-Check(orchestrationRecords.Any(record => record.Message.StartsWith("tracker-orchestration action=initialize panel=true input=true treatment=true icons=true controls=true", StringComparison.Ordinal)), "orchestration initialization diagnostic records feature availability");
+Check(orchestrationRecords.Any(record => record.Message.StartsWith("tracker-orchestration action=initialize panel=true input=true treatment=true presentation=true controls=true", StringComparison.Ordinal)), "orchestration initialization diagnostic records feature availability");
 Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration action=panel-hide manualRequested=false"), "panel action diagnostic records stored intent");
 Check(orchestrationRecords.Count(record => record.Message.StartsWith("tracker-orchestration action=global-toggle", StringComparison.Ordinal)) == 3, "global actions are diagnosed once each");
 Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration visibility=true hasRows=true manualRequested=true majorAvailable=true majorActive=false"), "visible diagnostic records all policy inputs");
@@ -574,6 +574,7 @@ Check(orchestrationControlAdapter.ReleaseCalls == 1, "orchestration control clea
 Check(orchestrationPanelAdapter.ReleaseCalls == 1, "orchestration panel cleanup is one-time");
 Check(orchestrationInputAdapter.ReleaseCalls == 1, "orchestration input cleanup is one-time");
 Check(orchestrationTreatmentAdapter.ReleaseCalls == 1, "orchestration treatment cleanup is one-time");
+Check(orchestrationPresentation.ReleaseCalls == 1, "orchestration presentation cleanup is one-time");
 Check(orchestrationDiagnostics.Records.Count(record => record.Message == "tracker-orchestration action=release") == 1, "orchestration release diagnostic is one-time");
 orchestrationControlAdapter.RaiseGlobalToggle();
 orchestrationControlAdapter.RaisePanelHide();
@@ -586,11 +587,12 @@ var partialPanel = new TrackerPanelUiBoundary(partialPanelAdapter);
 var partialInputAdapter = new RecordingReplicatorPinInputAdapter { AttachResult = false };
 var partialTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter { InitializeResult = false };
 var partialControlsAdapter = new RecordingVisibilityControlAdapter { CreateResult = false };
+var partialPresentation = new RecordingLiveRecipePresentation { InitializeResult = false };
 using (var partial = new TrackerOrchestrator(
     partialState,
     new ReplicatorPinInput(partialInputAdapter, partialState, partialDiagnostics),
     new RecipeGridTreatment(partialTreatmentAdapter, partialDiagnostics),
-    new RecipeIconSlotPresentation(partialState, new RecordingRecipeIconResolver(), partialPanel, partialDiagnostics),
+    partialPresentation,
     new MajorInterfaceVisibilityInput(new RecordingMajorInterfaceStateAdapter { Available = false }, partialDiagnostics),
     partialPanel,
     new TrackerVisibilityControls(partialControlsAdapter),
@@ -602,6 +604,7 @@ using (var partial = new TrackerOrchestrator(
 Check(partialPanelAdapter.ReleaseCalls == 1, "partial panel cleanup is bounded");
 Check(partialInputAdapter.ReleaseCalls == 1, "partial input cleanup is bounded");
 Check(partialTreatmentAdapter.ReleaseCalls == 1, "partial treatment cleanup is bounded");
+Check(partialPresentation.ReleaseCalls == 1, "partial presentation cleanup is bounded");
 Check(partialControlsAdapter.ReleaseCalls == 1, "partial control cleanup is bounded");
 
 var presentationDiagnostics = new RecordingDiagnosticSink();
@@ -804,6 +807,7 @@ Check(invalidPresentationRecords[0].Level == TrackerDiagnosticLevel.Debug, "inva
 
 RecipeDataSourceTests.Run(Check);
 RecipeRowPresentationTests.Run(Check);
+LiveRecipePresentationTests.Run(Check);
 
 if (failures.Count != 0)
 {
@@ -815,7 +819,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe data, recipe presentation, complete recipe rows, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe data, recipe presentation, complete recipe rows, live refresh, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -1138,6 +1142,33 @@ internal sealed class RecordingMajorInterfaceStateAdapter : IMajorInterfaceState
 
         signals = Signals;
         return Available;
+    }
+}
+
+internal sealed class RecordingLiveRecipePresentation : ILiveRecipePresentation
+{
+    public bool InitializeResult { get; set; } = true;
+
+    public int InitializeCalls { get; private set; }
+
+    public int RefreshCalls { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public bool TryInitialize()
+    {
+        InitializeCalls++;
+        return InitializeResult;
+    }
+
+    public void Refresh()
+    {
+        RefreshCalls++;
+    }
+
+    public void Dispose()
+    {
+        ReleaseCalls++;
     }
 }
 

@@ -64,10 +64,24 @@ namespace DSPRecipeTracker
                 var treatment = new RecipeGridTreatment(
                     new UnityRecipeGridTreatmentAdapter(uiGame.replicator),
                     diagnostics);
-                var icons = new RecipeIconSlotPresentation(
+                var replicator = uiGame.replicator;
+                var nativeText = ReferenceEquals(replicator, null)
+                    ? null
+                    : replicator.queueCountText;
+                var nativeFont = ReferenceEquals(nativeText, null)
+                    ? null
+                    : nativeText.font;
+                var recipePresentation = new LiveRecipePresentation(
                     state,
-                    new UnityRecipeIconResolver(),
-                    panel,
+                    new RecipePresentationInputSource(
+                        state,
+                        new DspRecipeDataAdapter(),
+                        new DspInventoryDataAdapter(),
+                        diagnostics),
+                    new RecipePresentationModel(diagnostics),
+                    new RecipeRowPresentation(
+                        new UnityRecipeRowUiAdapter(panelAdapter, nativeFont),
+                        diagnostics),
                     diagnostics);
                 var majorInterfaces = new MajorInterfaceVisibilityInput(
                     new UnityMajorInterfaceStateAdapter(uiGame),
@@ -92,7 +106,7 @@ namespace DSPRecipeTracker
                     state,
                     pinInput,
                     treatment,
-                    icons,
+                    recipePresentation,
                     majorInterfaces,
                     panel,
                     controls,

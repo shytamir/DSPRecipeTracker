@@ -270,6 +270,7 @@
           "baseType": "UnityEngine.UI.MaskableGraphic",
           "usage": "tracker-row-count-and-machine-warning-copy",
           "members": [
+            { "kind": "method", "name": "get_font", "signature": "UnityEngine.Font()" },
             { "kind": "method", "name": "set_font", "signature": "System.Void(UnityEngine.Font)" },
             { "kind": "method", "name": "set_text", "signature": "System.Void(System.String)" },
             { "kind": "method", "name": "set_fontSize", "signature": "System.Void(System.Int32)" }
@@ -552,7 +553,8 @@
           "usage": "replicator-adapter-host-and-major-interface-state",
           "members": [
             { "kind": "field", "name": "recipeBg", "signature": "UnityEngine.UI.Image" },
-            { "kind": "field", "name": "recipeIcons", "signature": "UnityEngine.UI.RawImage" }
+            { "kind": "field", "name": "recipeIcons", "signature": "UnityEngine.UI.RawImage" },
+            { "kind": "field", "name": "queueCountText", "signature": "UnityEngine.UI.Text" }
           ]
         }
       ]

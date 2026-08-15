@@ -153,6 +153,7 @@ namespace UnityEngine.UI
 
         public UnityEngine.Font font
         {
+            get { return null; }
             set { }
         }
 

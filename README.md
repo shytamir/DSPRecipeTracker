@@ -9,7 +9,7 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 and S3-02 are owner accepted, while S3-03 is
+owner authorized; S3-01 through S3-03 are owner accepted, while S3-04 is
 implemented and technically validated and remains Active pending owner
 acceptance. Runtime execution and runtime validation remain outside the
 current source-only authorization.
@@ -190,7 +190,7 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 and S3-02 are owner accepted, while S3-03 is
+is owner authorized; S3-01 through S3-03 are owner accepted, while S3-04 is
 implemented and technically validated and remains Active pending owner
 acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
@@ -198,22 +198,20 @@ Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
 accepted conclusions do not authorize new runtime execution. The plugin
 source now connects isolated Replicator input, independent recipe-grid
-treatment, the panel boundary, and paired visibility controls through plain
-orchestration at plugin startup; gameplay, native appearance, live
-layout, input, cleanup, and display-scale behavior remain unvalidated.
+treatment, live complete recipe rows, the panel boundary, and paired visibility
+controls through plain orchestration at plugin startup; gameplay, native
+appearance, layout, input, cleanup, and display-scale behavior remain
+unvalidated.
 
 The source now contains deterministic transient pin ordering, unpinning,
 three-entry capacity, bottom eviction, unavailable-recipe removal, independent
-native recipe-grid treatment, and exact fail-closed six-interface visibility
-collection, plus three ordered native recipe-icon panel slots, with bounded
-Debug transition diagnostics. The source also contains the UI-independent
-ordered direct-ingredient, Icarus-count, sufficiency, and machine-warning
-presentation model. Existing integrations remain connected through plugin
-startup orchestration. Separate read-only DSP recipe/item and Icarus-inventory
-adapters now produce normalized presentation inputs with safe invalid-pin
-removal and temporary row suppression. They are not connected to live refresh,
-the existing orchestration, or Unity rows until later Sprint 3 stories.
-Installed behavior remains unvalidated.
+native recipe-grid treatment, exact fail-closed six-interface visibility, and
+three ordered complete native-composed recipe rows, with bounded Debug
+transition diagnostics. The UI-independent presentation model and separate
+read-only DSP recipe/item and Icarus-inventory adapters now feed those rows
+through immediate pin-change and bounded steady refresh, safe invalid-pin
+removal, and temporary row suppression/recovery. Installed behavior remains
+unvalidated.
 
 ## Repository layout
 
@@ -275,7 +273,8 @@ Installed behavior remains unvalidated.
 |       |-- Validate-S2-06.ps1
 |       |-- Validate-S3-01.ps1
 |       |-- Validate-S3-02.ps1
-|       `-- Validate-S3-03.ps1
+|       |-- Validate-S3-03.ps1
+|       `-- Validate-S3-04.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

@@ -4,12 +4,12 @@
 
 **Status:** Authorized - implementation underway
 
-**Active story:** S3-03 - Render complete product and direct-ingredient rows
+**Active story:** S3-04 - Refresh live ingredient and inventory presentation
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S3-03 only
+**Implementation authorization:** S3-04 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,8 +17,8 @@ pending
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 and S3-02 are
-owner accepted. Implementation is underway with S3-03 as the only Active
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-03
+are owner accepted. Implementation is underway with S3-04 as the only Active
 story; later stories remain blocked until separately activated.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
@@ -317,8 +317,7 @@ activated S3-03; it does not activate any later story.
 
 ### S3-03 - Render complete product and direct-ingredient rows
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted
 
 **User story:** As a player, I want each pinned recipe shown with its native
 product icon, direct ingredients, counts, sufficiency, and any machine-only
@@ -413,12 +412,13 @@ pinning, crafting, inventory mutation, runtime collection, reflection, or
 Harmony ownership in the Unity row adapter. No plugin was installed or
 executed, and no game or substitute runtime was started.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S3-04.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+activated S3-04; it does not activate any later story.
 
 ### S3-04 - Refresh live ingredient and inventory presentation
 
-**Status:** Proposed - blocked by S3-03
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want tracker counts and sufficiency to follow my
 current Icarus inventory without re-pinning or disturbing pin order.
@@ -450,6 +450,56 @@ current Icarus inventory without re-pinning or disturbing pin order.
 shim validation, allocation/static review, and architecture review pass. A
 testable DLL may be produced, but live inventory refresh and recovery remain
 deferred to the final owner gate.
+
+**Implementation result:**
+
+- `LiveRecipePresentation` composes the accepted read-only adapters,
+  presentation model, and row boundary without moving their responsibilities
+  into the Unity or plugin lifecycle layers.
+- Pin changes refresh immediately. Stable non-empty pin state refreshes every
+  12 plugin refresh calls, avoiding recipe/inventory collection and managed
+  allocation on the intervening per-frame fast path. Stable empty state is
+  inert after its immediate hide operation.
+- Unity rows are applied only when the normalized frame changes or when a
+  previous row-resource application needs its bounded scheduled retry.
+- Temporary adapter, inventory, or row-resource failure retains pins,
+  suppresses affected rows, and recovers at the same cadence. Invalid recipe,
+  item, input-pair, or icon evidence still uses the accepted safe-removal path
+  before pin-dependent treatment and visibility refresh in the same cycle.
+- The product-icon-only live path is replaced rather than duplicated. The
+  complete row adapter reuses the font from the Replicator's public
+  `queueCountText` and the native sprites supplied by the data adapters.
+- Changed refresh state, suppression/recovery, disablement, and release emit
+  bounded Debug diagnostics. Unchanged and steady-empty refreshes are silent.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S3-04.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 312 `
+  -SourceRevision $revision
+```
+
+The deterministic suite covers immediate and scheduled refresh, the
+allocation-free intervening fast path, unchanged-frame silence, exact
+sufficiency-threshold transitions, pin-order stability, one through six direct
+ingredients, complete and row-level suppression/recovery, safe invalid
+removal, empty-state behavior, row retry, partial initialization, cleanup, and
+inert release. Local and Hosted Release builds completed with zero warnings
+and zero errors; all consumed surfaces passed exhaustive coverage. Bounded
+read-only inspection confirmed the exact public
+`UIReplicatorWindow.queueCountText` field and `UnityEngine.UI.Text.font` getter.
+Static review confirmed no repeated
+reflection or hierarchy search, no per-frame collection/allocation on the fast
+path, no second visibility rule, and no crafting, inventory, factory, save, or
+pin mutation outside the accepted invalid-removal path. No plugin was
+installed or executed, and no game or substitute runtime was started.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S3-05.
 
 ### S3-05 - Complete live dragging and display-bound clamping
 

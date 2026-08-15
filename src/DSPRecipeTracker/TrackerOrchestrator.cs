@@ -7,7 +7,7 @@ namespace DSPRecipeTracker
         private readonly PinnedRecipeState state;
         private readonly ReplicatorPinInput pinInput;
         private readonly RecipeGridTreatment gridTreatment;
-        private readonly RecipeIconSlotPresentation recipeIcons;
+        private readonly ILiveRecipePresentation recipePresentation;
         private readonly MajorInterfaceVisibilityInput majorInterfaces;
         private readonly TrackerPanelUiBoundary panel;
         private readonly TrackerVisibilityControls controls;
@@ -22,7 +22,7 @@ namespace DSPRecipeTracker
             PinnedRecipeState state,
             ReplicatorPinInput pinInput,
             RecipeGridTreatment gridTreatment,
-            RecipeIconSlotPresentation recipeIcons,
+            ILiveRecipePresentation recipePresentation,
             MajorInterfaceVisibilityInput majorInterfaces,
             TrackerPanelUiBoundary panel,
             TrackerVisibilityControls controls,
@@ -31,7 +31,7 @@ namespace DSPRecipeTracker
             this.state = state ?? throw new ArgumentNullException(nameof(state));
             this.pinInput = pinInput ?? throw new ArgumentNullException(nameof(pinInput));
             this.gridTreatment = gridTreatment ?? throw new ArgumentNullException(nameof(gridTreatment));
-            this.recipeIcons = recipeIcons ?? throw new ArgumentNullException(nameof(recipeIcons));
+            this.recipePresentation = recipePresentation ?? throw new ArgumentNullException(nameof(recipePresentation));
             this.majorInterfaces = majorInterfaces ?? throw new ArgumentNullException(nameof(majorInterfaces));
             this.panel = panel ?? throw new ArgumentNullException(nameof(panel));
             this.controls = controls ?? throw new ArgumentNullException(nameof(controls));
@@ -50,7 +50,7 @@ namespace DSPRecipeTracker
             var panelAvailable = panel.TryInitialize(initialRectangle);
             var inputAvailable = pinInput.TryInitialize();
             var treatmentAvailable = gridTreatment.TryInitialize();
-            var iconsAvailable = recipeIcons.TryInitialize();
+            var presentationAvailable = recipePresentation.TryInitialize();
             var controlsAvailable = controls.TryInitialize(HidePanel, ToggleGlobal, manualRequested);
             initialized = true;
 
@@ -59,7 +59,7 @@ namespace DSPRecipeTracker
                 "tracker-orchestration action=initialize panel=" + Format(panelAvailable) +
                 " input=" + Format(inputAvailable) +
                 " treatment=" + Format(treatmentAvailable) +
-                " icons=" + Format(iconsAvailable) +
+                " presentation=" + Format(presentationAvailable) +
                 " controls=" + Format(controlsAvailable));
             Refresh();
             return true;
@@ -72,8 +72,8 @@ namespace DSPRecipeTracker
                 return;
             }
 
+            recipePresentation.Refresh();
             gridTreatment.TryRefresh(state.RecipeIds);
-            recipeIcons.TryRefresh();
             ApplyVisibility();
         }
 
@@ -87,7 +87,7 @@ namespace DSPRecipeTracker
             released = true;
             initialized = false;
             controls.Dispose();
-            recipeIcons.Dispose();
+            recipePresentation.Dispose();
             gridTreatment.Dispose();
             pinInput.Dispose();
             panel.Dispose();

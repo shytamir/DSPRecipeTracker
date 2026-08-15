@@ -237,4 +237,5 @@ public class UIReplicatorWindow : ManualBehaviour
 
     public UnityEngine.UI.Image recipeBg;
     public UnityEngine.UI.RawImage recipeIcons;
+    public UnityEngine.UI.Text queueCountText;
 }

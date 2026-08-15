@@ -16,7 +16,7 @@ Owner-reviewed exit gates passed. Sprint 2, S2-01 through S2-06, and its three
 exit gates are complete and owner accepted. Its Source-ready and Package-
 inspected gates pass for commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`.
 The Sprint 3 roadmap is owner authorized and implementation is underway.
-S3-01 and S3-02 are owner accepted. S3-03 is implemented and technically
+S3-01 through S3-03 are owner accepted. S3-04 is implemented and technically
 validated and remains the only Active story pending owner acceptance; no later
 Sprint 3 story is authorized.
 The source contains the minimal plugin
@@ -24,14 +24,14 @@ skeleton, inspected package pipeline, UI-independent panel geometry and
 visibility policy, inert compile-time Unity panel boundary, and deterministic
 transient pin state, an isolated native Replicator input adapter, and an
 independent native recipe-grid treatment adapter, the exact fail-closed
-six-interface visibility input, three ordered native recipe-icon panel slots,
+six-interface visibility input, three ordered complete native-composed rows,
 paired tracker-owned visibility controls, and plain orchestration connected to
 plugin startup, plus a UI-independent direct-ingredient, Icarus-count,
 sufficiency, and machine-warning presentation model and separate read-only DSP
 recipe/item and Icarus-inventory adapters that produce normalized inputs. The
-new data path is not yet connected to live refresh, plugin orchestration, or
-Unity rows. Installed and in-game behavior remains unvalidated; no supported
-release exists.
+data path is now connected to bounded live refresh, plugin orchestration, and
+complete Unity rows. Installed and in-game behavior remains unvalidated; no
+supported release exists.
 
 **Owner review:** Accepted through 2026-08-15.
 
