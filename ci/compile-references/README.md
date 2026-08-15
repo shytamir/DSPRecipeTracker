@@ -10,8 +10,8 @@ declares only the Replicator host, populated recipe type, recipe identity,
 public native background/icon fields, the exact six-window active-state
 surface, and direct recipe identity-to-icon lookup needed by S2-02 through
 S2-05.
-Private reflection bindings are inventoried separately and validated against
-the hash-matched installed metadata; they are not misrepresented as public
+Private reflection bindings are inventoried separately and confirmed through
+bounded read-only inspection; they are not misrepresented as public
 compile-time members.
 
 Shims contain declarations only. They are never runtime substitutes, are never

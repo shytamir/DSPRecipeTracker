@@ -70,6 +70,9 @@ Source readiness requires, for the implemented and active roadmap scope:
 - hosted compile-reference shims contain declarations only, are excluded from
   package output, and pass the complete consumed-surface coverage validation
   defined by `THUNDERSTORE-PACKAGE.md`;
+- supplied game and Unity assemblies may be checked for exact consumed
+  signatures and narrowly required behavior, but ordinary story gates do not
+  pin or compare their hashes;
 - no dependency binary, save, player diagnostic, secret, or generated runtime
   evidence in tracked changes; and
 - documentation that distinguishes compiled behavior from unvalidated runtime

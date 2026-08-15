@@ -81,8 +81,7 @@ The planned runtime requires:
 - BepInEx 5 installed in the game directory.
 
 The initial feasibility baseline is DSP `0.10.34.28529`, Steam build
-`23109513`, Unity `2022.3.62f3c1`, and the exact game-assembly hash recorded in
-the runtime authority contract. Automated geometry validation covers
+`23109513`, and Unity `2022.3.62f3c1`. Automated geometry validation covers
 1920-by-1080/Auto at UI layout height 1080 and 2560-by-1440/Auto at UI layout
 height 1440. Owner-performed runtime display validation is limited to
 3840-by-2160/Auto, which calculates to a 1080-pixel UI layout height. Game,
@@ -91,15 +90,12 @@ redistributed in this repository.
 
 ## Runtime authority
 
-Runtime recipe facts and API integration are grounded in a SHA-256-identified
-installed `Assembly-CSharp.dll` and a validation-passing export derived from
-that same binary. The assembly is authoritative for IL and exact API shapes;
-the export is authoritative for the Proto and graph fields it preserves.
-
-See [docs/RUNTIME-AUTHORITY.md](docs/RUNTIME-AUTHORITY.md) for the recovered
-source identities, accepted conclusions, evidence hierarchy, and refresh
-rules. The former retained authority files were removed; licensed binaries and
-generated datasets are never redistributed.
+Installed DSP and Unity assemblies may be inspected read-only for the exact
+surface consumed by the product. Story validators check that narrow contract,
+not the broader runtime's binary identity. See
+[docs/RUNTIME-AUTHORITY.md](docs/RUNTIME-AUTHORITY.md) for the authority,
+inspection, and repository-boundary rules. Licensed binaries and generated
+runtime datasets are never redistributed.
 
 ## BepInEx conformance
 
@@ -116,7 +112,8 @@ clone of the native grid material with an independent state buffer.
 The project does not modify BepInEx, target the source checkout's BepInEx 6
 `master`, or promise compatibility with other loader versions. See
 [docs/BEPINEX-CONFORMANCE.md](docs/BEPINEX-CONFORMANCE.md) for exact commits,
-recorded binary hashes, accepted conclusions, and the fixed-version policy.
+the single hosted-download integrity boundary, accepted conclusions, and the
+fixed-version policy.
 
 The approved BepInEx plugin GUID is `dsprecipetracker`; its loader display name
 is `DSP-Recipe-Tracker`.

@@ -14,9 +14,8 @@ principles or owner acceptance.
 
 The investigation used:
 
-- `Assembly-CSharp.dll` SHA-256
-  `ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85`;
-- the validation-passing Phase 1 recipe export linked to that exact assembly;
+- the validation-passing Phase 1 recipe export and its corresponding installed
+  assembly;
 - direct metadata and IL inspection with the installed Mono.Cecil assembly;
 - the installed DSP `0.10.34.28529`, Steam build `23109513`;
 - Unity `2022.3.62f3c1` (`2022.3.62.1451004` file version); and
@@ -206,7 +205,7 @@ Tracker state should retain integer recipe IDs, resolve them at refresh, and
 fail softly if a recipe, output item, icon, or parallel recipe array is absent
 or inconsistent.
 
-The hash-verified Phase 1 dataset contains 161 recipes and 441 exact direct-
+The accepted Phase 1 dataset contains 161 recipes and 441 exact direct-
 input edges. Direct-input cardinality is 27 recipes with one input, 43 with
 two, 42 with three, 44 with four, four with five, and one with six. Recipe 75,
 Universe Matrix, is the sole six-input maximum. The supported tracker layout

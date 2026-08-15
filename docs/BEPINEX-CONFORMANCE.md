@@ -6,8 +6,8 @@ and operating with the default Steam game. It does not modify BepInEx, select
 an upgrade path, or promise compatibility with other loader versions.
 
 **Evidence disposition:** The former retained local snapshot was removed. The
-owner accepts the recorded identities, hashes, source mapping, and conformance
-conclusions in this document as the recovered baseline.
+owner accepts the recorded version, source mapping, and conformance conclusions
+in this document as the recovered baseline.
 
 ## Supported version
 
@@ -32,43 +32,21 @@ The project-owned loader identity approved in `PROJECT.md` is GUID
 `dsprecipetracker` with display name `DSP-Recipe-Tracker`. This identity is
 independent of the loader-version conformance evidence in this file.
 
-## Installed runtime identity
-
-The recorded binary identities are:
-
-| File | Assembly/file version | SHA-256 |
-| --- | --- | --- |
-| `BepInEx.dll` | `5.4.17.0` | `dc1cb6b58b962bda5aaa1d6b5f9ae14ec174f61836a1a1f96c1a040c7e8381f7` |
-| `BepInEx.Preloader.dll` | `5.4.17.0` | `adc41c73790ae5363217c8d0b178a02ccb85c17925810e735f4bc1564315f01c` |
-| `0Harmony.dll` | `2.5.5.0` | `7bd2bd6f87c1758047def40f2f0f024c877456ce7c01d68031358ee0c615d850` |
-| `BepInEx.Harmony.dll` | `2.0.0.0` | `d0739c4a13f369094cb164c205ee4cca5392bdd7241b9f242ee13f0d4c0b1856` |
-| `HarmonyXInterop.dll` | `1.0.0.0` | `e818d779a52b4d779c6dc873f3e4b19287abbc948575629ab58d8252ff8955f2` |
-| `Mono.Cecil.dll` | `0.10.4.0` | `7ae470288fff4a402899c254d0a76cefef55877f5c54f96e83c797cc5bb6e2f6` |
-| `MonoMod.RuntimeDetour.dll` | `21.9.19.1` | `281bfb29c5e9cc4cb98b81e7afc0171ae12891a7b7370a98568d9e2a3060db50` |
-| `MonoMod.Utils.dll` | `21.9.19.1` | `4cc34a5c4278d78ce3f516bb3b43c9a5ed3509672dbba932e036746a9360a570` |
-| `winhttp.dll` | `3.4.0.0` | `cf9dd372ca0ddbe01153502c49f8f756197bb260001792fe766f6c0242dc7fc0` |
+## Dependency identity and acquisition
 
 The `v5.4.17` source declares HarmonyX `2.5.5`, Mono.Cecil `0.10.4`, and
 MonoMod RuntimeDetour and Utils `21.9.19.1`. Those declarations match the
-installed dependency closure.
+accepted installed dependency closure.
 
-`doorstop_config.ini` enables Doorstop and targets
-`BepInEx\core\BepInEx.Preloader.dll`. Its recorded SHA-256 is
-`2255e7640434fdfccbfeb123a5f4fccb05032481b39c2ba822e905ccba58d20e`.
+Hosted CI downloads the documented Thunderstore dependency and performs one
+checksum comparison before using its `BepInEx.dll`. That check protects the
+remote dependency acquisition; it is not game-runtime authority and is not
+repeated by local or story validation. Local and hosted builds otherwise
+confirm the required BepInEx assembly version and consumed compile surface.
 
-## Removed local authority snapshot
-
-The former ignored snapshot contained the 18 files from `BepInEx/core`, the
-Doorstop DLL and configuration, recorded hashes, and a source archive produced
-from the pinned tag. Those files were removed. The recorded source-archive
-SHA-256 was
-`43154c79b2bcafe5978429df19a3076528471c2406ec923eaba185e68c1d6d26`.
-
-The owner accepts the conclusion that the snapshot matched the active
-installation and pinned source mapping at the time of recovery. If new Harmony
-internals require inspection, use the exact recorded submodule commit or a new
-explicitly established source; do not substitute current upstream code by
-inference.
+If new Harmony internals require inspection, use the exact recorded submodule
+commit or a new explicitly established source; do not substitute current
+upstream code by inference.
 
 ## Minimal supported feature surface
 
@@ -105,10 +83,9 @@ not the project's supported consumption surface.
   it verifies the consumed assembly identity against this accepted conformance
   baseline.
 - Do not compile against the BepInEx 6 `master` checkout state.
-- Treat an installed BepInEx or relevant dependency hash change as a
-  conformance change requiring renewed source validation and, only where the
-  change creates an otherwise-unprovable runtime claim, a later owner-performed
-  human check.
+- Treat a supported BepInEx version or consumed-surface change as a conformance
+  change requiring renewed source validation and, only where it creates an
+  otherwise-unprovable runtime claim, a later owner-performed human check.
 - A compile-only result does not establish installed compatibility. Discovery,
   lifecycle, logging, configuration, patch ownership, shutdown cleanup, and
   coexistence remain unvalidated until the owner performs the applicable

@@ -162,17 +162,11 @@ compile-reference shims. Shims must contain declarations only, must cover every
 known external symbol consumed by production code, and must never be packaged,
 loaded, or treated as runtime evidence.
 
-When authoritative runtime knowledge is required, inspect the installed game
-assemblies or actual runtime evidence as read-only inputs. Distinguish
-confirmed members from inference, isolate fragile integration points, and
-record uncertainty instead of presenting a proxy as fact.
-
-`docs/RUNTIME-AUTHORITY.md` records the recovered authority hierarchy, hashes,
-accepted conclusions, and refresh rules. The former retained evidence was
-removed and must not be claimed as present. Treat the recorded conclusions as
-the accepted recovery baseline. If new runtime claims are required against a
-different installed assembly, establish new evidence without mixing it into
-the accepted historical snapshot.
+Inspect supplied game and Unity assemblies read-only when exact consumed
+signatures or narrowly required behavior must be confirmed. Ordinary story
+validators must not pin or compare runtime hashes; tracked contracts retain
+only current consumed surfaces, while detailed evidence remains untracked.
+Archived roadmaps are historical and non-authoritative.
 
 `docs/BEPINEX-CONFORMANCE.md` fixes the supported plugin-manager contract at
 the installed BepInEx `5.4.17.0` and its pinned `v5.4.17` source tag. Use only

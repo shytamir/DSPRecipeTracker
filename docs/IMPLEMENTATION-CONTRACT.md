@@ -39,7 +39,8 @@ Use these sources for their respective authority:
   design;
 - [`FEASIBILITY.md`](FEASIBILITY.md) for confirmed game members and remaining
   runtime unknowns;
-- [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) for runtime evidence identity;
+- [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) for read-only runtime
+  inspection and consumed-surface boundaries;
 - [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) for loader conformance;
 - [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) for package layout,
   versioning, hosted compile references, and package validation;

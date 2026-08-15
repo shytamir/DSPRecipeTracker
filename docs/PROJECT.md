@@ -218,7 +218,7 @@ The following contracts implement and validate this product:
 | [`IMPLEMENTATION-CONTRACT.md`](IMPLEMENTATION-CONTRACT.md) | Architecture, runtime adapters, native integration mechanics, state ownership, failure cleanup, and source baseline. |
 | [`VALIDATION-CONTRACT.md`](VALIDATION-CONTRACT.md) | Source, package, behavioral, owner-acceptance, and publication gates; evidence and runtime-authorization rules. |
 | [`THUNDERSTORE-PACKAGE.md`](THUNDERSTORE-PACKAGE.md) | Package layout, version mapping, build-reference boundary, artifact validation, and publication boundary. |
-| [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) | Runtime evidence identity, provenance, coverage, and refresh rules. |
+| [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) | Runtime authority hierarchy, consumed-surface validation, and evidence boundaries. |
 | [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) | Supported loader version and permitted BepInEx feature surface. |
 | [`ROADMAP.md`](ROADMAP.md) | Current planning state and implementation authorization, when any. |
 

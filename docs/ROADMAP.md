@@ -70,7 +70,7 @@ The following accepted baseline is available:
   suitability, panel composition, dragging, containment, live visibility, and
   cleanup remain unvalidated and are intentionally grouped into the Sprint 3
   owner checkpoint.
-- The hash-verified Phase 1 bundle contains 161 exact runtime recipes and 441
+- The accepted Phase 1 findings contain 161 exact runtime recipes and 441
   direct-input edges. Every recipe has one to six direct ingredients; the
   maximum is six for recipe 75, Universe Matrix.
 - Read-only inspection of the matching game and Unity assemblies confirms the
@@ -224,7 +224,7 @@ recipe and Icarus inventory state without the mod changing either.
   `LDB.recipes.Select(recipeId)` and reads the public `Proto.ID`,
   `RecipeProto.Items`, `RecipeProto.ItemCounts`, `RecipeProto.Handcraft`,
   `RecipeProto.madeFromString`, and `RecipeProto.iconSprite` members confirmed
-  by the hash-matched assembly.
+  by bounded read-only assembly inspection.
 - Ingredient icons resolve through the exact public chain
   `LDB.items.Select(itemId).iconSprite`. The adapter does not select a recipe
   output or use `ItemProto.maincraft`.
@@ -303,14 +303,13 @@ inconsistent inputs, accepted safe removal, suppression and recovery, partial-
 inventory-read rejection, exception isolation, bounded diagnostics, and inert
 failure-isolated release.
 
-The installed `Assembly-CSharp.dll` matched the accepted SHA-256 before exact
-public signatures were checked. Local and Hosted Release builds completed with
-zero warnings and zero errors; both products passed exhaustive compile-
-reference coverage. Static review confirmed the exact read-only member surface
-and found no recipe-output selection, navigation, reflection, crafting,
-inventory mutation, persistence, Unity layout, or visibility ownership. No
-plugin was installed or executed, and no game or substitute runtime was
-started.
+Bounded read-only assembly inspection confirmed the exact public signatures.
+Local and Hosted Release builds completed with zero warnings and zero errors;
+both products passed exhaustive compile-reference coverage. Static review
+confirmed the exact read-only member surface and found no recipe-output
+selection, navigation, reflection, crafting, inventory mutation, persistence,
+Unity layout, or visibility ownership. No plugin was installed or executed,
+and no game or substitute runtime was started.
 
 **Owner acceptance:** Pending. Technical validation does not infer acceptance
 or activate S3-03.
