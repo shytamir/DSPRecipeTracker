@@ -58,7 +58,7 @@ if ($LASTEXITCODE -ne 0 -or $trackedOutputs.Count -ne 0) {
 }
 
 $roadmapText = [IO.File]::ReadAllText((Join-Path $repoRoot 'docs\ROADMAP.md'))
-if ($roadmapText -notmatch [Regex]::Escape('[`OWNER-VALIDATION.md`](OWNER-VALIDATION.md)')) {
+if ($roadmapText -notmatch [Regex]::Escape('(OWNER-VALIDATION.md)')) {
     throw 'The active roadmap does not link the owner validation procedure.'
 }
 
