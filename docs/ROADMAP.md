@@ -4,12 +4,12 @@
 
 **Status:** Authorized - implementation underway
 
-**Active story:** S3-05 - Complete live dragging and display-bound clamping
+**Active story:** S3-06 - Complete orchestration and prepare the owner checkpoint
 
-**Active story state:** Implemented and technically validated; owner acceptance
-pending
+**Active story state:** Implementation complete; exact-revision technical
+validation pending
 
-**Implementation authorization:** S3-05 only
+**Implementation authorization:** S3-06 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,9 +17,10 @@ pending
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-04
-are owner accepted. Implementation is underway with S3-05 as the only Active
-story; S3-06 remains blocked until separately activated.
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-05
+are owner accepted. Implementation is underway with S3-06 as the only Active
+story. Sprint completion remains unavailable pending its technical handoff,
+the owner-performed Behavioral-ready gate, and explicit owner review.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -502,8 +503,7 @@ activated S3-05; it does not activate S3-06.
 
 ### S3-05 - Complete live dragging and display-bound clamping
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want to move the tracker deliberately and keep
 the complete panel reachable at the supported Auto layout sizes.
@@ -601,14 +601,15 @@ search, per-pointer diagnostic stream, row interaction surface, or game-state
 mutation. No plugin was installed or executed, and no game or substitute
 runtime was started.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S3-06.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+activated S3-06; it does not complete Sprint 3 or satisfy a sprint exit gate.
 
 ## Epic 3 - Complete and hand off the MVP prototype
 
 ### S3-06 - Complete orchestration and prepare the owner checkpoint
 
-**Status:** Proposed - blocked by S3-01 through S3-05
+**Status:** Active - implementation complete; exact-revision technical
+validation pending
 
 **User story:** As the owner, I want one coherent testable prototype and a
 small, complete procedure for judging only the remaining live behavior.
@@ -651,6 +652,28 @@ small, complete procedure for judging only the remaining live behavior.
 **Acceptance gate:** The complete non-runtime validation chain passes and the
 testable artifact, evidence summary, known limitations, and proposed human
 procedure are ready for owner review. Agents do not run the procedure.
+
+**Implementation result:**
+
+- Plugin startup composes every accepted Sprint 2 and Sprint 3 boundary through
+  `TrackerOrchestrator`; the orchestrator retains only lifecycle, refresh, and
+  visibility coordination.
+- Deterministic integration coverage now isolates panel, drag, input,
+  treatment, presentation, and visibility-control initialization failures one
+  at a time. Every case verifies exact availability reporting, one-time
+  cleanup, and inert input callbacks after release.
+- Cleanup remains ordered from controls and drag listeners through row/data
+  presentation, treatment, pin input, and finally the panel shell so owned
+  children and callbacks are released before their host.
+- `Validate-S3-06.ps1` closes the story-level non-runtime chain.
+  `Validate-Sprint3-SourceReady.ps1` and
+  `Validate-Sprint3-PackageInspected.ps1` provide distinct exact-revision exit
+  gates without performing or inferring live validation.
+- The self-contained owner procedure limits future runtime work to one
+  3840-by-2160/Auto session and the remaining native integration, presentation,
+  input, visibility, and lifecycle observations.
+
+**Owner procedure:** [`Sprint 3 Owner Validation Procedure`](OWNER-VALIDATION.md)
 
 ## Sequence and dependencies
 

@@ -9,10 +9,10 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 through S3-04 are owner accepted, while S3-05 is
-implemented and technically validated and remains Active pending owner
-acceptance. Runtime execution and runtime validation remain outside the
-current source-only authorization.
+owner authorized; S3-01 through S3-05 are owner accepted, while S3-06 is
+Active with implementation complete and exact-revision technical validation
+pending. Runtime execution and runtime validation remain outside the current
+source-only authorization.
 Future in-game validation is performed only by the owner from testable builds,
 after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
@@ -190,9 +190,10 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 through S3-04 are owner accepted, while S3-05 is
-implemented and technically validated and remains Active pending owner
-acceptance.
+is owner authorized; S3-01 through S3-05 are owner accepted, while S3-06 is
+Active with implementation complete and exact-revision technical validation
+pending. Sprint completion remains unavailable pending the technical handoff
+and owner-performed exit gates.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -249,6 +250,7 @@ unvalidated.
 |   |   `-- PINNED-RECIPE-TRACKER-CONCEPT.md
 |   |-- PRODUCT-PRINCIPLES.md
 |   |-- PROJECT.md
+|   |-- OWNER-VALIDATION.md
 |   |-- ROADMAP.md
 |   |-- RUNTIME-AUTHORITY.md
 |   |-- THUNDERSTORE-PACKAGE.md
@@ -277,7 +279,10 @@ unvalidated.
 |       |-- Validate-S3-02.ps1
 |       |-- Validate-S3-03.ps1
 |       |-- Validate-S3-04.ps1
-|       `-- Validate-S3-05.ps1
+|       |-- Validate-S3-05.ps1
+|       |-- Validate-S3-06.ps1
+|       |-- Validate-Sprint3-SourceReady.ps1
+|       `-- Validate-Sprint3-PackageInspected.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

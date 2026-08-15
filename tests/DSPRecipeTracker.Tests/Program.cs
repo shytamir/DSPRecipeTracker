@@ -793,6 +793,19 @@ Check(partialPresentation.ReleaseCalls == 1, "partial presentation cleanup is bo
 Check(partialDragAdapter.ReleaseCalls == 1, "partial drag cleanup is bounded");
 Check(partialControlsAdapter.ReleaseCalls == 1, "partial control cleanup is bounded");
 
+foreach (var isolatedFeature in new[]
+{
+    "panel",
+    "drag",
+    "input",
+    "treatment",
+    "presentation",
+    "controls"
+})
+{
+    CheckOrchestrationIsolation(isolatedFeature);
+}
+
 var presentationDiagnostics = new RecordingDiagnosticSink();
 var presentation = new RecipePresentationModel(presentationDiagnostics);
 var recipeIcon = new object();
@@ -1014,6 +1027,85 @@ void Check(bool condition, string name)
     {
         failures.Add(name);
     }
+}
+
+void CheckOrchestrationIsolation(string unavailableFeature)
+{
+    var diagnostics = new RecordingDiagnosticSink();
+    var state = new PinnedRecipeState(diagnostics);
+    state.Toggle(909);
+    var panelAdapter = new RecordingPanelUiAdapter
+    {
+        CreateResult = unavailableFeature != "panel"
+    };
+    var panel = new TrackerPanelUiBoundary(panelAdapter);
+    var dragAdapter = new RecordingTrackerPanelDragAdapter
+    {
+        AttachResult = unavailableFeature != "drag"
+    };
+    var inputAdapter = new RecordingReplicatorPinInputAdapter
+    {
+        AttachResult = unavailableFeature != "input"
+    };
+    var treatmentAdapter = new RecordingRecipeGridTreatmentAdapter
+    {
+        InitializeResult = unavailableFeature != "treatment"
+    };
+    var presentation = new RecordingLiveRecipePresentation
+    {
+        InitializeResult = unavailableFeature != "presentation"
+    };
+    var controlsAdapter = new RecordingVisibilityControlAdapter
+    {
+        CreateResult = unavailableFeature != "controls"
+    };
+
+    var orchestrator = new TrackerOrchestrator(
+        state,
+        new ReplicatorPinInput(inputAdapter, state, diagnostics),
+        new RecipeGridTreatment(treatmentAdapter, diagnostics),
+        presentation,
+        new MajorInterfaceVisibilityInput(new RecordingMajorInterfaceStateAdapter(), diagnostics),
+        panel,
+        new TrackerPanelDrag(dragAdapter, panel, diagnostics),
+        new TrackerVisibilityControls(controlsAdapter),
+        diagnostics);
+
+    Check(orchestrator.TryInitialize(PanelGeometry.Create(24f, 84f)),
+        unavailableFeature + " isolation initializes remaining features");
+    orchestrator.Refresh();
+
+    var panelAvailable = unavailableFeature != "panel";
+    var dragAvailable = panelAvailable && unavailableFeature != "drag";
+    var expectedAvailability =
+        "tracker-orchestration action=initialize panel=" + panelAvailable.ToString().ToLowerInvariant() +
+        " drag=" + dragAvailable.ToString().ToLowerInvariant() +
+        " input=" + (unavailableFeature != "input").ToString().ToLowerInvariant() +
+        " treatment=" + (unavailableFeature != "treatment").ToString().ToLowerInvariant() +
+        " presentation=" + (unavailableFeature != "presentation").ToString().ToLowerInvariant() +
+        " controls=" + (unavailableFeature != "controls").ToString().ToLowerInvariant();
+    Check(diagnostics.Records.Any(record => record.Message == expectedAvailability),
+        unavailableFeature + " isolation reports exact feature availability");
+
+    orchestrator.Dispose();
+    orchestrator.Dispose();
+    Check(panelAdapter.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases panel once");
+    Check(dragAdapter.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases drag listeners once");
+    Check(inputAdapter.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases input listener once");
+    Check(treatmentAdapter.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases treatment once");
+    Check(presentation.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases presentation once");
+    Check(controlsAdapter.ReleaseCalls == 1,
+        unavailableFeature + " isolation releases controls once");
+    Check(inputAdapter.ListenerCount == 0 && dragAdapter.ListenerCount == 0,
+        unavailableFeature + " isolation leaves callbacks inert");
+    Check(diagnostics.Records.Count(record => record.Message ==
+            "tracker-orchestration action=release") == 1,
+        unavailableFeature + " isolation reports shutdown once");
 }
 
 void CheckRect(PanelRectangle actual, float expectedLeft, float expectedTop, string name)
