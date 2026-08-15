@@ -20,7 +20,7 @@ Behavioral-ready pending owner validation
 The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-05
 are owner accepted. S3-06 and the Source-ready and Package-inspected gates are
 technically complete for source revision
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains
+`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
 unavailable pending the owner-performed Behavioral-ready gate and explicit
 Owner-reviewed acceptance.
 
@@ -673,18 +673,32 @@ procedure are ready for owner review. Agents do not run the procedure.
 - The self-contained owner procedure limits future runtime work to one
   3840-by-2160/Auto session and the remaining native integration, presentation,
   input, visibility, and lifecycle observations.
+- The owner workshop exposed a panel-shell dependency on the Replicator grid's
+  null sprite and a procedure step that expected a row while the visibility
+  contract hid it. The final implementation removes the texture dependency,
+  retains a transparent raycast-containment surface, and draws four
+  non-raycasting four-unit border segments. The procedure now separates native
+  Replicator observations from tracker-row observations after the Replicator
+  and Inventory close.
+- An interim tiled native texture initialized successfully but impaired
+  legibility even at reduced opacity, so it was rejected rather than retained.
+  The final owner trace confirmed all six orchestrated features available,
+  one live two-ingredient row, expected visibility transitions, ordinary drag
+  completion, and edge clamping. These bounded workshop observations diagnose
+  the repaired handoff only; they do not satisfy Behavioral-ready or imply
+  Owner-reviewed acceptance.
 
 **Owner procedure:** [`Sprint 3 Owner Validation Procedure`](OWNER-VALIDATION.md)
 
 **Technical validation:** Passed on 2026-08-15 for source revision
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1` with:
+`cb37a0acbd23e77306137dc695d92980f1c686cc` with:
 
 ```powershell
 .\scripts\validate\Validate-S3-06.ps1 `
   -GameRoot '<DSP installation>' `
   -BepInExReferencePath '<documented BepInEx compile reference>' `
-  -BuildNumber 306 `
-  -SourceRevision ffd18688a3eff41d776204ebfcdcd4de21e15ab1
+  -BuildNumber 310 `
+  -SourceRevision cb37a0acbd23e77306137dc695d92980f1c686cc
 ```
 
 The complete S3-01 through S3-06 chain passed. Deterministic integration tests
@@ -692,9 +706,10 @@ covered each feature unavailable in isolation, exact availability reporting,
 ordered one-time cleanup, and inert callbacks. Local and Hosted Release builds
 completed with zero warnings and zero errors, and exhaustive consumed-surface
 coverage passed. Static review confirmed the accepted architecture, read-only
-game-state boundary, bounded diagnostics, and complete owner procedure. No
-plugin was installed or executed, and no game or substitute runtime was
-started.
+game-state boundary, bounded diagnostics, and complete owner procedure. The
+agent-run gate did not install or execute the plugin or start the game or a
+substitute runtime; the separate bounded owner workshop observations are
+recorded above.
 
 **Owner acceptance:** Not inferred. S3-06 hands the testable build into the
 pending owner-performed Behavioral-ready gate; Sprint 3 remains incomplete.
@@ -727,7 +742,7 @@ integration. Tracker-icon navigation remains outside the MVP.
 ### Source-ready
 
 **Status:** Passed on 2026-08-15 for
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`
+`cb37a0acbd23e77306137dc695d92980f1c686cc`
 
 - Every included Sprint 3 story meets its definition of done. S3-01 through
   S3-05 are explicitly owner accepted; S3-06 is the technical handoff into the
@@ -744,7 +759,7 @@ integration. Tracker-icon navigation remains outside the MVP.
   behavior, excludes tracker navigation, and limits display claims to the
   recorded automated and owner-performed cases.
 
-Validated with `Validate-Sprint3-SourceReady.ps1` using build number 306. The
+Validated with `Validate-Sprint3-SourceReady.ps1` using build number 310. The
 complete focused chain, Local/Hosted Release builds, exact shim coverage,
 architecture/static checks, clean-revision check, and tracked-output audit
 passed. This gate does not establish live behavior.
@@ -752,7 +767,7 @@ passed. This gate does not establish live behavior.
 ### Package-inspected
 
 **Status:** Passed on 2026-08-15 for
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`
+`cb37a0acbd23e77306137dc695d92980f1c686cc`
 
 - The real version-aligned Release output passes Local and Hosted static
   package inspection.
@@ -763,10 +778,10 @@ passed. This gate does not establish live behavior.
 - Metadata truthfully describes the development artifact and makes no
   unsupported installed, compatibility, publication, or release claim.
 
-Validated with `Validate-Sprint3-PackageInspected.ps1` using build number 306.
+Validated with `Validate-Sprint3-PackageInspected.ps1` using build number 310.
 Hosted and Local package construction and static inspection passed. The final
-retained owner-test files are `artifacts/package/0.1.306/DSPRecipeTracker.dll`
-and `artifacts/package/0.1.306/DSPRecipeTracker-0.1.306.zip`; `build-info.json`
+retained owner-test files are `artifacts/package/0.1.310/DSPRecipeTracker.dll`
+and `artifacts/package/0.1.310/DSPRecipeTracker-0.1.310.zip`; `build-info.json`
 records `referenceMode` `Local` and the validated source revision. The archive
 contains only the three root package assets and the intended plugin DLL.
 

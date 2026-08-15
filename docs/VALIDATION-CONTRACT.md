@@ -13,10 +13,11 @@ Its Source-ready and Package-inspected gates pass for commit
 `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
 authorized and implementation is complete. S3-01 through S3-05 are owner
 accepted. S3-06 and the Source-ready and Package-inspected gates pass for
-source revision `ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion
+source revision `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion
 remains unavailable pending the owner-performed Behavioral-ready gate and
 explicit Owner-reviewed acceptance.
-Installed behavior remains unvalidated and no supported release exists.
+Installed behavior is only partially observed through the bounded repair
+workshop. Behavioral-ready remains pending and no supported release exists.
 
 **Owner review:** Accepted through 2026-08-15.
 

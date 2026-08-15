@@ -11,11 +11,11 @@ exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
 owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus the
 Source-ready and Package-inspected gates pass for source revision
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains pending
+`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains pending
 owner-performed runtime validation and later explicit owner review. Runtime
 execution remains outside the current agent authorization.
-Future in-game validation is performed only by the owner from testable builds,
-after non-runtime checks are exhausted and only at meaningful gates. No
+Remaining in-game validation is performed only by the owner from testable
+builds, after non-runtime checks are exhausted and only at meaningful gates. No
 supported or published release exists yet.
 
 ## Planned MVP
@@ -193,7 +193,7 @@ accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
 is owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus
 the Source-ready and Package-inspected gates pass for source revision
-`ffd18688a3eff41d776204ebfcdcd4de21e15ab1`. Sprint completion remains
+`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
 unavailable pending the owner-performed Behavioral-ready gate and explicit
 Owner-reviewed acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
@@ -203,9 +203,9 @@ accepted conclusions do not authorize new runtime execution. The plugin
 source now connects isolated Replicator input, independent recipe-grid
 treatment, live complete recipe rows, scale-aware panel dragging and bounds
 reclamping, and paired visibility controls through plain orchestration at
-plugin startup; gameplay, native appearance, layout, input, cleanup, and
-display-scale behavior remain
-unvalidated.
+plugin startup. The owner workshop confirmed the repaired panel initializes,
+presents one live row, transitions visibility, drags, and clamps at an edge;
+the complete Behavioral-ready procedure remains pending.
 
 The source now contains deterministic transient pin ordering, unpinning,
 three-entry capacity, bottom eviction, unavailable-recipe removal, independent
@@ -214,8 +214,8 @@ three ordered complete native-composed recipe rows, with bounded Debug
 transition diagnostics. The UI-independent presentation model and separate
 read-only DSP recipe/item and Icarus-inventory adapters now feed those rows
 through immediate pin-change and bounded steady refresh, safe invalid-pin
-removal, and temporary row suppression/recovery. Installed behavior remains
-unvalidated.
+removal, and temporary row suppression/recovery. Installed behavior is only
+partially observed; the remaining owner gate is not inferred from the workshop.
 
 ## Repository layout
 
