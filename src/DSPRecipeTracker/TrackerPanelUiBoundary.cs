@@ -61,17 +61,25 @@ namespace DSPRecipeTracker
 
         public bool TryApplyDrag(DragDelta delta, ParentBounds parent)
         {
+            return TryApplyDrag(delta, parent, out _);
+        }
+
+        public bool TryApplyDrag(DragDelta delta, ParentBounds parent, out bool clamped)
+        {
+            clamped = false;
             if (!available)
             {
                 return false;
             }
 
             var nextRectangle = PanelGeometry.MoveAndClamp(rectangle, delta, parent);
+            clamped = nextRectangle.Left != rectangle.Left + delta.Horizontal ||
+                nextRectangle.Top != rectangle.Top + delta.Vertical;
             try
             {
                 if (!adapter.TryApplyLayout(nextRectangle))
                 {
-                    return FailSoftly();
+                    return false;
                 }
 
                 rectangle = nextRectangle;
@@ -79,7 +87,38 @@ namespace DSPRecipeTracker
             }
             catch (Exception)
             {
-                return FailSoftly();
+                return false;
+            }
+        }
+
+        public bool TryReclamp(ParentBounds parent, out bool corrected)
+        {
+            corrected = false;
+            if (!available)
+            {
+                return false;
+            }
+
+            var nextRectangle = PanelGeometry.Clamp(rectangle, parent);
+            corrected = nextRectangle.Left != rectangle.Left || nextRectangle.Top != rectangle.Top;
+            if (!corrected)
+            {
+                return true;
+            }
+
+            try
+            {
+                if (!adapter.TryApplyLayout(nextRectangle))
+                {
+                    return false;
+                }
+
+                rectangle = nextRectangle;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

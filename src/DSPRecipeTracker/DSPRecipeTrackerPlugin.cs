@@ -57,6 +57,10 @@ namespace DSPRecipeTracker
                     : uiGame.replicator.recipeBg.sprite;
                 var panelAdapter = new UnityTrackerPanelAdapter(panelParent, backgroundSprite);
                 var panel = new TrackerPanelUiBoundary(panelAdapter);
+                var panelDrag = new TrackerPanelDrag(
+                    new UnityTrackerPanelDragAdapter(panelAdapter, root.overlayCanvas),
+                    panel,
+                    diagnostics);
                 var pinInput = new ReplicatorPinInput(
                     new UnityReplicatorPinInputAdapter(uiGame.replicator),
                     state,
@@ -109,6 +113,7 @@ namespace DSPRecipeTracker
                     recipePresentation,
                     majorInterfaces,
                     panel,
+                    panelDrag,
                     controls,
                     diagnostics);
                 orchestrator.TryInitialize(PanelGeometry.Create(24f, 84f));

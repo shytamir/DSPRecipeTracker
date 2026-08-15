@@ -9,7 +9,7 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 through S3-03 are owner accepted, while S3-04 is
+owner authorized; S3-01 through S3-04 are owner accepted, while S3-05 is
 implemented and technically validated and remains Active pending owner
 acceptance. Runtime execution and runtime validation remain outside the
 current source-only authorization.
@@ -62,7 +62,7 @@ The authoritative product scope is maintained in
 [docs/PROJECT.md](docs/PROJECT.md). Readiness and acceptance criteria are
 maintained in [docs/VALIDATION-CONTRACT.md](docs/VALIDATION-CONTRACT.md).
 
-The current planning-pending state is recorded in
+The current active implementation state is recorded in
 [docs/ROADMAP.md](docs/ROADMAP.md). The completed Sprint 2 record is archived
 as [docs/archive/UI_INTEGRATION_ROADMAP.md](docs/archive/UI_INTEGRATION_ROADMAP.md).
 The authorized long-range MVP roadmap and original concept foundation remain
@@ -190,7 +190,7 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 through S3-03 are owner accepted, while S3-04 is
+is owner authorized; S3-01 through S3-04 are owner accepted, while S3-05 is
 implemented and technically validated and remains Active pending owner
 acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
@@ -198,9 +198,10 @@ Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
 accepted conclusions do not authorize new runtime execution. The plugin
 source now connects isolated Replicator input, independent recipe-grid
-treatment, live complete recipe rows, the panel boundary, and paired visibility
-controls through plain orchestration at plugin startup; gameplay, native
-appearance, layout, input, cleanup, and display-scale behavior remain
+treatment, live complete recipe rows, scale-aware panel dragging and bounds
+reclamping, and paired visibility controls through plain orchestration at
+plugin startup; gameplay, native appearance, layout, input, cleanup, and
+display-scale behavior remain
 unvalidated.
 
 The source now contains deterministic transient pin ordering, unpinning,
@@ -230,6 +231,7 @@ unvalidated.
 |       |   |-- UnityEngine/
 |       |   |-- UnityEngine.CoreModule/
 |       |   |-- UnityEngine.TextRenderingModule/
+|       |   |-- UnityEngine.UIModule/
 |       |   `-- UnityEngine.UI/
 |       `-- surface-inventory.json
 |-- Directory.Build.props
@@ -274,7 +276,8 @@ unvalidated.
 |       |-- Validate-S3-01.ps1
 |       |-- Validate-S3-02.ps1
 |       |-- Validate-S3-03.ps1
-|       `-- Validate-S3-04.ps1
+|       |-- Validate-S3-04.ps1
+|       `-- Validate-S3-05.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

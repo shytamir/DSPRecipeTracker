@@ -10,6 +10,7 @@ namespace DSPRecipeTracker
         private readonly ILiveRecipePresentation recipePresentation;
         private readonly MajorInterfaceVisibilityInput majorInterfaces;
         private readonly TrackerPanelUiBoundary panel;
+        private readonly TrackerPanelDrag panelDrag;
         private readonly TrackerVisibilityControls controls;
         private readonly ITrackerDiagnosticSink diagnostics;
         private bool manualRequested = true;
@@ -25,6 +26,7 @@ namespace DSPRecipeTracker
             ILiveRecipePresentation recipePresentation,
             MajorInterfaceVisibilityInput majorInterfaces,
             TrackerPanelUiBoundary panel,
+            TrackerPanelDrag panelDrag,
             TrackerVisibilityControls controls,
             ITrackerDiagnosticSink diagnostics)
         {
@@ -34,6 +36,7 @@ namespace DSPRecipeTracker
             this.recipePresentation = recipePresentation ?? throw new ArgumentNullException(nameof(recipePresentation));
             this.majorInterfaces = majorInterfaces ?? throw new ArgumentNullException(nameof(majorInterfaces));
             this.panel = panel ?? throw new ArgumentNullException(nameof(panel));
+            this.panelDrag = panelDrag ?? throw new ArgumentNullException(nameof(panelDrag));
             this.controls = controls ?? throw new ArgumentNullException(nameof(controls));
             this.diagnostics = diagnostics ?? throw new ArgumentNullException(nameof(diagnostics));
         }
@@ -48,6 +51,7 @@ namespace DSPRecipeTracker
             }
 
             var panelAvailable = panel.TryInitialize(initialRectangle);
+            var dragAvailable = panelDrag.TryInitialize();
             var inputAvailable = pinInput.TryInitialize();
             var treatmentAvailable = gridTreatment.TryInitialize();
             var presentationAvailable = recipePresentation.TryInitialize();
@@ -57,6 +61,7 @@ namespace DSPRecipeTracker
             diagnostics.Write(
                 TrackerDiagnosticLevel.Debug,
                 "tracker-orchestration action=initialize panel=" + Format(panelAvailable) +
+                " drag=" + Format(dragAvailable) +
                 " input=" + Format(inputAvailable) +
                 " treatment=" + Format(treatmentAvailable) +
                 " presentation=" + Format(presentationAvailable) +
@@ -74,6 +79,7 @@ namespace DSPRecipeTracker
 
             recipePresentation.Refresh();
             gridTreatment.TryRefresh(state.RecipeIds);
+            panelDrag.RefreshBounds();
             ApplyVisibility();
         }
 
@@ -87,6 +93,7 @@ namespace DSPRecipeTracker
             released = true;
             initialized = false;
             controls.Dispose();
+            panelDrag.Dispose();
             recipePresentation.Dispose();
             gridTreatment.Dispose();
             pinInput.Dispose();

@@ -32,13 +32,20 @@ namespace UnityEngine.EventSystems
         {
             get { return InputButton.Left; }
         }
+
+        public UnityEngine.Vector2 delta
+        {
+            get { return default(UnityEngine.Vector2); }
+        }
     }
 
     public enum EventTriggerType
     {
         PointerEnter,
         PointerExit,
-        PointerDown
+        PointerDown,
+        Drag = 5,
+        EndDrag = 14
     }
 
     public class EventTrigger : UnityEngine.MonoBehaviour
@@ -49,14 +56,14 @@ namespace UnityEngine.EventSystems
 
         public class TriggerEvent : UnityEngine.Events.UnityEvent<BaseEventData>
         {
-            private TriggerEvent()
+            public TriggerEvent()
             {
             }
         }
 
         public class Entry
         {
-            private Entry()
+            public Entry()
             {
             }
 

@@ -4,12 +4,12 @@
 
 **Status:** Authorized - implementation underway
 
-**Active story:** S3-04 - Refresh live ingredient and inventory presentation
+**Active story:** S3-05 - Complete live dragging and display-bound clamping
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S3-04 only
+**Implementation authorization:** S3-05 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,9 +17,9 @@ pending
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-03
-are owner accepted. Implementation is underway with S3-04 as the only Active
-story; later stories remain blocked until separately activated.
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-04
+are owner accepted. Implementation is underway with S3-05 as the only Active
+story; S3-06 remains blocked until separately activated.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -417,8 +417,7 @@ activated S3-04; it does not activate any later story.
 
 ### S3-04 - Refresh live ingredient and inventory presentation
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want tracker counts and sufficiency to follow my
 current Icarus inventory without re-pinning or disturbing pin order.
@@ -498,12 +497,13 @@ path, no second visibility rule, and no crafting, inventory, factory, save, or
 pin mutation outside the accepted invalid-removal path. No plugin was
 installed or executed, and no game or substitute runtime was started.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S3-05.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+activated S3-05; it does not activate S3-06.
 
 ### S3-05 - Complete live dragging and display-bound clamping
 
-**Status:** Proposed - blocked by S3-04
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want to move the tracker deliberately and keep
 the complete panel reachable at the supported Auto layout sizes.
@@ -553,6 +553,56 @@ shim validation, and source review pass. Review confirms real drag-event
 wiring, pixel-to-layout conversion, runtime parent-bound use, input-containment
 configuration, and cleanup. Live dragging, containment, and the
 3840-by-2160/Auto display case remain deferred to the final owner gate.
+
+**Implementation result:**
+
+- `UnityTrackerPanelDragAdapter` installs tracker-owned `Drag` and `EndDrag`
+  entries on the tracker panel, translates Unity's upward-positive pointer
+  delta into the panel's top-down coordinates, and removes both listeners and
+  the owned trigger during cleanup.
+- `TrackerPanelDrag` divides screen-pixel movement by the live overlay-canvas
+  scale factor, forwards UI-layout deltas into the existing neutral geometry,
+  and refreshes public parent-rectangle bounds without reproducing DSP's Auto
+  scale algorithm.
+- Parent-size changes re-clamp the entire fixed 360-by-252 panel. Invalid
+  scale, bounds, event wiring, or drag-layout application disables only drag
+  and reclamping; the panel shell, rows, visibility, and other tracker features
+  remain available.
+- Movement events are silent. Initialization, changed bounds, clamp
+  correction, one completion per moved drag, bounded disablement, and normal
+  release emit concise Debug diagnostics.
+- Hosted builds now include an exact declaration-only `UnityEngine.UIModule`
+  compile reference for `Canvas.scaleFactor`; the exhaustive surface inventory
+  covers every new Unity/DSP member and excludes the shims from packaging.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S3-05.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 305 `
+  -SourceRevision $revision
+```
+
+The deterministic suite covers factor-two scale conversion, 1920-by-1080 and
+2560-by-1440 Auto effective bounds, drag forwarding, every edge and corner,
+changed and undersized bounds, invalid scale and bounds, tracker-owned raycast
+configuration, failure isolation, listener cleanup, and inert release. Local
+and Hosted Release builds completed with zero warnings and zero errors, and
+their consumed external surfaces matched under exhaustive shim validation.
+Read-only inspection confirmed the public `UIRoot.overlayCanvas`,
+`Canvas.scaleFactor`, `RectTransform.rect`, `Rect.width`/`height`,
+`PointerEventData.delta`, `EventTriggerType.Drag`/`EndDrag`, and
+`UICanvasScalerHandler.GetSuggestUILayoutHeight(int)` members. Static review
+confirmed no duplicate Auto-scale algorithm, broad reflection or hierarchy
+search, per-pointer diagnostic stream, row interaction surface, or game-state
+mutation. No plugin was installed or executed, and no game or substitute
+runtime was started.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S3-06.
 
 ## Epic 3 - Complete and hand off the MVP prototype
 

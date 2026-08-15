@@ -23,6 +23,7 @@
     <DSPUnityEngineHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'))</DSPUnityEngineHostedReferencePath>
     <DSPUnityCoreModuleHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'))</DSPUnityCoreModuleHostedReferencePath>
     <DSPUnityTextRenderingModuleHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.TextRenderingModule\obj\Release\netstandard2.0\ref\UnityEngine.TextRenderingModule.dll'))</DSPUnityTextRenderingModuleHostedReferencePath>
+    <DSPUnityUIModuleHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.UIModule\obj\Release\netstandard2.0\ref\UnityEngine.UIModule.dll'))</DSPUnityUIModuleHostedReferencePath>
     <DSPUnityUIHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll'))</DSPUnityUIHostedReferencePath>
     <DSPAssemblyCSharpHostedReferencePath>$([MSBuild]::NormalizePath('$(DSPRecipeTrackerCompileReferenceRoot)DSPGame.Reference\obj\Release\netstandard2.0\ref\Assembly-CSharp.dll'))</DSPAssemblyCSharpHostedReferencePath>
   </PropertyGroup>

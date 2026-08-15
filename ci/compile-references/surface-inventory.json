@@ -93,7 +93,8 @@
             { "kind": "method", "name": "get_anchoredPosition", "signature": "UnityEngine.Vector2()" },
             { "kind": "method", "name": "set_anchoredPosition", "signature": "System.Void(UnityEngine.Vector2)" },
             { "kind": "method", "name": "set_sizeDelta", "signature": "System.Void(UnityEngine.Vector2)" },
-            { "kind": "method", "name": "set_pivot", "signature": "System.Void(UnityEngine.Vector2)" }
+            { "kind": "method", "name": "set_pivot", "signature": "System.Void(UnityEngine.Vector2)" },
+            { "kind": "method", "name": "get_rect", "signature": "UnityEngine.Rect()" }
           ]
         },
         {
@@ -109,10 +110,21 @@
         {
           "name": "UnityEngine.Vector2",
           "baseType": "System.ValueType",
-          "usage": "panel-layout-values",
+          "usage": "panel-layout-and-pointer-delta-values",
           "members": [
             { "kind": "method", "name": ".ctor", "signature": "System.Void(System.Single,System.Single)" },
-            { "kind": "method", "name": "op_Addition", "signature": "UnityEngine.Vector2(UnityEngine.Vector2,UnityEngine.Vector2)", "isStatic": true }
+            { "kind": "method", "name": "op_Addition", "signature": "UnityEngine.Vector2(UnityEngine.Vector2,UnityEngine.Vector2)", "isStatic": true },
+            { "kind": "field", "name": "x", "signature": "System.Single" },
+            { "kind": "field", "name": "y", "signature": "System.Single" }
+          ]
+        },
+        {
+          "name": "UnityEngine.Rect",
+          "baseType": "System.ValueType",
+          "usage": "live-parent-layout-bounds",
+          "members": [
+            { "kind": "method", "name": "get_width", "signature": "System.Single()" },
+            { "kind": "method", "name": "get_height", "signature": "System.Single()" }
           ]
         },
         {
@@ -206,6 +218,20 @@
       ]
     },
     {
+      "name": "UnityEngine.UIModule",
+      "shimProject": "Unity.Reference/UnityEngine.UIModule/UnityEngine.UIModule.Reference.csproj",
+      "types": [
+        {
+          "name": "UnityEngine.Canvas",
+          "baseType": "UnityEngine.Behaviour",
+          "usage": "live-overlay-canvas-scale",
+          "members": [
+            { "kind": "method", "name": "get_scaleFactor", "signature": "System.Single()" }
+          ]
+        }
+      ]
+    },
+    {
       "name": "UnityEngine.UI",
       "shimProject": "Unity.Reference/UnityEngine.UI/UnityEngine.UI.Reference.csproj",
       "types": [
@@ -291,9 +317,10 @@
         {
           "name": "UnityEngine.EventSystems.PointerEventData",
           "baseType": "UnityEngine.EventSystems.BaseEventData",
-          "usage": "replicator-pointer-button-filter",
+          "usage": "replicator-pointer-button-filter-and-panel-drag-delta",
           "members": [
-            { "kind": "method", "name": "get_button", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton()" }
+            { "kind": "method", "name": "get_button", "signature": "UnityEngine.EventSystems.PointerEventData+InputButton()" },
+            { "kind": "method", "name": "get_delta", "signature": "UnityEngine.Vector2()" }
           ]
         },
         {
@@ -310,18 +337,20 @@
         {
           "name": "UnityEngine.EventSystems.EventTriggerType",
           "baseType": "System.Enum",
-          "usage": "replicator-pointer-down-entry-selection",
+          "usage": "replicator-pointer-down-and-panel-drag-entry-selection",
           "members": [
             { "kind": "field", "name": "value__", "signature": "System.Int32" },
             { "kind": "field", "name": "PointerEnter", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
             { "kind": "field", "name": "PointerExit", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
-            { "kind": "field", "name": "PointerDown", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true }
+            { "kind": "field", "name": "PointerDown", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
+            { "kind": "field", "name": "Drag", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true },
+            { "kind": "field", "name": "EndDrag", "signature": "UnityEngine.EventSystems.EventTriggerType", "isStatic": true }
           ]
         },
         {
           "name": "UnityEngine.EventSystems.EventTrigger",
           "baseType": "UnityEngine.MonoBehaviour",
-          "usage": "existing-replicator-shared-event",
+          "usage": "existing-replicator-and-tracker-owned-panel-events",
           "members": [
             { "kind": "method", "name": "get_triggers", "signature": "System.Collections.Generic.List`1<UnityEngine.EventSystems.EventTrigger+Entry>()" }
           ]
@@ -329,14 +358,17 @@
         {
           "name": "UnityEngine.EventSystems.EventTrigger+TriggerEvent",
           "baseType": "UnityEngine.Events.UnityEvent`1<UnityEngine.EventSystems.BaseEventData>",
-          "usage": "existing-pointer-down-callback",
-          "members": []
+          "usage": "existing-pointer-down-and-tracker-owned-drag-callbacks",
+          "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" }
+          ]
         },
         {
           "name": "UnityEngine.EventSystems.EventTrigger+Entry",
           "baseType": "System.Object",
-          "usage": "existing-pointer-down-entry",
+          "usage": "existing-pointer-down-and-tracker-owned-drag-entries",
           "members": [
+            { "kind": "method", "name": ".ctor", "signature": "System.Void()" },
             { "kind": "field", "name": "eventID", "signature": "UnityEngine.EventSystems.EventTriggerType" },
             { "kind": "field", "name": "callback", "signature": "UnityEngine.EventSystems.EventTrigger+TriggerEvent" }
           ]
@@ -462,7 +494,8 @@
           "usage": "startup-ui-root-and-game-host",
           "members": [
             { "kind": "method", "name": "get_instance", "signature": "UIRoot()", "isStatic": true },
-            { "kind": "field", "name": "uiGame", "signature": "UIGame" }
+            { "kind": "field", "name": "uiGame", "signature": "UIGame" },
+            { "kind": "field", "name": "overlayCanvas", "signature": "UnityEngine.Canvas" }
           ]
         },
         {

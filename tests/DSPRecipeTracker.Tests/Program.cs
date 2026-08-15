@@ -218,6 +218,182 @@ CheckRect(PanelGeometry.Clamp(repeatedlyMoved, resizedParent), 460f, 278f, "pare
 var undersizedParent = new ParentBounds(20f, 30f, 300f, 200f);
 CheckRect(PanelGeometry.Clamp(panel, undersizedParent), 20f, 30f, "undersized parent anchors panel origin");
 
+Check(
+    TrackerPanelDragGeometry.TryConvertScreenDelta(
+        new DragDelta(200f, -100f),
+        2f,
+        out var scaledDrag),
+    "4k factor-two drag conversion succeeds");
+Check(scaledDrag.Horizontal == 100f && scaledDrag.Vertical == -50f,
+    "4k factor-two drag conversion uses UI-layout units");
+Check(!TrackerPanelDragGeometry.TryConvertScreenDelta(
+        new DragDelta(1f, 1f),
+        0f,
+        out _),
+    "non-positive canvas scale is rejected");
+Check(!TrackerPanelDragGeometry.TryConvertScreenDelta(
+        new DragDelta(float.NaN, 1f),
+        1f,
+        out _),
+    "non-finite pointer delta is rejected");
+Check(TrackerPanelDragGeometry.TryCreateParentBounds(1920f, 1080f, out var auto1080Bounds),
+    "1920-by-1080 Auto effective bounds are accepted");
+Check(auto1080Bounds.Width == 1920f && auto1080Bounds.Height == 1080f,
+    "1920-by-1080 Auto effective bounds are preserved");
+Check(TrackerPanelDragGeometry.TryCreateParentBounds(2560f, 1440f, out var auto1440Bounds),
+    "2560-by-1440 Auto effective bounds are accepted");
+Check(auto1440Bounds.Width == 2560f && auto1440Bounds.Height == 1440f,
+    "2560-by-1440 Auto effective bounds are preserved");
+Check(!TrackerPanelDragGeometry.TryCreateParentBounds(0f, 1080f, out _),
+    "non-positive parent width is rejected");
+Check(!TrackerPanelDragGeometry.TryCreateParentBounds(float.PositiveInfinity, 1080f, out _),
+    "non-finite parent bounds are rejected");
+
+var dragDiagnostics = new RecordingDiagnosticSink();
+var dragPanelAdapter = new RecordingPanelUiAdapter();
+using (var dragPanel = new TrackerPanelUiBoundary(dragPanelAdapter))
+{
+    Check(dragPanel.TryInitialize(PanelGeometry.Create(24f, 84f)), "drag panel initializes at contracted position");
+    var dragAdapter = new RecordingTrackerPanelDragAdapter
+    {
+        Width = 1920f,
+        Height = 1080f,
+        ScaleFactor = 1f
+    };
+    using (var dragBoundary = new TrackerPanelDrag(dragAdapter, dragPanel, dragDiagnostics))
+    {
+        Check(dragBoundary.TryInitialize(), "panel drag initializes");
+        Check(dragBoundary.IsAvailable, "panel drag reports availability");
+        Check(dragAdapter.AttachCalls == 1 && dragAdapter.ListenerCount == 2,
+            "panel drag installs its movement and completion listeners once");
+        Check(dragPanelAdapter.RaycastCalls == 1,
+            "panel drag retains tracker-owned raycast containment");
+
+        dragAdapter.RaiseDrag(new DragDelta(2000f, 2000f));
+        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 828f,
+            "1920-by-1080 Auto drag clamps at bottom-right");
+        dragAdapter.RaiseCompleted();
+        Check(dragDiagnostics.Records.Count(record => record.Message.StartsWith(
+                "tracker-drag action=complete", StringComparison.Ordinal)) == 1,
+            "one explicit completion diagnostic follows a drag");
+
+        dragAdapter.Width = 2560f;
+        dragAdapter.Height = 1440f;
+        dragBoundary.RefreshBounds();
+        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 828f,
+            "2560-by-1440 Auto bounds preserve an in-bounds panel");
+
+        dragAdapter.Width = 1280f;
+        dragAdapter.Height = 720f;
+        dragBoundary.RefreshBounds();
+        CheckRect(dragPanelAdapter.LastRectangle, 920f, 468f,
+            "changed parent bounds re-clamp the complete panel");
+        Check(dragDiagnostics.Records.Any(record => record.Message ==
+                "tracker-drag action=clamp-correction source=bounds"),
+            "bounds-driven clamp correction is diagnosed");
+    }
+    Check(dragAdapter.ReleaseCalls == 1 && dragAdapter.ListenerCount == 0,
+        "panel drag removes owned listeners exactly once");
+    var layoutCallsAfterRelease = dragPanelAdapter.LayoutCalls;
+    dragAdapter.RaiseDrag(new DragDelta(100f, 100f));
+    dragAdapter.RaiseCompleted();
+    Check(dragPanelAdapter.LayoutCalls == layoutCallsAfterRelease,
+        "released drag callbacks remain inert");
+    Check(dragPanel.IsAvailable, "drag release leaves the panel shell available");
+}
+var dragRecords = dragDiagnostics.Records.Where(record => record.Message.StartsWith(
+    "tracker-drag action=", StringComparison.Ordinal)).ToList();
+Check(dragRecords.Any(record => record.Message == "tracker-drag action=release"),
+    "panel drag records normal release");
+Check(dragRecords.All(record => record.Level == TrackerDiagnosticLevel.Debug),
+    "panel drag diagnostics use Debug level");
+Check(dragRecords.All(record => record.Message.Length < 128),
+    "panel drag diagnostics remain bounded");
+
+var missingDragPanelAdapter = new RecordingPanelUiAdapter();
+using (var missingDragPanel = new TrackerPanelUiBoundary(missingDragPanelAdapter))
+{
+    Check(missingDragPanel.TryInitialize(PanelGeometry.Create(24f, 84f)),
+        "missing-drag panel initializes");
+    var missingDragAdapter = new RecordingTrackerPanelDragAdapter { AttachResult = false };
+    using var missingDrag = new TrackerPanelDrag(
+        missingDragAdapter,
+        missingDragPanel,
+        new RecordingDiagnosticSink());
+    Check(!missingDrag.TryInitialize(), "missing drag event path fails softly");
+    Check(missingDragPanel.IsAvailable, "missing drag event path leaves the panel shell available");
+    Check(missingDragAdapter.ReleaseCalls == 1,
+        "missing drag event path performs one-time cleanup");
+}
+
+var invalidScalePanelAdapter = new RecordingPanelUiAdapter();
+using (var invalidScalePanel = new TrackerPanelUiBoundary(invalidScalePanelAdapter))
+{
+    Check(invalidScalePanel.TryInitialize(PanelGeometry.Create(24f, 84f)),
+        "invalid-scale panel initializes");
+    var invalidScaleAdapter = new RecordingTrackerPanelDragAdapter
+    {
+        Width = 1920f,
+        Height = 1080f,
+        ScaleFactor = 0f
+    };
+    using (var invalidScaleDrag = new TrackerPanelDrag(
+        invalidScaleAdapter,
+        invalidScalePanel,
+        new RecordingDiagnosticSink()))
+    {
+        Check(invalidScaleDrag.TryInitialize(), "invalid scale is deferred until live drag");
+        invalidScaleAdapter.RaiseDrag(new DragDelta(10f, 10f));
+        Check(!invalidScaleDrag.IsAvailable, "invalid live scale disables dragging softly");
+        Check(invalidScalePanel.IsAvailable && invalidScalePanel.TryApplyVisibility(true),
+            "invalid live scale leaves the tracker panel usable");
+    }
+    Check(invalidScaleAdapter.ReleaseCalls == 1,
+        "invalid live scale performs one-time drag cleanup");
+}
+
+var invalidBoundsPanelAdapter = new RecordingPanelUiAdapter();
+using (var invalidBoundsPanel = new TrackerPanelUiBoundary(invalidBoundsPanelAdapter))
+{
+    Check(invalidBoundsPanel.TryInitialize(PanelGeometry.Create(24f, 84f)),
+        "invalid-bounds panel initializes");
+    var invalidBoundsAdapter = new RecordingTrackerPanelDragAdapter
+    {
+        Width = float.NaN,
+        Height = 1080f
+    };
+    using var invalidBoundsDrag = new TrackerPanelDrag(
+        invalidBoundsAdapter,
+        invalidBoundsPanel,
+        new RecordingDiagnosticSink());
+    Check(!invalidBoundsDrag.TryInitialize(), "invalid parent bounds disable dragging softly");
+    Check(invalidBoundsPanel.IsAvailable, "invalid parent bounds leave the panel shell available");
+    Check(invalidBoundsAdapter.ReleaseCalls == 1,
+        "invalid parent bounds perform one-time drag cleanup");
+}
+
+var failedDragLayoutPanelAdapter = new RecordingPanelUiAdapter();
+using (var failedDragLayoutPanel = new TrackerPanelUiBoundary(failedDragLayoutPanelAdapter))
+{
+    Check(failedDragLayoutPanel.TryInitialize(PanelGeometry.Create(24f, 84f)),
+        "failed-drag-layout panel initializes");
+    var failedDragLayoutAdapter = new RecordingTrackerPanelDragAdapter
+    {
+        Width = 1920f,
+        Height = 1080f
+    };
+    using var failedDragLayout = new TrackerPanelDrag(
+        failedDragLayoutAdapter,
+        failedDragLayoutPanel,
+        new RecordingDiagnosticSink());
+    Check(failedDragLayout.TryInitialize(), "failed-drag-layout boundary initializes");
+    failedDragLayoutPanelAdapter.ThrowDuringLayout = true;
+    failedDragLayoutAdapter.RaiseDrag(new DragDelta(10f, 10f));
+    Check(!failedDragLayout.IsAvailable, "drag layout failure disables only dragging");
+    Check(failedDragLayoutPanel.IsAvailable,
+        "drag layout failure does not release the tracker panel");
+}
+
 var visibilityCases = new[]
 {
     (HasRows: false, ManualRequested: false, MajorInterfaceActive: false, Expected: false),
@@ -498,6 +674,11 @@ var orchestrationState = new PinnedRecipeState(orchestrationDiagnostics);
 orchestrationState.Toggle(808);
 var orchestrationPanelAdapter = new RecordingPanelUiAdapter();
 var orchestrationPanel = new TrackerPanelUiBoundary(orchestrationPanelAdapter);
+var orchestrationDragAdapter = new RecordingTrackerPanelDragAdapter();
+var orchestrationDrag = new TrackerPanelDrag(
+    orchestrationDragAdapter,
+    orchestrationPanel,
+    orchestrationDiagnostics);
 var orchestrationInputAdapter = new RecordingReplicatorPinInputAdapter();
 var orchestrationInput = new ReplicatorPinInput(orchestrationInputAdapter, orchestrationState, orchestrationDiagnostics);
 var orchestrationTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter();
@@ -514,6 +695,7 @@ var orchestration = new TrackerOrchestrator(
     orchestrationPresentation,
     orchestrationMajor,
     orchestrationPanel,
+    orchestrationDrag,
     orchestrationControls,
     orchestrationDiagnostics);
 
@@ -560,7 +742,7 @@ var visibilityRecordCount = orchestrationDiagnostics.Records.Count(record => rec
 orchestration.Refresh();
 Check(orchestrationDiagnostics.Records.Count(record => record.Message.StartsWith("tracker-orchestration visibility=", StringComparison.Ordinal)) == visibilityRecordCount, "unchanged orchestrated visibility is diagnostically silent");
 var orchestrationRecords = orchestrationDiagnostics.Records.Where(record => record.Message.StartsWith("tracker-orchestration ", StringComparison.Ordinal)).ToList();
-Check(orchestrationRecords.Any(record => record.Message.StartsWith("tracker-orchestration action=initialize panel=true input=true treatment=true presentation=true controls=true", StringComparison.Ordinal)), "orchestration initialization diagnostic records feature availability");
+Check(orchestrationRecords.Any(record => record.Message.StartsWith("tracker-orchestration action=initialize panel=true drag=true input=true treatment=true presentation=true controls=true", StringComparison.Ordinal)), "orchestration initialization diagnostic records feature availability");
 Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration action=panel-hide manualRequested=false"), "panel action diagnostic records stored intent");
 Check(orchestrationRecords.Count(record => record.Message.StartsWith("tracker-orchestration action=global-toggle", StringComparison.Ordinal)) == 3, "global actions are diagnosed once each");
 Check(orchestrationRecords.Any(record => record.Message == "tracker-orchestration visibility=true hasRows=true manualRequested=true majorAvailable=true majorActive=false"), "visible diagnostic records all policy inputs");
@@ -575,6 +757,7 @@ Check(orchestrationPanelAdapter.ReleaseCalls == 1, "orchestration panel cleanup 
 Check(orchestrationInputAdapter.ReleaseCalls == 1, "orchestration input cleanup is one-time");
 Check(orchestrationTreatmentAdapter.ReleaseCalls == 1, "orchestration treatment cleanup is one-time");
 Check(orchestrationPresentation.ReleaseCalls == 1, "orchestration presentation cleanup is one-time");
+Check(orchestrationDragAdapter.ReleaseCalls == 1, "orchestration drag cleanup is one-time");
 Check(orchestrationDiagnostics.Records.Count(record => record.Message == "tracker-orchestration action=release") == 1, "orchestration release diagnostic is one-time");
 orchestrationControlAdapter.RaiseGlobalToggle();
 orchestrationControlAdapter.RaisePanelHide();
@@ -588,6 +771,7 @@ var partialInputAdapter = new RecordingReplicatorPinInputAdapter { AttachResult 
 var partialTreatmentAdapter = new RecordingRecipeGridTreatmentAdapter { InitializeResult = false };
 var partialControlsAdapter = new RecordingVisibilityControlAdapter { CreateResult = false };
 var partialPresentation = new RecordingLiveRecipePresentation { InitializeResult = false };
+var partialDragAdapter = new RecordingTrackerPanelDragAdapter();
 using (var partial = new TrackerOrchestrator(
     partialState,
     new ReplicatorPinInput(partialInputAdapter, partialState, partialDiagnostics),
@@ -595,6 +779,7 @@ using (var partial = new TrackerOrchestrator(
     partialPresentation,
     new MajorInterfaceVisibilityInput(new RecordingMajorInterfaceStateAdapter { Available = false }, partialDiagnostics),
     partialPanel,
+    new TrackerPanelDrag(partialDragAdapter, partialPanel, partialDiagnostics),
     new TrackerVisibilityControls(partialControlsAdapter),
     partialDiagnostics))
 {
@@ -605,6 +790,7 @@ Check(partialPanelAdapter.ReleaseCalls == 1, "partial panel cleanup is bounded")
 Check(partialInputAdapter.ReleaseCalls == 1, "partial input cleanup is bounded");
 Check(partialTreatmentAdapter.ReleaseCalls == 1, "partial treatment cleanup is bounded");
 Check(partialPresentation.ReleaseCalls == 1, "partial presentation cleanup is bounded");
+Check(partialDragAdapter.ReleaseCalls == 1, "partial drag cleanup is bounded");
 Check(partialControlsAdapter.ReleaseCalls == 1, "partial control cleanup is bounded");
 
 var presentationDiagnostics = new RecordingDiagnosticSink();
@@ -819,7 +1005,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe data, recipe presentation, complete recipe rows, live refresh, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe data, recipe presentation, complete recipe rows, live refresh, panel dragging, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -901,6 +1087,8 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
 
     public int ReleaseCalls { get; private set; }
 
+    public int LayoutCalls { get; private set; }
+
     public PanelRectangle LastRectangle { get; private set; }
 
     public bool? LastVisibility { get; private set; }
@@ -923,6 +1111,7 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
 
     public bool TryApplyLayout(PanelRectangle rectangle)
     {
+        LayoutCalls++;
         if (ThrowDuringLayout)
         {
             throw new InvalidOperationException("Unavailable layout member.");
@@ -971,6 +1160,73 @@ internal sealed class RecordingPanelUiAdapter : ITrackerPanelUiAdapter
     public void Release()
     {
         ReleaseCalls++;
+    }
+}
+
+internal sealed class RecordingTrackerPanelDragAdapter : ITrackerPanelDragAdapter
+{
+    private Action<DragDelta>? drag;
+    private Action? dragCompleted;
+
+    public bool AttachResult { get; set; } = true;
+
+    public bool ReadScaleResult { get; set; } = true;
+
+    public bool ReadBoundsResult { get; set; } = true;
+
+    public float ScaleFactor { get; set; } = 1f;
+
+    public float Width { get; set; } = 1920f;
+
+    public float Height { get; set; } = 1080f;
+
+    public int AttachCalls { get; private set; }
+
+    public int ReleaseCalls { get; private set; }
+
+    public int ListenerCount => (drag == null ? 0 : 1) + (dragCompleted == null ? 0 : 1);
+
+    public bool TryAttach(Action<DragDelta> drag, Action dragCompleted)
+    {
+        AttachCalls++;
+        if (!AttachResult)
+        {
+            return false;
+        }
+
+        this.drag = drag;
+        this.dragCompleted = dragCompleted;
+        return true;
+    }
+
+    public bool TryReadScaleFactor(out float scaleFactor)
+    {
+        scaleFactor = ScaleFactor;
+        return ReadScaleResult;
+    }
+
+    public bool TryReadParentSize(out float width, out float height)
+    {
+        width = Width;
+        height = Height;
+        return ReadBoundsResult;
+    }
+
+    public void Release()
+    {
+        ReleaseCalls++;
+        drag = null;
+        dragCompleted = null;
+    }
+
+    public void RaiseDrag(DragDelta delta)
+    {
+        drag?.Invoke(delta);
+    }
+
+    public void RaiseCompleted()
+    {
+        dragCompleted?.Invoke();
     }
 }
 

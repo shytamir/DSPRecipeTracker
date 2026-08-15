@@ -28,6 +28,7 @@ $shimPaths = @(
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'),
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'),
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.TextRenderingModule\obj\Release\netstandard2.0\ref\UnityEngine.TextRenderingModule.dll'),
+    (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UIModule\obj\Release\netstandard2.0\ref\UnityEngine.UIModule.dll'),
     (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll'),
     (Join-Path $repoRoot 'ci\compile-references\DSPGame.Reference\obj\Release\netstandard2.0\ref\Assembly-CSharp.dll')
 )
@@ -69,6 +70,7 @@ if ($coverageDifference.Count -ne 0) {
 $uiSources = @(
     (Join-Path $repoRoot 'src\DSPRecipeTracker\TrackerPanelUiBoundary.cs'),
     (Join-Path $repoRoot 'src\DSPRecipeTracker\UnityTrackerPanelAdapter.cs'),
+    (Join-Path $repoRoot 'src\DSPRecipeTracker\UnityTrackerPanelDragAdapter.cs'),
     (Join-Path $repoRoot 'src\DSPRecipeTracker\UnityRecipeRowUiAdapter.cs')
 )
 $uiSourceText = ($uiSources | ForEach-Object { [IO.File]::ReadAllText($_) }) -join "`n"

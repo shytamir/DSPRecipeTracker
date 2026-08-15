@@ -22,6 +22,7 @@
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine" HintPath="$(DSPUnityEngineHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.CoreModule" HintPath="$(DSPUnityCoreModuleHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.TextRenderingModule" HintPath="$(DSPUnityTextRenderingModuleHostedReferencePath)" Private="false" />
+    <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.UIModule" HintPath="$(DSPUnityUIModuleHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="UnityEngine.UI" HintPath="$(DSPUnityUIHostedReferencePath)" Private="false" />
     <Reference Condition="'$(DSPReferenceMode)' == 'Hosted'" Include="Assembly-CSharp" HintPath="$(DSPAssemblyCSharpHostedReferencePath)" Private="false" />
   </ItemGroup>

@@ -70,6 +70,7 @@ if ($ReferenceMode -eq 'Hosted') {
         'ci\compile-references\Unity.Reference\UnityEngine\UnityEngine.Reference.csproj',
         'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\UnityEngine.CoreModule.Reference.csproj',
         'ci\compile-references\Unity.Reference\UnityEngine.TextRenderingModule\UnityEngine.TextRenderingModule.Reference.csproj',
+        'ci\compile-references\Unity.Reference\UnityEngine.UIModule\UnityEngine.UIModule.Reference.csproj',
         'ci\compile-references\Unity.Reference\UnityEngine.UI\UnityEngine.UI.Reference.csproj'
         'ci\compile-references\DSPGame.Reference\DSPGame.Reference.csproj'
     )
@@ -131,6 +132,7 @@ if ($ReferenceMode -eq 'Hosted') {
         (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine\obj\Release\netstandard2.0\ref\UnityEngine.dll'),
         (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.CoreModule\obj\Release\netstandard2.0\ref\UnityEngine.CoreModule.dll'),
         (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.TextRenderingModule\obj\Release\netstandard2.0\ref\UnityEngine.TextRenderingModule.dll'),
+        (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UIModule\obj\Release\netstandard2.0\ref\UnityEngine.UIModule.dll'),
         (Join-Path $repoRoot 'ci\compile-references\Unity.Reference\UnityEngine.UI\obj\Release\netstandard2.0\ref\UnityEngine.UI.dll')
         (Join-Path $repoRoot 'ci\compile-references\DSPGame.Reference\obj\Release\netstandard2.0\ref\Assembly-CSharp.dll')
     )

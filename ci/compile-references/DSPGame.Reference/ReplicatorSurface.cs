@@ -154,6 +154,7 @@ public class UIRoot : ManualBehaviour
 
     public static UIRoot instance { get { return null; } }
     public UIGame uiGame;
+    public UnityEngine.Canvas overlayCanvas;
 }
 
 public class UIGameMenu : ManualBehaviour

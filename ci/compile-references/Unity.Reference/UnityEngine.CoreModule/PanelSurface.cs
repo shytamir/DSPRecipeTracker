@@ -162,6 +162,11 @@ namespace UnityEngine
             set { }
         }
 
+        public Rect rect
+        {
+            get { return default(Rect); }
+        }
+
         public Vector2 pivot
         {
             set { }
@@ -188,11 +193,30 @@ namespace UnityEngine
     {
         public Vector2(float x, float y)
         {
+            this.x = x;
+            this.y = y;
         }
 
         public static Vector2 operator +(Vector2 left, Vector2 right)
         {
             return default(Vector2);
+        }
+
+        public float x;
+
+        public float y;
+    }
+
+    public struct Rect
+    {
+        public float width
+        {
+            get { return 0f; }
+        }
+
+        public float height
+        {
+            get { return 0f; }
         }
     }
 
