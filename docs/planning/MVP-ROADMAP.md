@@ -7,7 +7,7 @@
 **Planning horizon:** Concept to working MVP prototype
 
 **Current delivery state:**
-[`Sprint 3 - technical/package gates passed; owner validation pending`](../ROADMAP.md)
+[`Sprint 3 - Behavioral-ready passed; owner acceptance pending`](../ROADMAP.md)
 
 **Completed Sprint 2 roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](../archive/UI_INTEGRATION_ROADMAP.md)
@@ -24,8 +24,10 @@ commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3 is owner authorized;
 S3-01 through S3-05 are owner accepted, and S3-06 plus the Source-ready and
 Package-inspected gates pass for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending the owner-performed Behavioral-ready gate and explicit
-Owner-reviewed acceptance; no broader runtime authorization exists.
+unavailable pending explicit Owner-reviewed acceptance. The owner-performed
+Behavioral-ready procedure passed all four groups on 2026-08-15 for the
+recorded test build and conditions; release candidacy remains unassessed and
+no broader runtime authorization exists.
 
 Agents do not perform installed, loaded-game, visual, or interaction
 validation. The owner performs only bounded human checks supplied at later

@@ -2,7 +2,8 @@
 
 ## Status and artifact
 
-**Status:** Pending owner-performed validation
+**Status:** Passed by owner-performed validation on 2026-08-15; explicit owner
+acceptance remains pending
 
 **Purpose:** Judge only the live DSP behavior that deterministic, build, shim,
 and package inspection cannot establish.
@@ -17,6 +18,12 @@ Confirm that `build-info.json` reports semantic version `0.1.310`, source
 revision `cb37a0acbd23e77306137dc695d92980f1c686cc`, diagnostic label
 `0.1.310.cb37a0acbd23`, and `referenceMode` `Local`. This is a development test
 build, not a supported release or publication candidate.
+
+**Recorded result:** The owner reported `PASS` for groups A through D on
+2026-08-15. This satisfies the bounded Behavioral-ready gate for the identified
+test build and conditions. It does not imply explicit owner acceptance,
+publication approval, or release candidacy; further presentation refinement is
+planned before those decisions.
 
 ## Prerequisites and safe setup
 

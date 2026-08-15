@@ -14,10 +14,11 @@ Its Source-ready and Package-inspected gates pass for commit
 authorized and implementation is complete. S3-01 through S3-05 are owner
 accepted. S3-06 and the Source-ready and Package-inspected gates pass for
 source revision `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion
-remains unavailable pending the owner-performed Behavioral-ready gate and
-explicit Owner-reviewed acceptance.
-Installed behavior is only partially observed through the bounded repair
-workshop. Behavioral-ready remains pending and no supported release exists.
+remains unavailable pending explicit Owner-reviewed acceptance. The owner-
+performed Behavioral-ready procedure passed all four groups on 2026-08-15 for
+the recorded test build and conditions. Release candidacy remains unassessed
+while further presentation refinement is planned, and no supported release
+exists.
 
 **Owner review:** Accepted through 2026-08-15.
 

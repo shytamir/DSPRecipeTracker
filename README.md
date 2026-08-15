@@ -12,11 +12,11 @@ its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
 owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus the
 Source-ready and Package-inspected gates pass for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains pending
-owner-performed runtime validation and later explicit owner review. Runtime
-execution remains outside the current agent authorization.
-Remaining in-game validation is performed only by the owner from testable
-builds, after non-runtime checks are exhausted and only at meaningful gates. No
-supported or published release exists yet.
+explicit owner review. The owner-performed Behavioral-ready procedure passed
+all four groups on 2026-08-15 for the recorded test build and conditions.
+Release candidacy remains unassessed while presentation refinement continues;
+no supported or published release exists yet. Runtime execution remains
+outside the current agent authorization.
 
 ## Planned MVP
 
@@ -194,8 +194,10 @@ inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
 is owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus
 the Source-ready and Package-inspected gates pass for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending the owner-performed Behavioral-ready gate and explicit
-Owner-reviewed acceptance.
+unavailable pending explicit Owner-reviewed acceptance. The bounded owner-
+performed Behavioral-ready procedure passed all four groups on 2026-08-15 for
+the recorded test build and conditions. Release candidacy remains unassessed
+while presentation refinement continues.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -203,9 +205,9 @@ accepted conclusions do not authorize new runtime execution. The plugin
 source now connects isolated Replicator input, independent recipe-grid
 treatment, live complete recipe rows, scale-aware panel dragging and bounds
 reclamping, and paired visibility controls through plain orchestration at
-plugin startup. The owner workshop confirmed the repaired panel initializes,
-presents one live row, transitions visibility, drags, and clamps at an edge;
-the complete Behavioral-ready procedure remains pending.
+plugin startup. The owner subsequently reported `PASS` for all four bounded
+Behavioral-ready groups covering native pinning and presentation, dragging and
+contained input, visibility, and lifecycle and cleanup.
 
 The source now contains deterministic transient pin ordering, unpinning,
 three-entry capacity, bottom eviction, unavailable-recipe removal, independent

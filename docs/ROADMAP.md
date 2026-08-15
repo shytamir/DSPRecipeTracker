@@ -2,12 +2,12 @@
 
 ## Status and authority
 
-**Status:** Implementation complete - owner validation pending
+**Status:** Behavioral-ready passed - owner acceptance pending
 
 **Active story:** None - S3-06 technical handoff complete
 
-**Active story state:** Source-ready and Package-inspected passed;
-Behavioral-ready pending owner validation
+**Active story state:** Source-ready, Package-inspected, and Behavioral-ready
+passed; Owner-reviewed pending explicit owner acceptance
 
 **Implementation authorization:** None - technical handoff complete
 
@@ -21,8 +21,10 @@ The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-05
 are owner accepted. S3-06 and the Source-ready and Package-inspected gates are
 technically complete for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending the owner-performed Behavioral-ready gate and explicit
-Owner-reviewed acceptance.
+unavailable pending explicit Owner-reviewed acceptance. The owner completed the
+bounded Behavioral-ready procedure with all four groups passing on 2026-08-15;
+further presentation refinement is planned before release candidacy is
+assessed.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -690,6 +692,14 @@ procedure are ready for owner review. Agents do not run the procedure.
 
 **Owner procedure:** [`Sprint 3 Owner Validation Procedure`](OWNER-VALIDATION.md)
 
+**Owner-performed result:** Passed on 2026-08-15 for the recorded `0.1.310`
+test build at source revision
+`cb37a0acbd23e77306137dc695d92980f1c686cc`. The owner reported `PASS` for A,
+Native pinning and presentation; B, dragging and contained input; C,
+visibility; and D, lifecycle and cleanup. This satisfies Behavioral-ready but
+does not imply S3-06 or Sprint 3 owner acceptance, publication approval, or
+release candidacy. A further presentation-refinement workshop is planned.
+
 **Technical validation:** Passed on 2026-08-15 for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc` with:
 
@@ -711,8 +721,9 @@ agent-run gate did not install or execute the plugin or start the game or a
 substitute runtime; the separate bounded owner workshop observations are
 recorded above.
 
-**Owner acceptance:** Not inferred. S3-06 hands the testable build into the
-pending owner-performed Behavioral-ready gate; Sprint 3 remains incomplete.
+**Owner acceptance:** Not inferred. The owner-performed Behavioral-ready gate
+passed on 2026-08-15, but S3-06 and Sprint 3 remain incomplete pending explicit
+Owner-reviewed acceptance.
 
 ## Sequence and dependencies
 
@@ -787,7 +798,7 @@ contains only the three root package assets and the intended plugin DLL.
 
 ### Behavioral-ready
 
-**Status:** Pending owner-performed validation
+**Status:** Passed by owner-performed validation on 2026-08-15
 
 - Source-ready and Package-inspected pass first.
 - The owner runs the supplied testable build using the bounded procedure and
@@ -796,6 +807,11 @@ contains only the three root package assets and the intended plugin DLL.
   are not repeated as human workload.
 - Any failed or unexpected observation returns only the affected scope for
   diagnosis and repair; it is not silently waived or generalized.
+
+The owner reported `PASS` for all four procedure groups: native pinning and
+presentation; dragging and contained input; visibility; and lifecycle and
+cleanup. The result applies only to the recorded test build and selected
+conditions and does not imply owner acceptance or release candidacy.
 
 ### Owner-reviewed
 
@@ -809,10 +825,10 @@ contains only the three root package assets and the intended plugin DLL.
 
 ## Explicitly unavailable states
 
-Until the applicable gates pass, Sprint 3 establishes no `Behavioral-ready`,
-installed, visual, interaction, cleanup, compatibility, general display-
-support, `Publication-ready`, or supported-release status. Source-ready and
-Package-inspected evidence cannot establish those states by inference.
+Behavioral-ready is established only for the recorded test build and selected
+conditions. Until the remaining applicable gates pass, Sprint 3 establishes no
+Owner-reviewed acceptance, broader compatibility or display support,
+`Publication-ready`, or supported-release status.
 
 Even after a successful bounded owner procedure, observations apply only to
 the tested build and selected conditions. Publication remains a separate owner
