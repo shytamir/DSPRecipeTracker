@@ -2,5 +2,6 @@
 
 Placeholder package README. Owner-approved public copy is pending.
 
-This development artifact has not been installed or validated in-game and is
-not release-ready.
+The MVP prototype has passed bounded owner validation for its recorded build
+and conditions. This package remains a development artifact pending publication
+refinement; it is not a supported or published release.

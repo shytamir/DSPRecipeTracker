@@ -35,8 +35,9 @@ Preserve these invariants unless the task explicitly changes one:
   separate Pin/Unpin button is added;
 - left-click remains native selection-only, while right-click follows native
   selection and toggles the pin through the existing recipe-grid event;
-- tracker cell treatment uses an independent non-raycasting clone and state
-  buffer; do not write pin state into DSP's original recipe-grid buffer;
+- tracker cell treatment uses tracker-owned, non-raycasting green corner-
+  bracket markers on at most three pinned recipes; unpinned cells remain
+  neutral and tracker state never enters DSP's original recipe-grid buffer;
 - the tracker reads inventory and recipe state but does not alter inventory,
   crafting, the factory, or save data;
 - the MVP tracks Icarus inventory only and direct ingredients only;

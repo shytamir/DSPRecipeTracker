@@ -4,18 +4,13 @@
 
 **Status:** Current implementation contract
 
-**Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
-complete and owner accepted. Its three exit gates passed. Sprint 2, S2-01
-through S2-06, and its three exit gates are also complete and owner accepted.
-Its Source-ready and Package-inspected gates pass for commit
-`b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
-authorized and implementation is complete. S3-01 through S3-05 are owner
-accepted. S3-06 and the Source-ready and Package-inspected gates pass for
-source revision `cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion
-remains unavailable pending explicit Owner-reviewed acceptance. The bounded
-owner-performed Behavioral-ready procedure passed all four groups on
-2026-08-15 for the recorded test build and conditions; release candidacy
-remains unassessed while further presentation refinement is planned.
+**Implementation status:** Sprints 1 through 3 and their required owner gates
+are complete and owner accepted. Sprint 3 produced a working MVP prototype.
+The owner passed the bounded Behavioral-ready procedure and accepted direct
+workshop build `0.1.318`; Source-ready and Package-inspected then passed for
+clean source revision `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build
+number 318. The repository is planning-pending for publication refinement; no
+supported or published release exists.
 The source tree contains the minimal BepInEx identity/lifecycle/logging
 skeleton, static package pipeline, UI-independent panel geometry and visibility
 policy, an inert compile-time Unity panel boundary, deterministic transient pin
@@ -27,12 +22,11 @@ lifecycle, plus a UI-independent direct-ingredient, Icarus-count, sufficiency,
 and machine-warning presentation model, separate direct DSP recipe/item and
 Icarus-inventory adapters, a normalized input source, bounded live refresh,
 and feature-isolated live scale-aware panel dragging and parent-bound
-reclamping connected through plugin orchestration. The owner subsequently
-reported `PASS` for all four bounded Behavioral-ready groups covering native
-pinning and presentation, dragging and contained input, visibility, and
-lifecycle and cleanup. Explicit owner acceptance remains pending.
+reclamping connected through plugin orchestration. Game-session shutdown
+releases the orchestrator so transient pins and owned UI cannot cross a same-
+or different-save load.
 
-**Owner review:** Accepted on 2026-08-14.
+**Owner review:** Accepted through 2026-08-15.
 
 This file governs implementation structure, runtime integration mechanics,
 lifecycle ownership, failure handling, and the source toolchain. It implements
@@ -44,8 +38,8 @@ Use these sources for their respective authority:
 - [`PROJECT.md`](PROJECT.md) for product behavior and scope;
 - [`PRODUCT-PRINCIPLES.md`](PRODUCT-PRINCIPLES.md) for the native-extension
   design;
-- [`FEASIBILITY.md`](FEASIBILITY.md) for confirmed game members and remaining
-  runtime unknowns;
+- [`FEASIBILITY.md`](FEASIBILITY.md) for confirmed game members and historical
+  runtime findings;
 - [`RUNTIME-AUTHORITY.md`](RUNTIME-AUTHORITY.md) for read-only runtime
   inspection and consumed-surface boundaries;
 - [`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md) for loader conformance;
@@ -135,18 +129,20 @@ Replicator integration and tracker UI
 
 ### 2.3 Independent cell treatment
 
-- Reproduce the native recipe-background treatment in one non-raycasting,
-  tracker-owned grid layer.
-- Clone the native material and bind it to a separate tracker-owned state
-  buffer.
-- Use the native shader's filter treatment for available/unpinned green and
-  banned-color treatment for pinned red.
-- Keep the tracker layer beneath recipe icons and sufficiently restrained that
+- Keep available, unpinned recipe cells neutral.
+- Represent at most three pinned cells with tracker-owned marker objects, each
+  composed from four green corner brackets over the native 14-by-8 grid.
+- Keep every marker segment non-raycasting and restrained so recipe artwork and
   native hover, selection, disabled, and machine-only states remain legible.
 - Never write tracker state into DSP's original recipe-grid buffer.
-- Refresh the tracker layer when pin state or native recipe-grid population
-  changes.
-- Release the cloned object, material, buffer, and listener during shutdown.
+- Reposition or hide markers when pin state or native grid population changes.
+- Release all marker objects and the input listener during shutdown.
+
+The earlier cloned-material/full-cell design remains feasibility history, not
+the implementation contract. Runtime testing showed that its visual cost and
+complexity outweighed the value of treating every available cell. The accepted
+pinned-corner design preserves immediate pin recognition without obscuring
+icons or asking the player to decode another state.
 
 ## 3. Recipe and inventory integration
 
@@ -182,10 +178,18 @@ Replicator integration and tracker UI
   from any cloned native control before assigning tracker behavior.
 - Tracker-owned raycast targets must contain input without preventing the
   designated drag interaction.
-- The panel shell uses a transparent raycast-containment surface and four
-  tracker-owned, non-raycasting, four-unit border segments. It has no panel-
-  background sprite, texture, asset-name lookup, or Replicator-grid resource
+- The panel shell uses a flat dark translucent raycast-containment surface with
+  no border, sprite, texture, asset-name lookup, or Replicator-grid resource
   dependency.
+- The fixed panel is 360 by 300 UI-layout units. Three 90-unit rows follow a
+  semantic heading band; each row reserves a 30-unit full-width footer for its
+  normalized machine/facility name.
+- The increased height is an owner-accepted compromise after native multiline
+  text repeatedly clipped or disappeared. It may be reviewed during future
+  publication refinement, but interactive resizing remains outside the MVP.
+- Initial placement derives true left-middle top position from the live parent
+  height. The global control uses the native screenshot button as its reference
+  and is offset by `(0, 38)` to avoid the large Tech control.
 
 ## 5. Data and state safety
 
@@ -214,6 +218,9 @@ Replicator integration and tracker UI
   interaction after an integration failure.
 - Release tracker-owned event subscriptions, Unity objects, materials,
   compute buffers, and other resources during plugin shutdown.
+- Subscribe once to the game-ended lifecycle event, release the complete
+  orchestrator there, and permit clean initialization for the next game
+  session. Session state must not survive same-save or different-save loads.
 
 ## 7. Source and dependency baseline
 
@@ -259,7 +266,7 @@ BepInEx 6, add speculative loader adapters, or consume loader internals.
 
 ## 8. Adopted repository layout
 
-Implementation stories create files within this structure:
+The completed prototype uses this structure:
 
 ```text
 DSPRecipeTracker.sln
@@ -298,30 +305,28 @@ packaging/
 - `packaging` contains tracked Thunderstore inputs only. Generated binaries,
   archives, reports, and intermediate output remain under ignored paths.
 
-Do not add empty placeholder projects or directories before their roadmap
-story is Active. The structure is a placement contract, not authorization to
-implement a later story.
+Future work must not add empty placeholder projects or directories before its
+roadmap story is Active. The structure remains a placement contract, not
+authorization to implement later work.
 
-## 9. Implementor-owned presentation decisions
+## 9. Adopted presentation decisions
 
-The implementor selects and records:
+The completed prototype adopted:
 
-- exact fixed panel dimensions when implementing panel geometry;
-- calibrated cell-treatment opacity when implementing Replicator treatment;
-  and
-- the native icon choice and tracker-owned fallback text when implementing the
-  global Show/Hide control.
+- a fixed 360-by-300 panel with a full-width facility footer;
+- pinned-only green corner markers with neutral unpinned cells;
+- the native Replicator icon for paired visibility controls;
+- a borderless dark translucent panel background;
+- native font reuse with 12-unit headings, 13-unit quantities, and 11-unit
+  facility text; and
+- true left-middle initialization plus a `(0, 38)` global-control offset from
+  the native screenshot button.
 
-Each choice must preserve the product contract, reuse confirmed native
-resources where applicable, and receive all practical deterministic or static
-validation first. Visual clarity, native fit, and usability are then validated
-by the owner from a testable build DLL at a later meaningful human gate. These
-choices do not require advance owner selection and must not create isolated
-one-detail runtime checkpoints.
-
-Do not recover values from placeholder metadata, installed plugins, or
-historical probe code by inference. Record the selected value and concise
-rationale in the consuming story's implementation evidence.
+Deterministic checks covered geometry, state, cleanup, and exact consumed
+surfaces. The owner judged live clarity, native fit, lifecycle, and usability
+through the bounded procedure and refinement workshop. The archived
+[`Prototype Roadmap`](archive/PROTOTYPE-ROADMAP.md) preserves the progression
+and rationale without turning intermediate experiments into current contracts.
 
 ## 10. Implementation change control
 

@@ -4,10 +4,15 @@
 > foundation retained for planning context and design history. It does not
 > override [`docs/PROJECT.md`](../PROJECT.md), which governs current product
 > scope and accepted decisions whenever the documents differ.
+>
+> The completed prototype intentionally differs from several early ideas in
+> this record, including tracker-icon navigation and full-cell recipe-state
+> treatment. Current resolutions are governed by `docs/PROJECT.md` and their
+> rationale is preserved in `docs/archive/PROTOTYPE-ROADMAP.md`.
 
 ## Product concept record
 
-**Status:** Concept ready for feasibility investigation and MVP planning  
+**Status:** Historical concept foundation; MVP implementation completed
 **Working title:** Pinned Recipe Tracker  
 **Game:** Dyson Sphere Program  
 **Source:** Reformatted from a Discord design conversation between fantaflesje and alex2ez. The conversation times span 20:57–01:47; no date was included in the source.  

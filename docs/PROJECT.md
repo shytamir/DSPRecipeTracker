@@ -10,35 +10,18 @@
 
 **BepInEx display name:** `DSP-Recipe-Tracker`
 
-**Implementation status:** The bootstrap roadmap and S1-01 through S1-06 are
-complete and owner accepted. Its Source-ready, Package-inspected, and
-Owner-reviewed exit gates passed. Sprint 2, S2-01 through S2-06, and its three
-exit gates are complete and owner accepted. Its Source-ready and Package-
-inspected gates pass for commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`.
-The Sprint 3 roadmap is owner authorized and implementation is complete.
-S3-01 through S3-05 are owner accepted. S3-06 and the Source-ready and Package-
-inspected gates pass for source revision
-`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending explicit Owner-reviewed acceptance. The bounded owner-
-performed Behavioral-ready procedure passed all four groups on 2026-08-15;
-release candidacy remains unassessed while further presentation refinement is
-planned.
-The source contains the minimal plugin
-skeleton, inspected package pipeline, UI-independent panel geometry and
-visibility policy, inert compile-time Unity panel boundary, and deterministic
-transient pin state, an isolated native Replicator input adapter, and an
-independent native recipe-grid treatment adapter, the exact fail-closed
-six-interface visibility input, three ordered complete native-composed rows,
-paired tracker-owned visibility controls, and plain orchestration connected to
-plugin startup, plus a UI-independent direct-ingredient, Icarus-count,
-sufficiency, and machine-warning presentation model and separate read-only DSP
-recipe/item and Icarus-inventory adapters that produce normalized inputs. The
-data path is now connected to bounded live refresh, plugin orchestration,
-complete Unity rows, live scale-aware panel dragging, and parent-bound
-reclamping. The owner completed the bounded Behavioral-ready procedure for the
-recorded test build with all native-pinning, presentation, dragging, contained-
-input, visibility, lifecycle, and cleanup groups passing. Explicit owner
-acceptance remains pending, and no supported release exists.
+**Implementation status:** The bootstrap, native-integration, and prototype
+roadmaps are complete and owner accepted. Sprint 3 produced a working validated
+MVP prototype. The owner passed all four Behavioral-ready groups on 2026-08-15
+and accepted final direct workshop build `0.1.318`. Source-ready and Package-
+inspected subsequently passed for clean source revision
+`14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318. The source
+contains the complete right-click pinning, transient three-entry state,
+pinned-corner treatment, direct-ingredient and Icarus-inventory presentation,
+live refresh, exact six-interface visibility, paired controls, borderless
+fixed panel, scale-aware dragging and clamping, and game-session cleanup path.
+The repository is planning-pending for publication refinement. No supported or
+published release exists.
 
 **Owner review:** Accepted through 2026-08-15.
 
@@ -140,27 +123,42 @@ a new game rule.
 - A recipe that cannot be hand-crafted remains pinnable when the Replicator
   admits it.
 - Its row displays the game's localized production category or required
-  facility beneath the pinned product in restrained red text.
+  facility in a dedicated full-width footer using restrained amber text.
 - Ingredient icons do not recursively display production-building labels.
 - The tracker does not invoke or simulate machine production.
 
 ### 2.6 Native recipe-cell treatment
 
-- An available, unpinned native recipe cell receives a restrained green
-  treatment.
-- A pinned native recipe cell receives a restrained red treatment.
-- The treatment preserves native hover, selection, disabled, machine-only, and
-  other game states.
+- An available, unpinned native recipe cell receives no tracker treatment.
+- A pinned native recipe cell receives a restrained green corner-bracket
+  treatment; at most three pinned cells are marked.
+- The markers are tracker-owned and non-raycasting. They preserve recipe art
+  and native hover, selection, disabled, machine-only, and other game states.
 - Tracker treatment remains independent from DSP's original recipe-grid state;
-  tracker state must not overwrite native state.
+  tracker state never overwrites native state.
+
+The original MVP promise specified full-cell green treatment for available
+recipes and red treatment for pinned recipes. The first live implementation
+proved deleterious: full coverage obscured recipe artwork, produced extreme
+brightness on some icons, and added presentation cost without proportional
+value. The owner accepted pinned-only corner markers because they preserve the
+proven utility: pin state remains immediately recognizable without additional
+cognitive load. A distinct available-recipe treatment is deferred rather than
+simulated poorly.
 
 ### 2.7 Tracker panel
 
 - The tracker is a fixed-size panel for the MVP.
-- Its default position is left-middle, below Goals and above the planet map.
+- Its fixed size is 360 by 300 UI-layout units.
+- Its default position is derived from the live layout height as true left-
+  middle placement, keeping it clear of the top-left HUD at the validated
+  layouts.
 - It presents no more than three ordered recipe rows.
 - Each row uses the pinned product icon, direct-ingredient icons, quantities,
   sufficiency state, and any applicable machine-only warning.
+- `TARGET` and `INGREDIENTS` headings and a restrained separator make the row
+  roles explicit. Ingredient quantities are centered beneath their icons.
+- The panel uses a flat dark translucent background without a border.
 - Presentation uses the game's existing visual language and live native
   resources. The project ships no replacement game art or bespoke recipe-
   button prefab.
@@ -169,6 +167,14 @@ a new game rule.
   display-size change.
 - Panel interaction must not activate the game world or a covered HUD control.
 - The panel is not another pinning surface.
+
+The panel was increased from 360 by 252 to 360 by 300 UI-layout units after
+several direct-build attempts could not make native multiline facility text
+wrap reliably. A dedicated single-line footer ended that unproductive cycle
+while preserving complete facility names and three contained rows. The owner
+accepted this bounded presentation compromise; panel height may be reviewed in
+future publication refinement, while interactive resizing remains outside the
+MVP.
 
 ### 2.8 Visibility and player control
 
@@ -188,7 +194,8 @@ visible = hasRows && manualRequested && !majorInterfaceActive
   major interfaces is active.
 - A Hide control belongs to the panel.
 - A global Show/Hide control belongs to the existing bottom-right game-menu
-  group and inherits that group's native visibility.
+  group, inherits that group's native visibility, and occupies the validated
+  non-colliding position above its screenshot-button reference.
 
 ### 2.9 Tracker-icon navigation
 

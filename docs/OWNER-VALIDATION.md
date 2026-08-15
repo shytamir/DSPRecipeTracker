@@ -2,8 +2,7 @@
 
 ## Status and artifact
 
-**Status:** Passed by owner-performed validation on 2026-08-15; explicit owner
-acceptance remains pending
+**Status:** Passed and owner accepted on 2026-08-15
 
 **Purpose:** Judge only the live DSP behavior that deterministic, build, shim,
 and package inspection cannot establish.
@@ -20,10 +19,17 @@ revision `cb37a0acbd23e77306137dc695d92980f1c686cc`, diagnostic label
 build, not a supported release or publication candidate.
 
 **Recorded result:** The owner reported `PASS` for groups A through D on
-2026-08-15. This satisfies the bounded Behavioral-ready gate for the identified
-test build and conditions. It does not imply explicit owner acceptance,
-publication approval, or release candidacy; further presentation refinement is
-planned before those decisions.
+2026-08-15. This satisfied Behavioral-ready for the identified build and
+conditions. A subsequent direct-build workshop refined presentation and
+lifecycle behavior; the owner accepted final direct build `0.1.318`. Source-
+ready and Package-inspected then passed for the clean committed result at
+`14bbe8e046e32333bd7cf68f35b8f22bc04dd47f`, also using build number 318.
+Publication approval and release candidacy were not inferred.
+
+The formal steps below preserve the procedure actually run against build
+`0.1.310`. The accepted workshop progression and compromise rationale are
+recorded in the archived
+[`Sprint 3 Prototype Roadmap`](archive/PROTOTYPE-ROADMAP.md).
 
 ## Prerequisites and safe setup
 

@@ -2,13 +2,15 @@
 
 ## Status
 
-This record answers the initial design and technical questions using the
-authority snapshot and installed runtime available on 2026-08-14. It separates
-confirmed game behavior from implementation recommendations and validation
-that still requires an initialized in-game checkpoint.
+**Status:** Historical feasibility evidence
 
-These findings constrain implementation but do not replace the product
-principles or owner acceptance.
+This record answered the initial design and technical questions using the
+authority snapshot and installed runtime available on 2026-08-14. It separates
+confirmed game behavior from the recommendations that informed implementation.
+
+These findings remain evidence for the inspected runtime surface but do not
+override the completed implementation, current product principles, or owner
+acceptance.
 
 ## Evidence and method
 
@@ -287,15 +289,13 @@ documented fallback for any tracker-owned text. A cloned control must not keep
 an unrelated native localization key. A full translation table remains a
 feature-development decision.
 
-## Remaining owner observations
+## Owner-observation resolution
 
-The feasibility phase did not replace a small set of in-game judgments that
-cannot be established another way. They are not separate checkpoints. After
-all practical non-runtime validation, the implementor groups the applicable
-items into a meaningful testable build and the owner checks only:
+The feasibility phase left a small set of in-game judgments that could not be
+established another way. They were grouped into the bounded Sprint 3 owner
+procedure and refinement workshop. The owner evaluated:
 
-- whether the selected green/red opacity and placement preserve live native
-  recipe states;
+- whether tracker-owned cell treatment preserved live native recipe states;
 - whether the composed tracker, icon/text choices, initialized layout,
   dragging, input containment, and six-window behavior read and operate
   coherently together;
@@ -304,5 +304,8 @@ items into a meaningful testable build and the owner checks only:
 - a concrete compatibility conflict only when the project intends to make the
   corresponding claim.
 
-The supplied procedure must be self-contained, bounded, and understandable to
-a tester with no project knowledge, as required by `VALIDATION-CONTRACT.md`.
+Those observations passed on 2026-08-15. Full-cell green/red treatment was
+rejected during live refinement because it obscured artwork and could become
+excessively bright; pinned-only green corner brackets were accepted instead.
+The exact observed display boundary remains the one recorded above. Broader
+compatibility and display support were not inferred.

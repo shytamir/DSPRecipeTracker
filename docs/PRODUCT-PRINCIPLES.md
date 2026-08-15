@@ -55,20 +55,22 @@ selection path and then toggles the pin, so native behavior still runs
 unchanged and ordinary recipe selection cannot accidentally change tracker
 state.
 
-The recipe-control presentation communicates transient state with restrained
-native-compatible filtering:
+The recipe-control presentation communicates transient pinned state with a
+restrained green corner-bracket treatment on at most three pinned recipes.
+Available, unpinned recipes remain visually neutral. The tracker-owned markers
+are non-raycasting and must not conceal or
+replace recipe artwork or the game's hover, selection, disabled, machine-only,
+or other native states. Tracker state never enters the Replicator's original
+state buffer.
 
-- slightly green for an available, unpinned recipe; and
-- slightly red for a pinned recipe.
-
-Those treatments must not conceal or replace the game's hover, selection,
-disabled, machine-only, or other native states.
-
-Implement the treatment as an independent, non-raycasting clone of the native
-recipe background grid with its own material instance and state buffer. Do not
-write tracker state into the Replicator's original state buffer. The separate
-layer uses the native shader's filter state for green and banned-color state
-for red, while the original layer remains authoritative for native feedback.
+The original principle called for full-cell green filtering when available and
+red filtering when pinned. Live prototype evidence showed that treatment
+obscured icons and could become excessively bright, while distinguishing every
+available cell offered little additional value. Pinned-only corners communicate
+the same actionable state immediately, with no extra cognitive step and much
+lower visual cost. The owner accepted that evidence-driven deviation; a future
+available-state treatment requires a new design rather than restoration by
+default.
 
 ## 4. Inherit eligibility and technology lock
 

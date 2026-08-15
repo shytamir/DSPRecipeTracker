@@ -24,12 +24,13 @@ historical and authorizes no further implementation.
 surfaces while keeping pin state deterministic, transient, and separate from
 runtime adapters and Unity presentation.
 
-**Exit result:** Right-clicking an eligible recipe through the native
-Replicator event path drives an ordered three-entry tracker and an independent
-green/red recipe-grid treatment. The panel applies the exact six-interface
-visibility rule and provides paired panel Hide and native game-menu Show/Hide
-controls. Rows show only each pinned recipe's native icon; live ingredient and
-inventory presentation remains Sprint 3 work.
+**Exit result:** At the Sprint 2 exit, right-clicking an eligible recipe through
+the native Replicator event path drove an ordered three-entry tracker and an
+independent green/red recipe-grid treatment. The panel applied the exact six-
+interface visibility rule and provided paired panel Hide and native game-menu
+Show/Hide controls. Rows showed only each pinned recipe's native icon; Sprint 3
+later completed live ingredient and inventory presentation and replaced the
+full-cell treatment after owner evaluation.
 
 The exit result describes intended behavior, not a current runtime claim.
 
@@ -403,7 +404,8 @@ major interfaces without unrelated windows changing my choice.
 - All consumed members are authority-backed and fully shim-covered.
 
 **Acceptance gate:** Focused tests, Local/Hosted Release builds, exhaustive shim
-validation, and source review pass. Live window state remains unvalidated.
+validation, and source review pass. Live window state was deferred at this
+story gate and later passed in Sprint 3.
 
 **Implementation result:**
 
@@ -452,13 +454,12 @@ declaration-only shims. No game, loader, save, plugin, or substitute runtime
 was started or changed.
 
 **Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
-authorized S2-05; it does not infer acceptance of later work. Live window
-state remains unvalidated until the later meaningful owner gate.
+authorized S2-05; it did not infer acceptance of later work. Live window state
+was validated later at the meaningful Sprint 3 owner gate.
 
 ### S2-05 - Connect native recipe-icon slots to the panel
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want my ordered pins represented by recognizable
 native recipe icons in the tracker shell.
@@ -549,12 +550,12 @@ synchronizer. No game, loader, save, plugin, or substitute runtime was started
 or changed.
 
 **Owner acceptance:** Granted on 2026-08-15. Live icon composition, dragging,
-containment, and cleanup remain unvalidated until the later meaningful owner
-gate.
+containment, and cleanup were deferred at this story gate and later passed at
+the meaningful Sprint 3 owner gate.
 
 ### S2-06 - Add paired visibility controls and complete orchestration
 
-**Status:** Implemented and technically validated - owner acceptance pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want explicit controls for hiding and restoring
 the integrated tracker without automatic conditions changing my choice.
@@ -644,11 +645,12 @@ The real version-aligned development DLL and package were constructed under
 ignored `artifacts/` and passed static package inspection. No game, loader,
 save, plugin, or substitute runtime was started, installed, or changed.
 
-**Deferred human-only claims:** Native gesture coexistence, recipe-grid opacity,
-icon and fallback-copy suitability, live panel composition, dragging and input
-containment, exact six-interface behavior, paired Show/Hide interaction, and
-live cleanup remain for the coherent Sprint 3 owner gate. The development DLL
-is testable but is not installed, behaviorally ready, or publication-ready.
+**Deferred human-only claims at exit:** Native gesture coexistence, recipe-grid
+treatment, icon and fallback-copy suitability, live panel composition,
+dragging and input containment, exact six-interface behavior, paired Show/Hide
+interaction, and live cleanup were deferred to the coherent Sprint 3 owner
+gate. Sprint 3 later completed that gate; the Sprint 2 artifact itself remained
+non-runtime evidence and was never publication-ready.
 
 **Owner acceptance:** Granted on 2026-08-15. Story acceptance does not infer
 Sprint exit owner review.
@@ -667,8 +669,8 @@ S2-01 through S2-05
     `--> S2-06 paired controls and final orchestration
 ```
 
-Stories are activated one at a time. The structure proves state rules without
-Unity, then isolates each fragile runtime boundary before final orchestration.
+Stories were activated one at a time. The structure proved state rules without
+Unity, then isolated each fragile runtime boundary before final orchestration.
 
 ## Sprint exit gates
 
@@ -758,21 +760,21 @@ runtime cleanup, compatibility, or `Publication-ready` status. Those claims
 cannot be inferred from builds, doubles, shim coverage, package inspection,
 historical feasibility, or source review.
 
-Human-only checks for gesture behavior, native-state coexistence, opacity,
+Human-only checks for gesture behavior, native-state coexistence, treatment,
 icon/text suitability, layout, dragging, containment, six-interface hiding,
-Show/Hide behavior, and live cleanup remain deferred to the coherent owner gate
-in Sprint 3.
+Show/Hide behavior, and live cleanup were deferred to, and later passed at,
+the coherent owner gate in Sprint 3.
 
 ## Decisions and change control
 
-The implementor selects and records cell-treatment opacity, the native
-Show/Hide icon, and concise tracker-owned English fallback copy within S2-06.
-These choices receive source/static validation first and later human validation
-through a testable DLL.
+The implementor selected and recorded the cell treatment, native Show/Hide
+icon, and concise tracker-owned English fallback copy within S2-06. These
+choices received source/static validation first and later owner validation
+through Sprint 3 testable builds.
 
-Tracker-icon navigation remains excluded and decision-gated for Sprint 3.
-Supported resolution/UI-scale scope must be resolved before its consuming
-Sprint 3 story becomes Ready.
+Tracker-icon navigation remained excluded from the MVP. The supported
+resolution/UI-scale scope was resolved before its consuming Sprint 3 story
+became Ready.
 
 An owner-approved roadmap change is required to alter pin gesture, eligibility,
 ordering, capacity, lifetime, the six-interface rule, player-owned visibility,

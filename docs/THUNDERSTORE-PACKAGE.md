@@ -6,7 +6,10 @@
 
 **Implementation status:** The S1-03 package pipeline is implemented,
 technically validated, and owner accepted. It creates an inspected development
-artifact only; no supported or published release exists.
+artifact only. The completed MVP prototype passed Package-inspected for clean
+commit `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` as build `0.1.318`.
+Publication refinement is planning-pending; no supported or published release
+exists.
 
 This contract defines package layout, version mapping, build inputs, static
 validation, and artifact retention for DSP Recipe Tracker. It does not publish,
@@ -66,9 +69,9 @@ scripts.
 
 ## 3. Build and validation workflow
 
-Sprint 1 implements local package construction and GitHub Actions automation
+Sprint 1 implemented local package construction and GitHub Actions automation
 using the same static validators. A workflow triggered by each push to `main`
-and by manual dispatch will:
+and by manual dispatch:
 
 1. verify that it checked out the triggering commit;
 2. derive all version forms from `VERSION`, the run number, and commit;

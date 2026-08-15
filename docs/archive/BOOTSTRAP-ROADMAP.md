@@ -616,13 +616,13 @@ This sprint cannot reach `Behavioral-ready`, installed, visual, interaction, or
 gate. Those states must not be inferred from source readiness, package
 inspection, prior feasibility probes, or owner review of this sprint.
 
-## Remaining decisions
+## Decisions later resolved
 
-Panel dimensions, cell-treatment opacity, and the global Show/Hide icon and
-fallback text are implementor-owned choices governed by
-`IMPLEMENTATION-CONTRACT.md`. They receive practical non-runtime validation
-first and owner human validation only in a later meaningful testable build.
+Panel dimensions, cell treatment, and the global Show/Hide icon and fallback
+text were implementor-owned choices governed by `IMPLEMENTATION-CONTRACT.md`.
+They received practical non-runtime validation first and owner human validation
+in the later coherent Sprint 3 gate.
 
-The owner resolves only the product decisions listed in `PROJECT.md`, and only
-before their consuming stories become Ready. No runtime-validation planning
-decision is required during this sprint.
+The owner resolved only the product decisions listed in `PROJECT.md`, before
+their consuming stories became Ready. No runtime-validation planning decision
+was required during this sprint.

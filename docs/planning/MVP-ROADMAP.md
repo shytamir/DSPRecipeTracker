@@ -2,12 +2,15 @@
 
 ## Status and authority
 
-**Status:** Authorized planning baseline
+**Status:** Complete historical planning baseline
 
 **Planning horizon:** Concept to working MVP prototype
 
 **Current delivery state:**
-[`Sprint 3 - Behavioral-ready passed; owner acceptance pending`](../ROADMAP.md)
+[`Planning pending - publication refinement`](../ROADMAP.md)
+
+**Completed Sprint 3 roadmap:**
+[`Sprint 3 - Recipe Presentation and Prototype Hardening`](../archive/PROTOTYPE-ROADMAP.md)
 
 **Completed Sprint 2 roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](../archive/UI_INTEGRATION_ROADMAP.md)
@@ -20,14 +23,12 @@ Its Source-ready and Package-inspected exit gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its three exit gates are complete
 and owner accepted. Its Source-ready and Package-inspected gates pass for
-commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3 is owner authorized;
-S3-01 through S3-05 are owner accepted, and S3-06 plus the Source-ready and
-Package-inspected gates pass for source revision
-`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending explicit Owner-reviewed acceptance. The owner-performed
-Behavioral-ready procedure passed all four groups on 2026-08-15 for the
-recorded test build and conditions; release candidacy remains unassessed and
-no broader runtime authorization exists.
+commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3, S3-01
+through S3-06, and all four exit gates are complete and owner accepted. Its
+final Source-ready and Package-inspected gates pass for clean commit
+`14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318. The MVP
+prototype is working and validated; publication readiness remains unassessed
+and requires a future owner-authorized roadmap.
 
 Agents do not perform installed, loaded-game, visual, or interaction
 validation. The owner performs only bounded human checks supplied at later
@@ -94,12 +95,12 @@ surfaces.
 **Epics:**
 
 1. Native right-click pin gesture integration.
-2. Independent Replicator cell-state treatment.
+2. Independent Replicator pinned-cell treatment.
 3. Transient FILO state and panel-slot synchronization.
 4. Major-window visibility and paired Hide/Show controls.
 
 **Exit result:** Right-clicking an eligible native recipe cell drives the
-three-entry tracker, independent green/red treatment, exact six-window hide
+three-entry tracker, independent pinned-cell treatment, exact six-window hide
 rule, panel Hide control, and native game-menu restore control. Rows may still
 use minimal recipe identity presentation.
 
@@ -132,9 +133,9 @@ height 1440. The only owner-performed runtime display case is
 3840-by-2160/Auto at UI layout height 1080; no broader display-support claim is
 included.
 
-Agents do not execute that loop in DSP. Runtime, visual, interaction, cleanup,
-and compatibility claims remain unavailable until the owner completes the
-applicable bounded human checks against the supplied testable DLL.
+Agents did not execute that loop in DSP. The owner completed the applicable
+bounded human checks and accepted the prototype for the recorded build and
+conditions. Broader compatibility and display claims remain unavailable.
 
 ## Dependency chain
 
@@ -145,7 +146,7 @@ Sprint 2: Replicator, tracker state, and HUD visibility integration
     |
 Sprint 3: live row content, hardening, and final package validation
     |
-Working MVP prototype ready for owner review
+Working validated MVP prototype
 ```
 
 Sprint 2 depends on the lifecycle, panel, and visibility boundaries established
@@ -155,7 +156,7 @@ into the Sprint 1 shell.
 
 ## Cross-sprint definition of prototype
 
-The source prototype is ready for owner review only when it:
+The source prototype was ready for owner review when it:
 
 - builds with zero release errors against complete, authority-aligned
   references;
@@ -170,10 +171,9 @@ The source prototype is ready for owner review only when it:
   publication approval.
 
 Installed lifecycle, runtime behavior, native appearance, interaction,
-cleanup, coexistence, and supported display claims require owner-performed
-human validation where non-runtime checks cannot prove them. Related checks are
-grouped at meaningful gates and cannot be inferred from this source-prototype
-gate.
+cleanup, and coexistence received the bounded owner validation that non-runtime
+checks could not provide. The result remains limited to its recorded build and
+display condition.
 
 Persistence, quantity scaling, recursive ingredients, automatic replication,
 animation, resizing, speculative compatibility layers, and broader

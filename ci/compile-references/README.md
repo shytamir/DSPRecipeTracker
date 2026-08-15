@@ -7,8 +7,8 @@ The `UnityEngine` facade supplies the transitive `MonoBehaviour` declaration
 required by BepInEx. The Unity shims declare the exact panel, Replicator,
 image, text, and font surface consumed by production. `DSPGame.Reference`
 declares only the consumed Replicator, visibility, recipe, item-icon, player,
-Icarus-inventory, overlay-canvas, pointer-drag, and parent-rectangle surface
-needed through S3-05.
+Icarus-inventory, overlay-canvas, pointer-drag, parent-rectangle, and lifecycle
+surface consumed by the completed MVP prototype.
 Private reflection bindings are inventoried separately and confirmed through
 bounded read-only inspection; they are not misrepresented as public
 compile-time members.

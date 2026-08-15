@@ -1,31 +1,24 @@
 # DSP Recipe Tracker
 
-DSP Recipe Tracker is a planned in-game recipe companion for
+DSP Recipe Tracker is a working validated MVP prototype for
 [Dyson Sphere Program](https://store.steampowered.com/app/1366540/Dyson_Sphere_Program/).
-It will let players pin recipes from the Replicator and compare each recipe's
+It lets players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
 
-The recovered product, implementation, and validation contracts are owner
-accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
-exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
-its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus the
-Source-ready and Package-inspected gates pass for source revision
-`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains pending
-explicit owner review. The owner-performed Behavioral-ready procedure passed
-all four groups on 2026-08-15 for the recorded test build and conditions.
-Release candidacy remains unassessed while presentation refinement continues;
-no supported or published release exists yet. Runtime execution remains
-outside the current agent authorization.
+The product, implementation, and validation contracts and Sprints 1 through 3
+are owner accepted. The final workshop behavior passed owner validation and
+acceptance on 2026-08-15. Source-ready and Package-inspected passed for clean
+commit `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318.
+The repository is planning-pending for publication refinement; no supported or
+published release exists.
 
-## Planned MVP
+## Validated MVP prototype
 
 - Pin and unpin recipes by right-clicking the Replicator's existing recipe
   grid. Left-click remains selection-only, while right-click preserves native
   selection and toggles the pin.
-- Show restrained green and red filtering on native Replicator recipe cells
-  for unpinned and pinned state without adding a separate Pin button or
-  modifying DSP's original cell-state buffer.
+- Mark pinned native Replicator cells with restrained green corner brackets;
+  unpinned cells remain neutral and DSP's original state buffer is untouched.
 - Show up to three pinned recipes; a fourth pin replaces the bottom entry.
 - Display product and direct-ingredient icons without recursively expanding
   the recipe tree.
@@ -63,11 +56,12 @@ The authoritative product scope is maintained in
 [docs/PROJECT.md](docs/PROJECT.md). Readiness and acceptance criteria are
 maintained in [docs/VALIDATION-CONTRACT.md](docs/VALIDATION-CONTRACT.md).
 
-The current active implementation state is recorded in
-[docs/ROADMAP.md](docs/ROADMAP.md). The completed Sprint 2 record is archived
-as [docs/archive/UI_INTEGRATION_ROADMAP.md](docs/archive/UI_INTEGRATION_ROADMAP.md).
-The authorized long-range MVP roadmap and original concept foundation remain
-under `docs/planning/`.
+The current planning-pending state is recorded in
+[docs/ROADMAP.md](docs/ROADMAP.md). Completed Sprint records are archived as
+[Sprint 3](docs/archive/PROTOTYPE-ROADMAP.md),
+[Sprint 2](docs/archive/UI_INTEGRATION_ROADMAP.md), and
+[Sprint 1](docs/archive/BOOTSTRAP-ROADMAP.md). The historical MVP roadmap and
+original concept foundation remain under `docs/planning/`.
 
 The governing UI-extension approach is recorded in
 [docs/PRODUCT-PRINCIPLES.md](docs/PRODUCT-PRINCIPLES.md). The initial
@@ -76,7 +70,7 @@ runtime evidence separately from product decisions.
 
 ## Requirements
 
-The planned runtime requires:
+The prototype runtime requires:
 
 - Dyson Sphere Program;
 - BepInEx 5 installed in the game directory.
@@ -101,14 +95,14 @@ runtime datasets are never redistributed.
 ## BepInEx conformance
 
 The supported plugin-manager contract is the installed BepInEx `5.4.17.0`,
-mapped to source tag `v5.4.17`. The plugin will use only BepInEx 5 lifecycle,
+mapped to source tag `v5.4.17`. The plugin uses only BepInEx 5 lifecycle,
 identity, logging, and any explicitly needed configuration surface. HarmonyX
 `2.5.5` is available but will be referenced only when a confirmed game hook
 requires patching.
 
-The confirmed MVP pin path uses the Replicator's existing `PointerDown` event
-and does not require HarmonyX. Its green/red treatment uses a non-raycasting
-clone of the native grid material with an independent state buffer.
+The MVP pin path uses the Replicator's existing `PointerDown` event and does
+not require HarmonyX. Its pinned-cell treatment uses tracker-owned,
+non-raycasting green corner brackets.
 
 The project does not modify BepInEx, target the source checkout's BepInEx 6
 `master`, or promise compatibility with other loader versions. See
@@ -121,7 +115,7 @@ is `DSP-Recipe-Tracker`.
 
 ## Build
 
-S1-02 provides a minimal, nonfunctional BepInEx plugin skeleton. It establishes
+S1-02 introduced the minimal BepInEx plugin skeleton. It established
 the approved identity, loader lifecycle/logging boundary, and versioned source
 build; it does not implement recipe tracking or authorize installation.
 
@@ -170,7 +164,7 @@ package is not installed or loaded.
 ## Versioning and packaging
 
 `VERSION` supplies the major and minor release line. The real package pipeline
-will use the GitHub Actions run number as the patch value and derive:
+uses the GitHub Actions run number as the patch value and derives:
 
 ```text
 Package/plugin version: M.m.N
@@ -186,38 +180,17 @@ for 30 days; the workflow does not publish it.
 
 ## Project status
 
-The bootstrap roadmap and S1-01 through S1-06 are complete and owner accepted.
-Its Source-ready and Package-inspected gates pass for commit
-`06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
-accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
-inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized; S3-01 through S3-05 are owner accepted, and S3-06 plus
-the Source-ready and Package-inspected gates pass for source revision
-`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending explicit Owner-reviewed acceptance. The bounded owner-
-performed Behavioral-ready procedure passed all four groups on 2026-08-15 for
-the recorded test build and conditions. Release candidacy remains unassessed
-while presentation refinement continues.
-Historical assembly and isolated-runtime feasibility conclusions identify the
-Replicator input surface, recipe and inventory APIs, native HUD host, exact
-major-interface visibility signals, and reusable presentation resources. Those
-accepted conclusions do not authorize new runtime execution. The plugin
-source now connects isolated Replicator input, independent recipe-grid
-treatment, live complete recipe rows, scale-aware panel dragging and bounds
-reclamping, and paired visibility controls through plain orchestration at
-plugin startup. The owner subsequently reported `PASS` for all four bounded
-Behavioral-ready groups covering native pinning and presentation, dragging and
-contained input, visibility, and lifecycle and cleanup.
+Sprints 1 through 3 and all required exit gates are complete and owner
+accepted. The resulting prototype implements the complete transient pinning,
+direct-ingredient presentation, visibility, dragging, lifecycle, and package
+loop with bounded Debug diagnostics. The owner passed the formal four-group
+procedure and accepted the refined workshop build. The clean committed result
+then passed Source-ready and Package-inspected as build 318.
 
-The source now contains deterministic transient pin ordering, unpinning,
-three-entry capacity, bottom eviction, unavailable-recipe removal, independent
-native recipe-grid treatment, exact fail-closed six-interface visibility, and
-three ordered complete native-composed recipe rows, with bounded Debug
-transition diagnostics. The UI-independent presentation model and separate
-read-only DSP recipe/item and Icarus-inventory adapters now feed those rows
-through immediate pin-change and bounded steady refresh, safe invalid-pin
-removal, and temporary row suppression/recovery. Installed behavior is only
-partially observed; the remaining owner gate is not inferred from the workshop.
+The repository has no active story. Its next state is publication refinement,
+which requires a new owner-authorized roadmap. The validated prototype does
+not imply publication approval, compatibility beyond the recorded baseline,
+or a supported release.
 
 ## Repository layout
 
@@ -245,7 +218,9 @@ partially observed; the remaining owner gate is not inferred from the workshop.
 |-- global.json
 |-- docs/
 |   |-- archive/
-|   |   `-- BOOTSTRAP-ROADMAP.md
+|   |   |-- BOOTSTRAP-ROADMAP.md
+|   |   |-- PROTOTYPE-ROADMAP.md
+|   |   `-- UI_INTEGRATION_ROADMAP.md
 |   |-- BEPINEX-CONFORMANCE.md
 |   |-- FEASIBILITY.md
 |   |-- IMPLEMENTATION-CONTRACT.md
@@ -303,9 +278,9 @@ partially observed; the remaining owner gate is not inferred from the workshop.
 Before contributing, read [AGENTS.md](AGENTS.md). It defines the repository's
 scope, safety, validation, and Git expectations.
 
-Implementation files will follow the adopted
+Implementation files follow the adopted
 [source, test, CI-reference, validation, and package layout](docs/IMPLEMENTATION-CONTRACT.md#8-adopted-repository-layout)
-as their respective Sprint 1 stories become Active. Later-story placeholder
+Future implementation requires an active owner-authorized roadmap; placeholder
 projects and directories are not created in advance.
 
 The [original concept foundation](docs/planning/PINNED-RECIPE-TRACKER-CONCEPT.md)

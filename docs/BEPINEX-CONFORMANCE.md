@@ -86,11 +86,12 @@ not the project's supported consumption surface.
 - Treat a supported BepInEx version or consumed-surface change as a conformance
   change requiring renewed source validation and, only where it creates an
   otherwise-unprovable runtime claim, a later owner-performed human check.
-- A compile-only result does not establish installed compatibility. Discovery,
-  lifecycle, logging, configuration, patch ownership, shutdown cleanup, and
-  coexistence remain unvalidated until the owner performs the applicable
-  bounded human checks against a supplied testable build. Agents do not install
-  or load the project plugin in the game environment.
+- A compile-only result does not establish installed compatibility. The owner
+  validated discovery, lifecycle, logging, shutdown cleanup, and coexistence
+  for the recorded MVP build and conditions. Configuration and patch ownership
+  were not consumed by that implementation, and broader compatibility remains
+  unclaimed. Agents do not install or load the project plugin in the game
+  environment.
 
 The version in use is the version supported. If it stops satisfying project
 requirements, that is a new authority and product decision rather than an
