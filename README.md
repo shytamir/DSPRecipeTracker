@@ -173,7 +173,7 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current pre-release line is `0.1`. Pushes to `main` and manual dispatches
+The current pre-release line is `0.9`. Pushes to `main` and manual dispatches
 run the same hosted build, shim-coverage check, package construction, and static
 inspection in GitHub Actions. The resulting development artifact is retained
 for 30 days; the workflow does not publish it.

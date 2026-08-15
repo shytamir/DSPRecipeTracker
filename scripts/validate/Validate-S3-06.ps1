@@ -195,4 +195,4 @@ foreach ($diagnosticTerm in @(
     }
 }
 
-Write-Output 'S3-06 acceptance validation passed for complete plugin composition, game-session reset wiring, per-feature initialization isolation, ordered one-time cleanup, inert callbacks, bounded diagnostic coverage, and the self-contained owner procedure. Runtime execution remains pending owner validation.'
+Write-Output 'S3-06 acceptance validation passed for complete plugin composition, game-session reset wiring, per-feature initialization isolation, ordered one-time cleanup, inert callbacks, bounded diagnostic coverage, and the self-contained owner procedure.'

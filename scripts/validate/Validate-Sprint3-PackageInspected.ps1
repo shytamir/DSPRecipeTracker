@@ -37,7 +37,18 @@ if ($LASTEXITCODE -ne 0) {
     throw "Hosted package inspection failed with exit code $LASTEXITCODE."
 }
 
-$semanticVersion = "0.1.$BuildNumber"
+$hostedBuildInfoPath = Join-Path $repoRoot 'artifacts\build\build-info.json'
+if (-not (Test-Path -LiteralPath $hostedBuildInfoPath)) {
+    throw "Hosted package inspection did not produce build information: $hostedBuildInfoPath"
+}
+$hostedBuildInfo = [IO.File]::ReadAllText($hostedBuildInfoPath) | ConvertFrom-Json
+$semanticVersion = $hostedBuildInfo.semanticVersion
+if ([string]::IsNullOrWhiteSpace($semanticVersion) -or
+    $hostedBuildInfo.buildNumber -ne $BuildNumber -or
+    $hostedBuildInfo.sourceRevision -ne $SourceRevision.ToLowerInvariant() -or
+    $hostedBuildInfo.referenceMode -ne 'Hosted') {
+    throw 'Hosted build information does not match the expected build number, source revision, and reference mode.'
+}
 $packageRoot = Join-Path $repoRoot "artifacts\package\$semanticVersion"
 Copy-Item -LiteralPath (Join-Path $packageRoot 'package-validation.json') `
     -Destination (Join-Path $packageRoot 'package-validation-hosted.json') -Force

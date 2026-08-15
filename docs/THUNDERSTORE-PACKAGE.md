@@ -57,7 +57,7 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current pre-release line is `0.1`. The same generated semantic version is
+The current pre-release line is `0.9`. The same generated semantic version is
 used by `manifest.json` and the BepInEx plugin attribute. The recipe-tracker
 assembly uses the generated four-part assembly and file version. The diagnostic
 commit suffix is retained in build information and product diagnostics without

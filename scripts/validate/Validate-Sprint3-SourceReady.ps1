@@ -62,4 +62,4 @@ if ($roadmapText -notmatch [Regex]::Escape('(OWNER-VALIDATION.md)')) {
     throw 'The active roadmap does not link the owner validation procedure.'
 }
 
-Write-Output "Sprint 3 Source-ready validation passed for source revision $SourceRevision. Behavioral-ready and Owner-reviewed remain pending owner validation."
+Write-Output "Sprint 3 Source-ready validation passed for source revision $SourceRevision."
