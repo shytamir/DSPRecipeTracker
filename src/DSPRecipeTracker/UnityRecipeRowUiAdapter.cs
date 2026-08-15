@@ -5,12 +5,19 @@ namespace DSPRecipeTracker
 {
     internal sealed class UnityRecipeRowUiAdapter : IRecipeRowUiAdapter
     {
-        private const int IngredientFontSize = 11;
-        private const int WarningFontSize = 9;
+        private const int HeaderFontSize = 12;
+        private const int IngredientFontSize = 13;
+        private const int WarningFontSize = 11;
+        private static readonly Color HeaderColor =
+            new Color(0.78f, 0.9f, 1f, 1f);
         private static readonly Color SufficientColor =
-            new Color(0.404f, 0.647f, 0.486f, 1f);
+            new Color(0.35f, 0.9f, 0.55f, 1f);
         private static readonly Color InsufficientColor =
-            new Color(0.561f, 0.208f, 0.208f, 1f);
+            new Color(1f, 0.38f, 0.32f, 1f);
+        private static readonly Color MachineColor =
+            new Color(0.95f, 0.72f, 0.3f, 1f);
+        private static readonly Color SeparatorColor =
+            new Color(0.12f, 0.68f, 0.82f, 0.45f);
 
         private readonly UnityTrackerPanelAdapter panel;
         private readonly Font nativeFont;
@@ -26,6 +33,7 @@ namespace DSPRecipeTracker
             new Text[PinnedRecipeState.Capacity, RecipePresentationModel.MaximumIngredientCount];
         private readonly Text[] warningTexts =
             new Text[PinnedRecipeState.Capacity];
+        private GameObject semanticHeaderObject;
         private bool initialized;
         private bool released;
 
@@ -61,6 +69,13 @@ namespace DSPRecipeTracker
 
             try
             {
+                if (!TryCreateSemanticHeader(parent))
+                {
+                    failure = new RecipeRowUiFailure(0, RecipeRowUiResourceClass.RowContainer);
+                    Release();
+                    return false;
+                }
+
                 for (var rowIndex = 0;
                     rowIndex < PinnedRecipeState.Capacity;
                     rowIndex++)
@@ -146,15 +161,16 @@ namespace DSPRecipeTracker
                 ingredientObject.SetActive(active);
             }
 
-            var warningText = warningTexts[rowIndex];
             var hasWarning = !string.IsNullOrWhiteSpace(row.MachineWarning);
+            var warningText = warningTexts[rowIndex];
             if (hasWarning)
             {
                 warningText.text = row.MachineWarning;
-                warningText.color = InsufficientColor;
+                warningText.color = MachineColor;
             }
 
             warningText.gameObject.SetActive(hasWarning);
+
             rowObjects[rowIndex].SetActive(true);
             return true;
         }
@@ -181,6 +197,13 @@ namespace DSPRecipeTracker
 
             released = true;
             initialized = false;
+            var ownedHeader = semanticHeaderObject;
+            semanticHeaderObject = null;
+            if (!ReferenceEquals(ownedHeader, null))
+            {
+                Object.Destroy(ownedHeader);
+            }
+
             for (var rowIndex = 0;
                 rowIndex < PinnedRecipeState.Capacity;
                 rowIndex++)
@@ -242,6 +265,11 @@ namespace DSPRecipeTracker
             productImage.raycastTarget = false;
             productImages[rowIndex] = productImage;
 
+            if (!TryCreateSeparator(rowTransform))
+            {
+                return false;
+            }
+
             for (var ingredientIndex = 0;
                 ingredientIndex < RecipePresentationModel.MaximumIngredientCount;
                 ingredientIndex++)
@@ -252,18 +280,24 @@ namespace DSPRecipeTracker
                 }
             }
 
-            var warningObject = new GameObject("Machine Warning");
+            var warningObject = new GameObject("Machine Facility Footer");
             var warningTransform =
                 (RectTransform)warningObject.AddComponent(typeof(RectTransform));
             var warningText = (Text)warningObject.AddComponent(typeof(Text));
             if (ReferenceEquals(warningTransform, null) || ReferenceEquals(warningText, null))
             {
+                Object.Destroy(warningObject);
                 return false;
             }
 
             warningTransform.SetParent(rowTransform, false);
-            ConfigureRect(warningTransform, 4f, 54f, 62f, 14f);
-            ConfigureText(warningText, WarningFontSize);
+            ConfigureRect(
+                warningTransform,
+                RecipeRowLayout.ProductLabelLeft,
+                RecipeRowLayout.ProductLabelTop,
+                RecipeRowLayout.ProductLabelWidth,
+                RecipeRowLayout.ProductLabelHeight);
+            ConfigureText(warningText, WarningFontSize, TextAnchor.MiddleLeft);
             warningObject.SetActive(false);
             warningTexts[rowIndex] = warningText;
             rowObject.SetActive(false);
@@ -299,7 +333,7 @@ namespace DSPRecipeTracker
             }
 
             iconTransform.SetParent(cellTransform, false);
-            ConfigureRect(iconTransform, 5f, 3f, RecipeRowLayout.IngredientIconSize, RecipeRowLayout.IngredientIconSize);
+            ConfigureRect(iconTransform, 5f, 2f, RecipeRowLayout.IngredientIconSize, RecipeRowLayout.IngredientIconSize);
             iconImage.raycastTarget = false;
 
             var textObject = new GameObject("Count");
@@ -311,8 +345,8 @@ namespace DSPRecipeTracker
             }
 
             textTransform.SetParent(cellTransform, false);
-            ConfigureRect(textTransform, 0f, 41f, RecipeRowLayout.IngredientCellWidth, 18f);
-            ConfigureText(countText, IngredientFontSize);
+            ConfigureRect(textTransform, 0f, 39f, RecipeRowLayout.IngredientCellWidth, 20f);
+            ConfigureText(countText, IngredientFontSize, TextAnchor.MiddleCenter);
 
             ingredientObjects[rowIndex, ingredientIndex] = cellObject;
             ingredientImages[rowIndex, ingredientIndex] = iconImage;
@@ -321,10 +355,94 @@ namespace DSPRecipeTracker
             return true;
         }
 
-        private void ConfigureText(Text text, int fontSize)
+        private bool TryCreateSemanticHeader(RectTransform parent)
+        {
+            var headerObject = new GameObject("Recipe Semantics");
+            var headerTransform =
+                (RectTransform)headerObject.AddComponent(typeof(RectTransform));
+            if (ReferenceEquals(headerTransform, null))
+            {
+                Object.Destroy(headerObject);
+                return false;
+            }
+
+            headerTransform.SetParent(parent, false);
+            ConfigureRect(
+                headerTransform,
+                0f,
+                4f,
+                PanelGeometry.FixedWidth,
+                RecipeRowLayout.HeaderHeight);
+
+            if (!TryCreateHeaderText(headerTransform, "Target Header", "TARGET", 4f, 64f) ||
+                !TryCreateHeaderText(
+                    headerTransform,
+                    "Ingredients Header",
+                    "INGREDIENTS",
+                    RecipeRowLayout.IngredientFirstLeft,
+                    PanelGeometry.FixedWidth - RecipeRowLayout.IngredientFirstLeft - 8f))
+            {
+                Object.Destroy(headerObject);
+                return false;
+            }
+
+            semanticHeaderObject = headerObject;
+            return true;
+        }
+
+        private bool TryCreateHeaderText(
+            RectTransform parent,
+            string name,
+            string copy,
+            float left,
+            float width)
+        {
+            var textObject = new GameObject(name);
+            var textTransform = (RectTransform)textObject.AddComponent(typeof(RectTransform));
+            var text = (Text)textObject.AddComponent(typeof(Text));
+            if (ReferenceEquals(textTransform, null) || ReferenceEquals(text, null))
+            {
+                Object.Destroy(textObject);
+                return false;
+            }
+
+            textTransform.SetParent(parent, false);
+            ConfigureRect(textTransform, left, 0f, width, RecipeRowLayout.HeaderHeight);
+            ConfigureText(text, HeaderFontSize, TextAnchor.MiddleCenter);
+            text.text = copy;
+            text.color = HeaderColor;
+            return true;
+        }
+
+        private static bool TryCreateSeparator(RectTransform parent)
+        {
+            var separatorObject = new GameObject("Target Ingredient Separator");
+            var separatorTransform =
+                (RectTransform)separatorObject.AddComponent(typeof(RectTransform));
+            var separatorImage = (Image)separatorObject.AddComponent(typeof(Image));
+            if (ReferenceEquals(separatorTransform, null) || ReferenceEquals(separatorImage, null))
+            {
+                Object.Destroy(separatorObject);
+                return false;
+            }
+
+            separatorTransform.SetParent(parent, false);
+            ConfigureRect(
+                separatorTransform,
+                RecipeRowLayout.SeparatorLeft,
+                2f,
+                1f,
+                RecipeRowLayout.ContentHeight - 4f);
+            separatorImage.color = SeparatorColor;
+            separatorImage.raycastTarget = false;
+            return true;
+        }
+
+        private void ConfigureText(Text text, int fontSize, TextAnchor alignment)
         {
             text.font = nativeFont;
             text.fontSize = fontSize;
+            text.alignment = alignment;
             text.raycastTarget = false;
         }
 

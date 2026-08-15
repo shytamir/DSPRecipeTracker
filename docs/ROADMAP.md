@@ -2,12 +2,13 @@
 
 ## Status and authority
 
-**Status:** Behavioral-ready passed - owner acceptance pending
+**Status:** S3-06 owner accepted - exit-gate revalidation pending
 
-**Active story:** None - S3-06 technical handoff complete
+**Active story:** None - S3-06 owner accepted
 
-**Active story state:** Source-ready, Package-inspected, and Behavioral-ready
-passed; Owner-reviewed pending explicit owner acceptance
+**Active story state:** Behavioral-ready and S3-06 owner acceptance passed;
+Source-ready and Package-inspected require rerun for the accepted workshop
+revision; Sprint Owner-reviewed remains pending
 
 **Implementation authorization:** None - technical handoff complete
 
@@ -17,14 +18,14 @@ passed; Owner-reviewed pending explicit owner acceptance
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-05
-are owner accepted. S3-06 and the Source-ready and Package-inspected gates are
-technically complete for source revision
-`cb37a0acbd23e77306137dc695d92980f1c686cc`. Sprint completion remains
-unavailable pending explicit Owner-reviewed acceptance. The owner completed the
-bounded Behavioral-ready procedure with all four groups passing on 2026-08-15;
-further presentation refinement is planned before release candidacy is
-assessed.
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 through S3-06
+are owner accepted. The original Source-ready and Package-inspected gates
+passed for source revision `cb37a0acbd23e77306137dc695d92980f1c686cc`, and
+the bounded Behavioral-ready procedure passed all four groups. A subsequent
+presentation-refinement workshop produced owner-accepted direct build
+`0.1.318`; the two automated exit gates require rerun for its committed source
+revision before the remaining project documentation is reconciled. Sprint
+Owner-reviewed acceptance remains separate and pending.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -612,7 +613,7 @@ activated S3-06; it does not complete Sprint 3 or satisfy a sprint exit gate.
 
 ### S3-06 - Complete orchestration and prepare the owner checkpoint
 
-**Status:** Complete - technical acceptance gate passed on 2026-08-15
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As the owner, I want one coherent testable prototype and a
 small, complete procedure for judging only the remaining live behavior.
@@ -677,18 +678,28 @@ procedure are ready for owner review. Agents do not run the procedure.
   input, visibility, and lifecycle observations.
 - The owner workshop exposed a panel-shell dependency on the Replicator grid's
   null sprite and a procedure step that expected a row while the visibility
-  contract hid it. The final implementation removes the texture dependency,
-  retains a transparent raycast-containment surface, and draws four
-  non-raycasting four-unit border segments. The procedure now separates native
-  Replicator observations from tracker-row observations after the Replicator
-  and Inventory close.
+  contract hid it. The implementation removes the texture dependency and the
+  procedure separates native Replicator observations from tracker-row
+  observations after the Replicator and Inventory close.
 - An interim tiled native texture initialized successfully but impaired
-  legibility even at reduced opacity, so it was rejected rather than retained.
-  The final owner trace confirmed all six orchestrated features available,
-  one live two-ingredient row, expected visibility transitions, ordinary drag
-  completion, and edge clamping. These bounded workshop observations diagnose
-  the repaired handoff only; they do not satisfy Behavioral-ready or imply
-  Owner-reviewed acceptance.
+  legibility even at reduced opacity, so it was rejected. The accepted panel
+  instead uses a flat dark translucent background without a redundant border.
+- Presentation refinement replaces full-cell red/green coverage with three
+  non-raycasting green corner markers on pinned Replicator recipes only.
+  Unpinned cells remain visually neutral so item artwork stays legible.
+- Complete tracker rows now distinguish `TARGET` from `INGREDIENTS`, align
+  readable centered quantities beneath ingredient icons, and place the full
+  normalized machine/facility name in a dedicated single-line footer.
+- Game-session shutdown now releases transient pins and owned UI before a same-
+  or different-save load can initialize a new tracker session.
+- The final layout removes the four-unit panel border, derives a true left-
+  middle initial position from the live layout height, and places the global
+  control 38 units above the native screenshot-button reference. Deterministic
+  checks cover the 1080- and 1440-unit Auto layouts and undersized bounds.
+- Direct builds `0.1.313` through `0.1.318` isolated the null-sprite shell,
+  texture legibility, facility-label geometry, session cleanup, recipe-marker,
+  initial-position, and global-control issues one variable at a time. The owner
+  accepted the final `0.1.318` result on 2026-08-15.
 
 **Owner procedure:** [`Sprint 3 Owner Validation Procedure`](OWNER-VALIDATION.md)
 
@@ -697,8 +708,9 @@ test build at source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc`. The owner reported `PASS` for A,
 Native pinning and presentation; B, dragging and contained input; C,
 visibility; and D, lifecycle and cleanup. This satisfies Behavioral-ready but
-does not imply S3-06 or Sprint 3 owner acceptance, publication approval, or
-release candidacy. A further presentation-refinement workshop is planned.
+did not by itself imply S3-06 or Sprint 3 owner acceptance, publication
+approval, or release candidacy. The subsequent owner-accepted refinement
+workshop is recorded above.
 
 **Technical validation:** Passed on 2026-08-15 for source revision
 `cb37a0acbd23e77306137dc695d92980f1c686cc` with:
@@ -721,9 +733,10 @@ agent-run gate did not install or execute the plugin or start the game or a
 substitute runtime; the separate bounded owner workshop observations are
 recorded above.
 
-**Owner acceptance:** Not inferred. The owner-performed Behavioral-ready gate
-passed on 2026-08-15, but S3-06 and Sprint 3 remain incomplete pending explicit
-Owner-reviewed acceptance.
+**Owner acceptance:** Accepted explicitly on 2026-08-15 for direct workshop
+build `0.1.318`. This completes S3-06 but does not infer Sprint Owner-reviewed
+acceptance, publication approval, or release candidacy. Source-ready and
+Package-inspected must first be rerun for the committed workshop revision.
 
 ## Sequence and dependencies
 
@@ -752,12 +765,12 @@ integration. Tracker-icon navigation remains outside the MVP.
 
 ### Source-ready
 
-**Status:** Passed on 2026-08-15 for
-`cb37a0acbd23e77306137dc695d92980f1c686cc`
+**Status:** Previously passed on 2026-08-15 for
+`cb37a0acbd23e77306137dc695d92980f1c686cc`; accepted workshop revision pending
+revalidation
 
-- Every included Sprint 3 story meets its definition of done. S3-01 through
-  S3-05 are explicitly owner accepted; S3-06 is the technical handoff into the
-  remaining sprint exit gates.
+- Every included Sprint 3 story meets its definition of done and S3-01 through
+  S3-06 are explicitly owner accepted. Sprint exit remains separate.
 - The complete focused validation chain and Local/Hosted Release builds pass
   with zero errors for one recorded source revision.
 - Every consumed external reference is authority-backed and exhaustively
@@ -777,8 +790,9 @@ passed. This gate does not establish live behavior.
 
 ### Package-inspected
 
-**Status:** Passed on 2026-08-15 for
-`cb37a0acbd23e77306137dc695d92980f1c686cc`
+**Status:** Previously passed on 2026-08-15 for
+`cb37a0acbd23e77306137dc695d92980f1c686cc`; accepted workshop revision pending
+revalidation
 
 - The real version-aligned Release output passes Local and Hosted static
   package inspection.
@@ -815,7 +829,7 @@ conditions and does not imply owner acceptance or release candidacy.
 
 ### Owner-reviewed
 
-**Status:** Pending explicit owner acceptance
+**Status:** Pending explicit Sprint 3 acceptance
 
 - The owner reviews the complete technical evidence, owner-performed results,
   deferred claims, and known limitations.

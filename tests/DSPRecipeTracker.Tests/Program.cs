@@ -138,9 +138,9 @@ using (var treatment = new RecipeGridTreatment(treatmentAdapter, treatmentDiagno
     Check(treatmentAdapter.InitializeCalls == 1, "recipe-grid treatment resources initialize once");
     Check(treatment.TryRefresh(new[] { 20 }), "initial recipe-grid treatment refresh succeeds");
     Check(treatmentAdapter.ApplyCalls == 1, "initial recipe-grid treatment uploads once");
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "initial recipe-grid treatment", 0, RecipeGridTreatmentModel.UnpinnedMask);
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "pinned recipe-grid treatment", 1, RecipeGridTreatmentModel.PinnedMask);
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "second unpinned recipe-grid treatment", 2, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "initial unpinned recipe-grid treatment is neutral", 0, RecipeGridTreatmentModel.NeutralMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "pinned recipe-grid treatment", 1, RecipeGridTreatmentModel.PinnedMarkerState);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "second unpinned recipe-grid treatment is neutral", 2, RecipeGridTreatmentModel.NeutralMask);
     CheckTreatmentState(treatmentAdapter.LastAppliedState, "initial neutral recipe-grid treatment", 3, RecipeGridTreatmentModel.NeutralMask);
     Check(treatmentAdapter.OriginalState.All(value => value == 99), "tracker never writes the simulated native state buffer");
 
@@ -149,16 +149,16 @@ using (var treatment = new RecipeGridTreatment(treatmentAdapter, treatmentDiagno
 
     Check(treatment.TryRefresh(new[] { 30 }), "pin-change recipe-grid treatment refresh succeeds");
     Check(treatmentAdapter.ApplyCalls == 2, "pin change uploads once");
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "unpin remaps to green", 1, RecipeGridTreatmentModel.UnpinnedMask);
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "new pin remaps to red", 2, RecipeGridTreatmentModel.PinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "unpin removes the marker", 1, RecipeGridTreatmentModel.NeutralMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "new pin receives a corner marker", 2, RecipeGridTreatmentModel.PinnedMarkerState);
 
     treatmentAdapter.SetPopulation(40);
     Check(treatment.TryRefresh(new[] { 30 }), "repopulated recipe-grid treatment refresh succeeds");
     Check(treatmentAdapter.ApplyCalls == 3, "population change uploads once");
-    CheckTreatmentState(treatmentAdapter.LastAppliedState, "repopulated cell is unpinned", 0, RecipeGridTreatmentModel.UnpinnedMask);
+    CheckTreatmentState(treatmentAdapter.LastAppliedState, "repopulated unpinned cell remains neutral", 0, RecipeGridTreatmentModel.NeutralMask);
     CheckTreatmentState(treatmentAdapter.LastAppliedState, "stale cell one is cleared", 1, RecipeGridTreatmentModel.NeutralMask);
     CheckTreatmentState(treatmentAdapter.LastAppliedState, "stale cell two is cleared", 2, RecipeGridTreatmentModel.NeutralMask);
-    Check(treatmentAdapter.LastAppliedState.Count(value => value != RecipeGridTreatmentModel.NeutralMask) == 1, "pins absent from current grid remain neutral");
+    Check(treatmentAdapter.LastAppliedState.All(value => value == RecipeGridTreatmentModel.NeutralMask), "pins absent from current grid and unpinned cells remain neutral");
 
     treatmentAdapter.SetPopulation(50);
     Check(treatment.TryRefresh(new[] { 30 }), "same-mask population identity change refresh succeeds");
@@ -193,27 +193,33 @@ Check(failedTreatmentAdapter.ReleaseCalls == 1, "failed recipe-grid treatment cl
 Check(failedTreatmentDiagnostics.Records.Count(record => record.Message.Contains("action=disable", StringComparison.Ordinal)) == 1, "recipe-grid treatment failure is reported once");
 
 Check(PanelGeometry.FixedWidth == 360f, "fixed panel width");
-Check(PanelGeometry.FixedHeight == 252f, "fixed panel height");
+Check(PanelGeometry.FixedHeight == 300f, "fixed panel height");
+CheckRect(PanelGeometry.CreateLeftMiddle(1080f), 24f, 390f,
+    "1080-layout initial panel is left-middle");
+CheckRect(PanelGeometry.CreateLeftMiddle(1440f), 24f, 570f,
+    "1440-layout initial panel is left-middle");
+CheckRect(PanelGeometry.CreateLeftMiddle(200f), 24f, 0f,
+    "undersized layout initial panel remains reachable");
 
 var parent = new ParentBounds(0f, 0f, 1280f, 720f);
 var panel = PanelGeometry.Create(400f, 200f);
 CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(-1000f, 0f), parent), 0f, 200f, "left edge");
 CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(1000f, 0f), parent), 920f, 200f, "right edge");
 CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(0f, -1000f), parent), 400f, 0f, "top edge");
-CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(0f, 1000f), parent), 400f, 468f, "bottom edge");
+CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(0f, 1000f), parent), 400f, 420f, "bottom edge");
 CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(-1000f, -1000f), parent), 0f, 0f, "top-left corner");
 CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(1000f, -1000f), parent), 920f, 0f, "top-right corner");
-CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(-1000f, 1000f), parent), 0f, 468f, "bottom-left corner");
-CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(1000f, 1000f), parent), 920f, 468f, "bottom-right corner");
+CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(-1000f, 1000f), parent), 0f, 420f, "bottom-left corner");
+CheckRect(PanelGeometry.MoveAndClamp(panel, new DragDelta(1000f, 1000f), parent), 920f, 420f, "bottom-right corner");
 
 var repeatedlyMoved = PanelGeometry.Create(100f, 100f);
 repeatedlyMoved = PanelGeometry.MoveAndClamp(repeatedlyMoved, new DragDelta(300f, 200f), parent);
 repeatedlyMoved = PanelGeometry.MoveAndClamp(repeatedlyMoved, new DragDelta(300f, 200f), parent);
 repeatedlyMoved = PanelGeometry.MoveAndClamp(repeatedlyMoved, new DragDelta(300f, 200f), parent);
-CheckRect(repeatedlyMoved, 920f, 468f, "repeated drag deltas");
+CheckRect(repeatedlyMoved, 920f, 420f, "repeated drag deltas");
 
 var resizedParent = new ParentBounds(20f, 30f, 800f, 500f);
-CheckRect(PanelGeometry.Clamp(repeatedlyMoved, resizedParent), 460f, 278f, "parent-size change");
+CheckRect(PanelGeometry.Clamp(repeatedlyMoved, resizedParent), 460f, 230f, "parent-size change");
 
 var undersizedParent = new ParentBounds(20f, 30f, 300f, 200f);
 CheckRect(PanelGeometry.Clamp(panel, undersizedParent), 20f, 30f, "undersized parent anchors panel origin");
@@ -270,7 +276,7 @@ using (var dragPanel = new TrackerPanelUiBoundary(dragPanelAdapter))
             "panel drag retains tracker-owned raycast containment");
 
         dragAdapter.RaiseDrag(new DragDelta(2000f, 2000f));
-        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 828f,
+        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 780f,
             "1920-by-1080 Auto drag clamps at bottom-right");
         dragAdapter.RaiseCompleted();
         Check(dragDiagnostics.Records.Count(record => record.Message.StartsWith(
@@ -280,13 +286,13 @@ using (var dragPanel = new TrackerPanelUiBoundary(dragPanelAdapter))
         dragAdapter.Width = 2560f;
         dragAdapter.Height = 1440f;
         dragBoundary.RefreshBounds();
-        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 828f,
+        CheckRect(dragPanelAdapter.LastRectangle, 1560f, 780f,
             "2560-by-1440 Auto bounds preserve an in-bounds panel");
 
         dragAdapter.Width = 1280f;
         dragAdapter.Height = 720f;
         dragBoundary.RefreshBounds();
-        CheckRect(dragPanelAdapter.LastRectangle, 920f, 468f,
+        CheckRect(dragPanelAdapter.LastRectangle, 920f, 420f,
             "changed parent bounds re-clamp the complete panel");
         Check(dragDiagnostics.Records.Any(record => record.Message ==
                 "tracker-drag action=clamp-correction source=bounds"),
@@ -509,7 +515,7 @@ using (var uiBoundary = new TrackerPanelUiBoundary(uiAdapter))
     Check(uiAdapter.CreateCalls == 1, "UI boundary creates once");
     Check(uiAdapter.RaycastCalls == 1, "UI boundary enables raycast containment once");
     Check(uiBoundary.TryApplyDrag(new DragDelta(2000f, 2000f), parent), "UI boundary accepts drag");
-    CheckRect(uiAdapter.LastRectangle, 920f, 468f, "UI boundary applies clamped drag");
+    CheckRect(uiAdapter.LastRectangle, 920f, 420f, "UI boundary applies clamped drag");
     Check(uiBoundary.TryApplyVisibility(true), "UI boundary applies visible result");
     Check(uiAdapter.LastVisibility == true, "UI boundary preserves visible result");
     Check(uiBoundary.TryApplyVisibility(false), "UI boundary applies hidden result");
@@ -560,7 +566,7 @@ using (var slotPanel = new TrackerPanelUiBoundary(slotPanelAdapter))
         Check(slots.TryRefresh(), "recipe-icon slots synchronize unpin");
         CheckRecipeOrder(slotPanelAdapter.LastRecipeIconIds, "recipe-icon slots preserve order after unpin", 303, 101);
         Check(slotPanel.TryApplyDrag(new DragDelta(2000f, 2000f), new ParentBounds(0f, 0f, 1280f, 720f)), "recipe-icon panel preserves drag pass-through");
-        CheckRect(slotPanelAdapter.LastRectangle, 920f, 468f, "recipe-icon panel drag remains clamped");
+        CheckRect(slotPanelAdapter.LastRectangle, 920f, 420f, "recipe-icon panel drag remains clamped");
         Check(slotPanelAdapter.RaycastCalls == 1, "recipe-icon panel retains input containment");
     }
     Check(slotPanelAdapter.IconReleaseCalls == 1, "recipe-icon slots release owned UI once");

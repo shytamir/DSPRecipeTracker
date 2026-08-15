@@ -53,9 +53,14 @@ foreach ($requiredText in @(
     'new MajorInterfaceVisibilityInput(',
     'new TrackerVisibilityControls(',
     'new TrackerOrchestrator(',
-    'orchestrator.TryInitialize(PanelGeometry.Create(24f, 84f))',
+    'PanelGeometry.CreateLeftMiddle(panelParent.rect.height)',
     'orchestrator?.Refresh()',
-    'orchestrator?.Dispose()'
+    'orchestrator?.Dispose()',
+    'GameMain.onGameEnded += OnGameEnded',
+    'GameMain.onGameEnded -= OnGameEnded',
+    'if (!GameMain.isRunning)',
+    'initializationAttempted = false',
+    'tracker-lifecycle action=game-end-reset'
 )) {
     if ($pluginText -notmatch [Regex]::Escape($requiredText)) {
         throw "S3-06 plugin composition is missing: $requiredText"
@@ -127,24 +132,23 @@ foreach ($requiredProcedureText in @(
 
 foreach ($requiredPanelText in @(
     'new UnityTrackerPanelAdapter(panelParent)',
-    'internal const float BorderThickness = 4f',
-    'panelBackground.color = new Color(0f, 0f, 0f, 0f)',
-    '"Top Border"',
-    '"Bottom Border"',
-    '"Left Border"',
-    '"Right Border"',
-    'borderImage.color = new Color(0.12f, 0.68f, 0.82f, 0.9f)',
-    'borderImage.raycastTarget = false'
+    'panelBackground.color = new Color(0.015f, 0.035f, 0.09f, 0.78f)'
 )) {
     if (($pluginText + "`n" + $panelAdapterText) -notmatch [Regex]::Escape($requiredPanelText)) {
-        throw "S3-06 texture-free panel contract is missing: $requiredPanelText"
+        throw "S3-06 texture-free panel-shell contract is missing: $requiredPanelText"
     }
 }
 foreach ($prohibitedPanelText in @(
     'backgroundSprite',
     'BackgroundResourcePath',
     'Resources.Load',
-    'Image.Type.Tiled'
+    'Image.Type.Tiled',
+    'BorderThickness',
+    'TryCreateBorder',
+    '"Top Border"',
+    '"Bottom Border"',
+    '"Left Border"',
+    '"Right Border"'
 )) {
     if (($pluginText + "`n" + $panelAdapterText) -match [Regex]::Escape($prohibitedPanelText)) {
         throw "S3-06 panel retains prohibited texture dependency: $prohibitedPanelText"
@@ -191,4 +195,4 @@ foreach ($diagnosticTerm in @(
     }
 }
 
-Write-Output 'S3-06 acceptance validation passed for complete plugin composition, per-feature initialization isolation, ordered one-time cleanup, inert callbacks, bounded diagnostic coverage, and the self-contained owner procedure. Runtime execution remains pending owner validation.'
+Write-Output 'S3-06 acceptance validation passed for complete plugin composition, game-session reset wiring, per-feature initialization isolation, ordered one-time cleanup, inert callbacks, bounded diagnostic coverage, and the self-contained owner procedure. Runtime execution remains pending owner validation.'

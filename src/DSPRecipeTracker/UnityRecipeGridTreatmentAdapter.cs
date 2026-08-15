@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -10,18 +9,21 @@ namespace DSPRecipeTracker
     internal sealed class UnityRecipeGridTreatmentAdapter : IRecipeGridTreatmentAdapter
     {
         internal const string RecipeArrayFieldName = "recipeProtoArray";
-        internal const float OverlayOpacity = 0.08f;
+        internal const int GridColumns = 14;
+        internal const int GridRows = 8;
+        internal const float CellSize = 46f;
+        internal const int MarkerCapacity = PinnedRecipeState.Capacity;
+        internal const float CornerInset = 3f;
+        internal const float CornerLength = 10f;
+        internal const float CornerThickness = 2f;
 
+        private static readonly Color MarkerColor = new Color(0.2f, 0.75f, 0.25f, 0.95f);
         private const BindingFlags PrivateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
-        private const string StateBufferProperty = "_StateBuffer";
-        private const string FilterColorProperty = "_FilterColor";
-        private const string BansColorProperty = "_BansColor";
 
         private readonly UIReplicatorWindow window;
         private readonly FieldInfo recipeArrayField;
-        private Image overlay;
-        private Material material;
-        private ComputeBuffer stateBuffer;
+        private readonly GameObject[] markerObjects = new GameObject[MarkerCapacity];
+        private readonly RectTransform[] markerTransforms = new RectTransform[MarkerCapacity];
         private bool released;
 
         public UnityRecipeGridTreatmentAdapter(UIReplicatorWindow window)
@@ -33,39 +35,20 @@ namespace DSPRecipeTracker
         public bool TryInitialize()
         {
             if (released || ReferenceEquals(window, null) || recipeArrayField == null ||
-                ReferenceEquals(window.recipeBg, null) || ReferenceEquals(window.recipeIcons, null))
+                ReferenceEquals(window.recipeBg, null))
             {
                 return false;
             }
 
-            var nativeMaterial = window.recipeBg.material;
-            if (ReferenceEquals(nativeMaterial, null))
+            for (var markerIndex = 0; markerIndex < MarkerCapacity; markerIndex++)
             {
-                return false;
+                if (!TryCreateMarker(markerIndex))
+                {
+                    ReleaseMarkers();
+                    return false;
+                }
             }
 
-            overlay = Object.Instantiate(window.recipeBg, window.recipeBg.transform.parent, false);
-            if (ReferenceEquals(overlay, null))
-            {
-                return false;
-            }
-
-            overlay.raycastTarget = false;
-            overlay.color = new Color(1f, 1f, 1f, OverlayOpacity);
-            overlay.transform.SetSiblingIndex(window.recipeIcons.transform.GetSiblingIndex());
-
-            var copiedTrigger = overlay.GetComponent<EventTrigger>();
-            if (!ReferenceEquals(copiedTrigger, null))
-            {
-                Object.Destroy(copiedTrigger);
-            }
-
-            material = new Material(nativeMaterial);
-            stateBuffer = new ComputeBuffer(RecipeGridTreatmentModel.CellCount, sizeof(uint));
-            material.SetBuffer(StateBufferProperty, stateBuffer);
-            material.SetColor(FilterColorProperty, new Color(0.2f, 0.75f, 0.25f, 1f));
-            material.SetColor(BansColorProperty, new Color(0.78f, 0.22f, 0.22f, 0.45f));
-            overlay.material = material;
             return true;
         }
 
@@ -95,12 +78,37 @@ namespace DSPRecipeTracker
         public bool TryApplyState(uint[] states)
         {
             if (released || states == null || states.Length != RecipeGridTreatmentModel.CellCount ||
-                stateBuffer == null)
+                ReferenceEquals(markerObjects[0], null))
             {
                 return false;
             }
 
-            stateBuffer.SetData(states);
+            var markerIndex = 0;
+            for (var cellIndex = 0; cellIndex < states.Length; cellIndex++)
+            {
+                if (states[cellIndex] != RecipeGridTreatmentModel.PinnedMarkerState)
+                {
+                    continue;
+                }
+
+                if (cellIndex >= GridColumns * GridRows || markerIndex >= MarkerCapacity)
+                {
+                    return false;
+                }
+
+                var column = cellIndex % GridColumns;
+                var row = cellIndex / GridColumns;
+                markerTransforms[markerIndex].anchoredPosition =
+                    new Vector2(column * CellSize, -row * CellSize);
+                markerObjects[markerIndex].SetActive(true);
+                markerIndex++;
+            }
+
+            for (; markerIndex < MarkerCapacity; markerIndex++)
+            {
+                markerObjects[markerIndex].SetActive(false);
+            }
+
             return true;
         }
 
@@ -112,27 +120,100 @@ namespace DSPRecipeTracker
             }
 
             released = true;
-            if (!ReferenceEquals(overlay, null))
+            ReleaseMarkers();
+        }
+
+        private bool TryCreateMarker(int markerIndex)
+        {
+            var markerObject = new GameObject("Pinned Recipe Corners " + (markerIndex + 1));
+            var markerTransform = (RectTransform)markerObject.AddComponent(typeof(RectTransform));
+            if (ReferenceEquals(markerTransform, null))
             {
-                overlay.gameObject.SetActive(false);
+                Object.Destroy(markerObject);
+                return false;
             }
 
-            if (stateBuffer != null)
+            markerTransform.SetParent(window.recipeBg.transform, false);
+            var topLeft = new Vector2(0f, 1f);
+            markerTransform.anchorMin = topLeft;
+            markerTransform.anchorMax = topLeft;
+            markerTransform.pivot = topLeft;
+            markerTransform.sizeDelta = new Vector2(CellSize, CellSize);
+
+            if (!TryCreateCorner(markerTransform, "Top Left", new Vector2(0f, 1f), new Vector2(1f, -1f)) ||
+                !TryCreateCorner(markerTransform, "Top Right", new Vector2(1f, 1f), new Vector2(-1f, -1f)) ||
+                !TryCreateCorner(markerTransform, "Bottom Left", new Vector2(0f, 0f), new Vector2(1f, 1f)) ||
+                !TryCreateCorner(markerTransform, "Bottom Right", new Vector2(1f, 0f), new Vector2(-1f, 1f)))
             {
-                stateBuffer.Release();
-                stateBuffer = null;
+                Object.Destroy(markerObject);
+                return false;
             }
 
-            if (!ReferenceEquals(material, null))
+            markerObject.SetActive(false);
+            markerObjects[markerIndex] = markerObject;
+            markerTransforms[markerIndex] = markerTransform;
+            return true;
+        }
+
+        private static bool TryCreateCorner(
+            RectTransform parent,
+            string name,
+            Vector2 anchor,
+            Vector2 direction)
+        {
+            return TryCreateSegment(
+                    parent,
+                    name + " Horizontal",
+                    anchor,
+                    new Vector2(direction.x * CornerInset, direction.y * CornerInset),
+                    new Vector2(CornerLength, CornerThickness)) &&
+                TryCreateSegment(
+                    parent,
+                    name + " Vertical",
+                    anchor,
+                    new Vector2(direction.x * CornerInset, direction.y * CornerInset),
+                    new Vector2(CornerThickness, CornerLength));
+        }
+
+        private static bool TryCreateSegment(
+            RectTransform parent,
+            string name,
+            Vector2 anchor,
+            Vector2 anchoredPosition,
+            Vector2 sizeDelta)
+        {
+            var segmentObject = new GameObject(name);
+            var segmentTransform = (RectTransform)segmentObject.AddComponent(typeof(RectTransform));
+            var segmentImage = (Image)segmentObject.AddComponent(typeof(Image));
+            if (ReferenceEquals(segmentTransform, null) || ReferenceEquals(segmentImage, null))
             {
-                Object.Destroy(material);
-                material = null;
+                Object.Destroy(segmentObject);
+                return false;
             }
 
-            if (!ReferenceEquals(overlay, null))
+            segmentTransform.SetParent(parent, false);
+            segmentTransform.anchorMin = anchor;
+            segmentTransform.anchorMax = anchor;
+            segmentTransform.pivot = anchor;
+            segmentTransform.anchoredPosition = anchoredPosition;
+            segmentTransform.sizeDelta = sizeDelta;
+            segmentImage.color = MarkerColor;
+            segmentImage.raycastTarget = false;
+            return true;
+        }
+
+        private void ReleaseMarkers()
+        {
+            for (var markerIndex = 0; markerIndex < MarkerCapacity; markerIndex++)
             {
-                Object.Destroy(overlay.gameObject);
-                overlay = null;
+                if (!ReferenceEquals(markerObjects[markerIndex], null))
+                {
+                    markerObjects[markerIndex].SetActive(false);
+                    Object.Destroy(markerObjects[markerIndex]);
+                    markerObjects[markerIndex] = null;
+                }
+
+                markerTransforms[markerIndex] = null;
             }
         }
     }

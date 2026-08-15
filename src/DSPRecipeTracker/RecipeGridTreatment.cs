@@ -26,8 +26,7 @@ namespace DSPRecipeTracker
     {
         public const int CellCount = 120;
         public const uint NeutralMask = 0x0;
-        public const uint UnpinnedMask = 0x2;
-        public const uint PinnedMask = 0x8;
+        public const uint PinnedMarkerState = 0x1;
 
         private readonly int[] previousPopulation = new int[CellCount];
         private readonly int[] previousPins = new int[PinnedRecipeState.Capacity];
@@ -83,12 +82,12 @@ namespace DSPRecipeTracker
                 populatedCount++;
                 if (Contains(pinnedRecipeIds, recipeId))
                 {
-                    states[index] = PinnedMask;
+                    states[index] = PinnedMarkerState;
                     pinnedCount++;
                 }
                 else
                 {
-                    states[index] = UnpinnedMask;
+                    states[index] = NeutralMask;
                     unpinnedCount++;
                 }
             }
@@ -196,7 +195,7 @@ namespace DSPRecipeTracker
                 available = true;
                 diagnostics.Write(
                     TrackerDiagnosticLevel.Debug,
-                    "recipe-grid-treatment action=initialize cells=120 opacity=0.08");
+                    "recipe-grid-treatment action=initialize cells=120 markers=3 style=green-corners");
                 return true;
             }
             catch (Exception)

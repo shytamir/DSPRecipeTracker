@@ -135,6 +135,7 @@ foreach ($requiredText in @(
     'internal const string HideCopy = "Hide Recipe Tracker"',
     'internal const string ShowCopy = "Show Recipe Tracker"',
     'TryResolveNativeIcon(gameMenu.button3)',
+    'source.anchoredPosition + new Vector2(0f, 38f)',
     '!images[index].raycastTarget',
     'UIRoot.instance',
     'uiGame.transform as RectTransform'

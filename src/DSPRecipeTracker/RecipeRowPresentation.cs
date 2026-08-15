@@ -105,13 +105,20 @@ namespace DSPRecipeTracker
 
     internal static class RecipeRowLayout
     {
-        public const float RowHeight = 70f;
-        public const float FirstRowTop = 10f;
-        public const float RowSpacing = 78f;
+        public const float HeaderHeight = 18f;
+        public const float RowHeight = 90f;
+        public const float FirstRowTop = 24f;
+        public const float RowSpacing = 90f;
+        public const float ContentHeight = 60f;
         public const float ProductLeft = 12f;
-        public const float ProductTop = 4f;
-        public const float ProductSize = 48f;
-        public const float IngredientFirstLeft = 70f;
+        public const float ProductTop = 1f;
+        public const float ProductSize = 42f;
+        public const float ProductLabelLeft = 12f;
+        public const float ProductLabelTop = 60f;
+        public const float ProductLabelWidth = 336f;
+        public const float ProductLabelHeight = 30f;
+        public const float SeparatorLeft = 70f;
+        public const float IngredientFirstLeft = 76f;
         public const float IngredientCellWidth = 44f;
         public const float IngredientCellSpacing = 46f;
         public const float IngredientIconSize = 34f;
@@ -365,9 +372,20 @@ namespace DSPRecipeTracker
                 recipeId,
                 row.RecipeIcon,
                 ingredients,
-                row.MachineWarning);
+                FormatMachineWarning(row.MachineWarning));
             failure = default(RecipeRowUiFailure);
             return true;
+        }
+
+        internal static string FormatMachineWarning(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
+
+            var words = value.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            return string.Join(" ", words);
         }
 
         private bool DisableDuringInitialization(RecipeRowUiFailure failure)

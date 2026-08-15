@@ -5,8 +5,6 @@ namespace DSPRecipeTracker
 {
     internal sealed class UnityTrackerPanelAdapter : ITrackerPanelUiAdapter
     {
-        internal const float BorderThickness = 4f;
-
         private readonly RectTransform parent;
         private GameObject panelObject;
         private RectTransform panelTransform;
@@ -41,8 +39,8 @@ namespace DSPRecipeTracker
             }
 
             panelTransform.SetParent(parent, false);
-            panelBackground.color = new Color(0f, 0f, 0f, 0f);
-            return TryCreateBorder();
+            panelBackground.color = new Color(0.015f, 0.035f, 0.09f, 0.78f);
+            return true;
         }
 
         public bool TryApplyLayout(PanelRectangle rectangle)
@@ -173,71 +171,6 @@ namespace DSPRecipeTracker
                 recipeIconImages[index] = slotImage;
             }
 
-            return true;
-        }
-
-        private bool TryCreateBorder()
-        {
-            return TryCreateBorderSegment(
-                    "Top Border",
-                    new Vector2(0f, 1f),
-                    new Vector2(1f, 1f),
-                    new Vector2(0.5f, 1f),
-                    new Vector2(0f, 0f),
-                    new Vector2(0f, BorderThickness)) &&
-                TryCreateBorderSegment(
-                    "Bottom Border",
-                    new Vector2(0f, 0f),
-                    new Vector2(1f, 0f),
-                    new Vector2(0.5f, 0f),
-                    new Vector2(0f, 0f),
-                    new Vector2(0f, BorderThickness)) &&
-                TryCreateBorderSegment(
-                    "Left Border",
-                    new Vector2(0f, 0f),
-                    new Vector2(0f, 1f),
-                    new Vector2(0f, 0.5f),
-                    new Vector2(0f, 0f),
-                    new Vector2(BorderThickness, 0f)) &&
-                TryCreateBorderSegment(
-                    "Right Border",
-                    new Vector2(1f, 0f),
-                    new Vector2(1f, 1f),
-                    new Vector2(1f, 0.5f),
-                    new Vector2(0f, 0f),
-                    new Vector2(BorderThickness, 0f));
-        }
-
-        private bool TryCreateBorderSegment(
-            string name,
-            Vector2 anchorMin,
-            Vector2 anchorMax,
-            Vector2 pivot,
-            Vector2 anchoredPosition,
-            Vector2 sizeDelta)
-        {
-            var borderObject = new GameObject(name);
-            var borderTransform = (RectTransform)borderObject.AddComponent(typeof(RectTransform));
-            if (ReferenceEquals(borderTransform, null))
-            {
-                Object.Destroy(borderObject);
-                return false;
-            }
-
-            borderTransform.SetParent(panelTransform, false);
-            var borderImage = (Image)borderObject.AddComponent(typeof(Image));
-            if (ReferenceEquals(borderImage, null))
-            {
-                return false;
-            }
-
-            borderTransform.anchorMin = anchorMin;
-            borderTransform.anchorMax = anchorMax;
-            borderTransform.pivot = pivot;
-            borderTransform.anchoredPosition = anchoredPosition;
-            borderTransform.sizeDelta = sizeDelta;
-            borderImage.color = new Color(0.12f, 0.68f, 0.82f, 0.9f);
-            borderImage.raycastTarget = false;
             return true;
         }
 

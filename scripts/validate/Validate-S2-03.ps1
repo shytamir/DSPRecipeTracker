@@ -28,11 +28,7 @@ try {
 
     $expectedFields = @(
         @{ Name = 'recipeBg'; Type = 'UnityEngine.UI.Image'; Public = $true },
-        @{ Name = 'recipeIcons'; Type = 'UnityEngine.UI.RawImage'; Public = $true },
-        @{ Name = 'recipeProtoArray'; Type = 'RecipeProto[]'; Public = $false },
-        @{ Name = 'recipeStateArray'; Type = 'System.UInt32[]'; Public = $false },
-        @{ Name = 'recipeStateBuffer'; Type = 'UnityEngine.ComputeBuffer'; Public = $false },
-        @{ Name = 'recipeBgMat'; Type = 'UnityEngine.Material'; Public = $false }
+        @{ Name = 'recipeProtoArray'; Type = 'RecipeProto[]'; Public = $false }
     )
     foreach ($expectedField in $expectedFields) {
         $field = $window.Fields | Where-Object { $_.Name -eq $expectedField.Name }
@@ -43,19 +39,11 @@ try {
         }
     }
 
-    $createMethod = $window.Methods | Where-Object { $_.Name -eq '_OnCreate' }
-    $createInstructions = @($createMethod.Body.Instructions | ForEach-Object { $_.ToString() }) -join "`n"
-    foreach ($requiredInstruction in @('ldc.i4.s 120', 'newarr System.UInt32', 'newarr RecipeProto', 'UnityEngine.ComputeBuffer::.ctor(System.Int32,System.Int32)')) {
-        if ($createInstructions -notmatch [Regex]::Escape($requiredInstruction)) {
-            throw "Native recipe-grid construction no longer contains $requiredInstruction."
-        }
-    }
-
-    $materialMethod = $window.Methods | Where-Object { $_.Name -eq 'SetMaterialProps' }
-    $materialInstructions = @($materialMethod.Body.Instructions | ForEach-Object { $_.ToString() }) -join "`n"
-    foreach ($requiredInstruction in @('recipeBgMat', '_StateBuffer', 'recipeStateBuffer')) {
-        if ($materialInstructions -notmatch [Regex]::Escape($requiredInstruction)) {
-            throw "Native recipe-grid material binding no longer contains $requiredInstruction."
+    $hitTestMethod = $window.Methods | Where-Object { $_.Name -eq 'TestMouseRecipeIndex' }
+    $hitTestInstructions = @($hitTestMethod.Body.Instructions | ForEach-Object { $_.ToString() }) -join "`n"
+    foreach ($requiredInstruction in @('ldc.r4 46', 'ldc.i4.s 14', 'ldc.i4.8', 'mul', 'add')) {
+        if ($hitTestInstructions -notmatch [Regex]::Escape($requiredInstruction)) {
+            throw "Native recipe-grid hit testing no longer contains $requiredInstruction."
         }
     }
 }
@@ -70,14 +58,18 @@ $adapterText = [IO.File]::ReadAllText($adapterPath)
 
 foreach ($requiredText in @(
     'CellCount = 120',
-    'UnpinnedMask = 0x2',
-    'PinnedMask = 0x8',
-    'OverlayOpacity = 0.08f',
-    'new Color(0.2f, 0.75f, 0.25f, 1f)',
-    'new Color(0.78f, 0.22f, 0.22f, 0.45f)',
+    'PinnedMarkerState = 0x1',
+    'GridColumns = 14',
+    'GridRows = 8',
+    'CellSize = 46f',
+    'MarkerCapacity = PinnedRecipeState.Capacity',
+    'CornerLength = 10f',
+    'CornerThickness = 2f',
+    'new Color(0.2f, 0.75f, 0.25f, 0.95f)',
     'raycastTarget = false',
-    'SetSiblingIndex',
-    'stateBuffer.SetData(states)'
+    'SetParent(window.recipeBg.transform, false)',
+    'markerObjects[markerIndex].SetActive(true)',
+    'markerObjects[markerIndex].SetActive(false)'
 )) {
     if (($modelText + $adapterText) -notmatch [Regex]::Escape($requiredText)) {
         throw "S2-03 source is missing required treatment contract text: $requiredText"
@@ -88,6 +80,13 @@ foreach ($prohibitedText in @(
     'recipeStateArray',
     'recipeStateBuffer',
     'recipeBgMat',
+    'ComputeBuffer',
+    'Material',
+    '_StateBuffer',
+    '_FilterColor',
+    '_BansColor',
+    'Object.Instantiate(window.recipeBg',
+    'new Color(0.78f, 0.22f, 0.22f',
     '.SetValue(',
     'Harmony',
     'void Update(',
@@ -110,4 +109,4 @@ if ($testProjectText -notmatch 'RecipeGridTreatment\.cs') {
     throw 'The deterministic tests do not link the S2-03 treatment model directly.'
 }
 
-Write-Output 'S2-03 acceptance validation passed for independent state ownership, exact native treatment mapping, changed-only refresh, neutral stale clearing, non-raycasting layer order, fail-soft isolation, one-time cleanup, and bounded Debug diagnostics.'
+Write-Output 'S2-03 acceptance validation passed for pinned-only green corner markers, neutral unpinned cells, native 14-by-8 geometry, independent state ownership, changed-only refresh, non-raycasting presentation, fail-soft isolation, one-time cleanup, and bounded Debug diagnostics.'

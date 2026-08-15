@@ -78,6 +78,7 @@ try {
     Require-Setter $text 'font' 'UnityEngine.Font'
     Require-Setter $text 'text' 'System.String'
     Require-Setter $text 'fontSize' 'System.Int32'
+    Require-Setter $text 'alignment' 'UnityEngine.TextAnchor'
 }
 finally {
     $ui.Dispose()
@@ -100,6 +101,16 @@ foreach ($requiredText in @(
     'productImage.raycastTarget = false',
     'row.Ingredients[ingredientIndex].Icon.Value is Sprite',
     'IngredientValueTreatment.Sufficient',
+    '"TARGET"',
+    '"INGREDIENTS"',
+    'TextAnchor.MiddleCenter',
+    'TextAnchor.MiddleLeft',
+    '"Machine Facility Footer"',
+    'warningText.text = row.MachineWarning',
+    'warningText.gameObject.SetActive(hasWarning)',
+    'RecipeRowLayout.ContentHeight',
+    'RecipeRowLayout.SeparatorLeft',
+    'new Color(0.95f, 0.72f, 0.3f, 1f)',
     'Object.Destroy(ownedRow)'
 )) {
     if ($unityText -notmatch [Regex]::Escape($requiredText)) {
@@ -123,6 +134,23 @@ foreach ($prohibitedText in @(
 )) {
     if ($unityText -match [Regex]::Escape($prohibitedText)) {
         throw "S3-03 Unity row adapter contains prohibited interaction, runtime collection, or mutation text: $prohibitedText"
+    }
+}
+
+foreach ($requiredPresentationText in @(
+    'FormatMachineWarning(row.MachineWarning)',
+    'value.Split((char[])null, StringSplitOptions.RemoveEmptyEntries)',
+    'public const float RowHeight = 90f',
+    'public const float RowSpacing = 90f',
+    'public const float ContentHeight = 60f',
+    'public const float ProductLabelLeft = 12f',
+    'public const float ProductLabelTop = 60f',
+    'public const float ProductLabelWidth = 336f',
+    'public const float ProductLabelHeight = 30f',
+    'string.Join(" ", words)'
+)) {
+    if ($presentationText -notmatch [Regex]::Escape($requiredPresentationText)) {
+        throw "S3-03 presentation model is missing deterministic machine-label formatting: $requiredPresentationText"
     }
 }
 
@@ -159,11 +187,13 @@ foreach ($inventoryTerm in @(
     'UnityEngine.UI.Text',
     'set_font',
     'set_text',
-    'set_fontSize'
+    'set_fontSize',
+    'set_alignment',
+    'UnityEngine.TextAnchor'
 )) {
     if ($inventoryText -notmatch [Regex]::Escape($inventoryTerm)) {
         throw "Consumed-surface inventory is missing $inventoryTerm."
     }
 }
 
-Write-Output 'S3-03 acceptance validation passed for complete ordered one-through-six ingredient row composition, numeric sufficiency treatment, machine-only copy, fixed-panel containment, non-interactive native resource reuse, failure isolation, cleanup, bounded diagnostics, exact consumed Text/font members, and exhaustive shim coverage.'
+Write-Output 'S3-03 acceptance validation passed for semantic target/ingredient headings, centered readable quantities, a dedicated single-line machine footer, target/ingredient separation, complete ordered one-through-six ingredient rows, fixed-panel containment, non-interactive native resource reuse, failure isolation, cleanup, bounded diagnostics, exact consumed Text/font members, and exhaustive shim coverage.'

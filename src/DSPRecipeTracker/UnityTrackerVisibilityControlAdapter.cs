@@ -186,7 +186,7 @@ namespace DSPRecipeTracker
         {
             var source = (RectTransform)nativeTemplate.transform;
             var transform = (RectTransform)button.transform;
-            transform.anchoredPosition = source.anchoredPosition + new Vector2(-52f, 0f);
+            transform.anchoredPosition = source.anchoredPosition + new Vector2(0f, 38f);
         }
 
         private static void ReleaseButton(ref Button button, UnityAction listener)

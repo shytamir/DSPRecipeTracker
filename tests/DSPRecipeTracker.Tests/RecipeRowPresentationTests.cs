@@ -5,10 +5,32 @@ internal static class RecipeRowPresentationTests
     public static void Run(Action<bool, string> check)
     {
         CompleteThreeRowComposition(check);
+        MachineWarningFormatting(check);
         IngredientRangeAndContainment(check);
         UnsupportedAndMalformedRows(check);
         ResourceFailureIsolation(check);
         InitializationAndRelease(check);
+    }
+
+    private static void MachineWarningFormatting(Action<bool, string> check)
+    {
+        var adapter = new RecordingRecipeRowUiAdapter();
+        using var presentation = new RecipeRowPresentation(
+            adapter,
+            new RecordingDiagnosticSink());
+        presentation.TryInitialize();
+
+        check(presentation.TryApplyFrame(new RecipePresentationFrame(new[]
+        {
+            CreateRow(250, new[] { 1250 }, new[] { 1 }, new[] { 1 },
+                "  Chemical\u00a0Facility  ")
+        })), "machine warning with non-breaking whitespace applies");
+        check(adapter.AppliedRows[0].MachineWarning == "Chemical Facility",
+            "machine warning whitespace is normalized for the dedicated footer");
+
+        check(RecipeRowPresentation.FormatMachineWarning("Miniature Particle Collider") ==
+            "Miniature Particle Collider",
+            "multiword machine warning remains complete on one footer line");
     }
 
     private static void CompleteThreeRowComposition(Action<bool, string> check)
@@ -92,6 +114,22 @@ internal static class RecipeRowPresentationTests
         check(RecipeRowLayout.ProductLeft + RecipeRowLayout.ProductSize <
             RecipeRowLayout.IngredientFirstLeft,
             "product and ingredient regions do not overlap");
+        check(RecipeRowLayout.HeaderHeight <= RecipeRowLayout.FirstRowTop,
+            "semantic headings remain above the first recipe row");
+        check(RecipeRowLayout.ProductLabelTop + RecipeRowLayout.ProductLabelHeight <=
+            RecipeRowLayout.RowHeight,
+            "machine requirement remains inside its recipe row");
+        check(RecipeRowLayout.RowHeight == RecipeRowLayout.RowSpacing,
+            "machine requirement consumes only the established inter-row reserve");
+        check(RecipeRowLayout.ProductLabelTop >= RecipeRowLayout.ContentHeight &&
+            RecipeRowLayout.ProductLabelLeft == RecipeRowLayout.ProductLeft &&
+            RecipeRowLayout.ProductLabelLeft + RecipeRowLayout.ProductLabelWidth <=
+                PanelGeometry.FixedWidth,
+            "machine requirement has a dedicated full-width footer below row content");
+        check(RecipeRowLayout.ProductLeft + RecipeRowLayout.ProductSize <
+            RecipeRowLayout.SeparatorLeft &&
+            RecipeRowLayout.SeparatorLeft < RecipeRowLayout.IngredientFirstLeft,
+            "separator remains between target and ingredient regions");
     }
 
     private static void UnsupportedAndMalformedRows(Action<bool, string> check)

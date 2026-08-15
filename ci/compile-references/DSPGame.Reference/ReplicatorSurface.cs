@@ -96,6 +96,17 @@ public class GameMain : UnityEngine.MonoBehaviour
     {
         get { return null; }
     }
+
+    public static bool isRunning
+    {
+        get { return false; }
+    }
+
+    public static event System.Action onGameEnded
+    {
+        add { }
+        remove { }
+    }
 }
 
 public class Player
@@ -237,6 +248,5 @@ public class UIReplicatorWindow : ManualBehaviour
     }
 
     public UnityEngine.UI.Image recipeBg;
-    public UnityEngine.UI.RawImage recipeIcons;
     public UnityEngine.UI.Text queueCountText;
 }

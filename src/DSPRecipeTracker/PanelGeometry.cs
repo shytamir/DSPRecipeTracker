@@ -80,12 +80,18 @@ namespace DSPRecipeTracker
 
     internal static class PanelGeometry
     {
+        public const float InitialLeft = 24f;
         public const float FixedWidth = 360f;
-        public const float FixedHeight = 252f;
+        public const float FixedHeight = 300f;
 
         public static PanelRectangle Create(float left, float top)
         {
             return new PanelRectangle(left, top, FixedWidth, FixedHeight);
+        }
+
+        public static PanelRectangle CreateLeftMiddle(float layoutHeight)
+        {
+            return Create(InitialLeft, Math.Max(0f, (layoutHeight - FixedHeight) / 2f));
         }
 
         public static PanelRectangle MoveAndClamp(

@@ -125,11 +125,6 @@ namespace UnityEngine.UI
             set { }
         }
 
-        public virtual UnityEngine.Material material
-        {
-            get { return null; }
-            set { }
-        }
     }
 
     public abstract class MaskableGraphic : Graphic
@@ -173,12 +168,12 @@ namespace UnityEngine.UI
         {
             set { }
         }
+
+        public UnityEngine.TextAnchor alignment
+        {
+            set { }
+        }
+
     }
 
-    public class RawImage : MaskableGraphic
-    {
-        protected RawImage()
-        {
-        }
-    }
 }

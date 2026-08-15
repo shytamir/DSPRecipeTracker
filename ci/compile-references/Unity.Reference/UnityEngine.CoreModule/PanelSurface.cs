@@ -125,14 +125,6 @@ namespace UnityEngine
             get { return null; }
         }
 
-        public int GetSiblingIndex()
-        {
-            return 0;
-        }
-
-        public void SetSiblingIndex(int index)
-        {
-        }
     }
 
     public sealed class RectTransform : Transform
@@ -223,36 +215,6 @@ namespace UnityEngine
     public struct Color
     {
         public Color(float red, float green, float blue, float alpha)
-        {
-        }
-    }
-
-    public class Material : Object
-    {
-        public Material(Material source)
-        {
-        }
-
-        public void SetBuffer(string name, ComputeBuffer value)
-        {
-        }
-
-        public void SetColor(string name, Color value)
-        {
-        }
-    }
-
-    public sealed class ComputeBuffer
-    {
-        public ComputeBuffer(int count, int stride)
-        {
-        }
-
-        public void SetData(Array data)
-        {
-        }
-
-        public void Release()
         {
         }
     }

@@ -12,11 +12,17 @@ namespace DSPRecipeTracker
 
         private void Awake()
         {
+            GameMain.onGameEnded += OnGameEnded;
             Logger.LogInfo(PluginMetadata.DisplayName + " " + BuildIdentity.DiagnosticLabel + " loaded.");
         }
 
         private void Update()
         {
+            if (!GameMain.isRunning)
+            {
+                return;
+            }
+
             if (ReferenceEquals(orchestrator, null))
             {
                 TryInitialize();
@@ -26,6 +32,19 @@ namespace DSPRecipeTracker
         }
 
         private void OnDestroy()
+        {
+            GameMain.onGameEnded -= OnGameEnded;
+            ReleaseOrchestrator();
+        }
+
+        private void OnGameEnded()
+        {
+            ReleaseOrchestrator();
+            initializationAttempted = false;
+            Logger.LogDebug("tracker-lifecycle action=game-end-reset");
+        }
+
+        private void ReleaseOrchestrator()
         {
             orchestrator?.Dispose();
             orchestrator = null;
@@ -112,7 +131,8 @@ namespace DSPRecipeTracker
                     panelDrag,
                     controls,
                     diagnostics);
-                orchestrator.TryInitialize(PanelGeometry.Create(24f, 84f));
+                orchestrator.TryInitialize(
+                    PanelGeometry.CreateLeftMiddle(panelParent.rect.height));
             }
             catch (Exception)
             {
