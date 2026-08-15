@@ -51,11 +51,7 @@ namespace DSPRecipeTracker
                 var diagnostics = new BepInExTrackerDiagnosticSink(Logger);
                 var state = new PinnedRecipeState(diagnostics);
                 var panelParent = uiGame.transform as RectTransform;
-                var backgroundSprite = ReferenceEquals(uiGame.replicator, null) ||
-                    ReferenceEquals(uiGame.replicator.recipeBg, null)
-                    ? null
-                    : uiGame.replicator.recipeBg.sprite;
-                var panelAdapter = new UnityTrackerPanelAdapter(panelParent, backgroundSprite);
+                var panelAdapter = new UnityTrackerPanelAdapter(panelParent);
                 var panel = new TrackerPanelUiBoundary(panelAdapter);
                 var panelDrag = new TrackerPanelDrag(
                     new UnityTrackerPanelDragAdapter(panelAdapter, root.overlayCanvas),

@@ -9,14 +9,14 @@ and package inspection cannot establish.
 
 Use these exact development artifacts produced by the Sprint 3 package gate:
 
-- DLL: `artifacts/package/0.1.306/DSPRecipeTracker.dll`
-- package: `artifacts/package/0.1.306/DSPRecipeTracker-0.1.306.zip`
-- build identity: `artifacts/package/0.1.306/build-info.json`
+- DLL: `artifacts/package/0.1.310/DSPRecipeTracker.dll`
+- package: `artifacts/package/0.1.310/DSPRecipeTracker-0.1.310.zip`
+- build identity: `artifacts/package/0.1.310/build-info.json`
 
-Confirm that `build-info.json` reports semantic version `0.1.306`, source
-revision `ffd18688a3eff41d776204ebfcdcd4de21e15ab1`, diagnostic label
-`0.1.306.ffd18688a3ef`, and `referenceMode` `Local`. This is a development test
-build, not a supported release or publication candidate.
+Confirm that `build-info.json` reports semantic version `0.1.310`, the source
+revision and matching diagnostic label supplied with the workshop handoff, and
+`referenceMode` `Local`. This is a development test build, not a supported
+release or publication candidate.
 
 ## Prerequisites and safe setup
 
@@ -38,19 +38,24 @@ build, not a supported release or publication candidate.
 1. Open the Replicator and left-click an unlocked hand-craftable recipe.
    Confirm native selection changes and no pin is created.
 2. Right-click that recipe. Confirm native selection still behaves normally,
-   the recipe becomes pinned, its native grid cell receives restrained pinned
-   treatment, and one complete tracker row appears.
-3. Confirm the row shows the native product icon, every direct ingredient in
+   the recipe becomes pinned, and its native grid cell receives restrained
+   pinned treatment. The tracker remains hidden while the Replicator or
+   Inventory is open.
+3. Close the Replicator and Inventory. Confirm one complete tracker row
+   appears and shows the native product icon, every direct ingredient in
    native order, `inventory / required` values, and readable sufficient or
    insufficient treatment. Confirm the tracker icons themselves do nothing
    when clicked.
 4. Add or remove one direct ingredient through ordinary game controls. Confirm
-   the displayed inventory count and sufficiency update shortly afterward
-   without re-pinning or moving the row.
-5. Pin one unlocked machine-only recipe. Confirm its row identifies the native
-   production category without offering crafting or navigation behavior.
-6. Right-click the first pinned recipe again. Confirm it unpins while native
-   Replicator selection remains usable.
+   any opened major interface is closed, then confirm the displayed inventory
+   count and sufficiency update shortly afterward without re-pinning or moving
+   the row.
+5. Reopen the Replicator, pin one unlocked machine-only recipe, then close the
+   Replicator and Inventory. Confirm its row identifies the native production
+   category without offering crafting or navigation behavior.
+6. Reopen the Replicator and right-click the first pinned recipe again.
+   Confirm native selection remains usable, then close the Replicator and
+   Inventory and confirm the corresponding tracker row is removed.
 
 Expected result: native Replicator behavior coexists with pinning, cell
 treatment is clear but restrained, rows are complete and current, and the

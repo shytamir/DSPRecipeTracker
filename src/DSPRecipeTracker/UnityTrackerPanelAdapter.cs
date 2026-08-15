@@ -5,8 +5,9 @@ namespace DSPRecipeTracker
 {
     internal sealed class UnityTrackerPanelAdapter : ITrackerPanelUiAdapter
     {
+        internal const float BorderThickness = 4f;
+
         private readonly RectTransform parent;
-        private readonly Sprite backgroundSprite;
         private GameObject panelObject;
         private RectTransform panelTransform;
         private Image panelBackground;
@@ -16,10 +17,9 @@ namespace DSPRecipeTracker
             new Image[PinnedRecipeState.Capacity];
         private bool recipeIconsReleased;
 
-        public UnityTrackerPanelAdapter(RectTransform parent, Sprite backgroundSprite)
+        public UnityTrackerPanelAdapter(RectTransform parent)
         {
             this.parent = parent;
-            this.backgroundSprite = backgroundSprite;
         }
 
         internal RectTransform PanelTransform => panelTransform;
@@ -27,8 +27,7 @@ namespace DSPRecipeTracker
         public bool TryCreate()
         {
             if (!ReferenceEquals(panelObject, null) ||
-                ReferenceEquals(parent, null) ||
-                ReferenceEquals(backgroundSprite, null))
+                ReferenceEquals(parent, null))
             {
                 return false;
             }
@@ -42,8 +41,8 @@ namespace DSPRecipeTracker
             }
 
             panelTransform.SetParent(parent, false);
-            panelBackground.sprite = backgroundSprite;
-            return true;
+            panelBackground.color = new Color(0f, 0f, 0f, 0f);
+            return TryCreateBorder();
         }
 
         public bool TryApplyLayout(PanelRectangle rectangle)
@@ -174,6 +173,71 @@ namespace DSPRecipeTracker
                 recipeIconImages[index] = slotImage;
             }
 
+            return true;
+        }
+
+        private bool TryCreateBorder()
+        {
+            return TryCreateBorderSegment(
+                    "Top Border",
+                    new Vector2(0f, 1f),
+                    new Vector2(1f, 1f),
+                    new Vector2(0.5f, 1f),
+                    new Vector2(0f, 0f),
+                    new Vector2(0f, BorderThickness)) &&
+                TryCreateBorderSegment(
+                    "Bottom Border",
+                    new Vector2(0f, 0f),
+                    new Vector2(1f, 0f),
+                    new Vector2(0.5f, 0f),
+                    new Vector2(0f, 0f),
+                    new Vector2(0f, BorderThickness)) &&
+                TryCreateBorderSegment(
+                    "Left Border",
+                    new Vector2(0f, 0f),
+                    new Vector2(0f, 1f),
+                    new Vector2(0f, 0.5f),
+                    new Vector2(0f, 0f),
+                    new Vector2(BorderThickness, 0f)) &&
+                TryCreateBorderSegment(
+                    "Right Border",
+                    new Vector2(1f, 0f),
+                    new Vector2(1f, 1f),
+                    new Vector2(1f, 0.5f),
+                    new Vector2(0f, 0f),
+                    new Vector2(BorderThickness, 0f));
+        }
+
+        private bool TryCreateBorderSegment(
+            string name,
+            Vector2 anchorMin,
+            Vector2 anchorMax,
+            Vector2 pivot,
+            Vector2 anchoredPosition,
+            Vector2 sizeDelta)
+        {
+            var borderObject = new GameObject(name);
+            var borderTransform = (RectTransform)borderObject.AddComponent(typeof(RectTransform));
+            if (ReferenceEquals(borderTransform, null))
+            {
+                Object.Destroy(borderObject);
+                return false;
+            }
+
+            borderTransform.SetParent(panelTransform, false);
+            var borderImage = (Image)borderObject.AddComponent(typeof(Image));
+            if (ReferenceEquals(borderImage, null))
+            {
+                return false;
+            }
+
+            borderTransform.anchorMin = anchorMin;
+            borderTransform.anchorMax = anchorMax;
+            borderTransform.pivot = pivot;
+            borderTransform.anchoredPosition = anchoredPosition;
+            borderTransform.sizeDelta = sizeDelta;
+            borderImage.color = new Color(0.12f, 0.68f, 0.82f, 0.9f);
+            borderImage.raycastTarget = false;
             return true;
         }
 

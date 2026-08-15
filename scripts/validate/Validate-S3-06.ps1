@@ -30,6 +30,8 @@ $pluginText = [IO.File]::ReadAllText(
     (Join-Path $repoRoot 'src\DSPRecipeTracker\DSPRecipeTrackerPlugin.cs'))
 $orchestratorText = [IO.File]::ReadAllText(
     (Join-Path $repoRoot 'src\DSPRecipeTracker\TrackerOrchestrator.cs'))
+$panelAdapterText = [IO.File]::ReadAllText(
+    (Join-Path $repoRoot 'src\DSPRecipeTracker\UnityTrackerPanelAdapter.cs'))
 $testText = [IO.File]::ReadAllText(
     (Join-Path $repoRoot 'tests\DSPRecipeTracker.Tests\Program.cs'))
 $procedurePath = Join-Path $repoRoot 'docs\OWNER-VALIDATION.md'
@@ -99,8 +101,8 @@ foreach ($requiredTestText in @(
 }
 
 foreach ($requiredProcedureText in @(
-    'artifacts/package/0.1.306/DSPRecipeTracker.dll',
-    'DSPRecipeTracker-0.1.306.zip',
+    'artifacts/package/0.1.310/DSPRecipeTracker.dll',
+    'DSPRecipeTracker-0.1.310.zip',
     '3840 by 2160',
     'UI Layout Reference Height',
     'Native pinning and live recipe presentation',
@@ -114,12 +116,41 @@ foreach ($requiredProcedureText in @(
     'Statistics',
     'Dashboard',
     'PASS | FAIL | UNEXPECTED',
-    'If every group passes, no screenshot or log is needed'
+    'If every group passes, no screenshot or log is needed',
+    'The tracker remains hidden while the Replicator or',
+    'Close the Replicator and Inventory. Confirm one complete tracker row'
 )) {
     if ($procedureText -notmatch [Regex]::Escape($requiredProcedureText)) {
         throw "S3-06 owner procedure is incomplete: $requiredProcedureText"
     }
 }
+
+foreach ($requiredPanelText in @(
+    'new UnityTrackerPanelAdapter(panelParent)',
+    'internal const float BorderThickness = 4f',
+    'panelBackground.color = new Color(0f, 0f, 0f, 0f)',
+    '"Top Border"',
+    '"Bottom Border"',
+    '"Left Border"',
+    '"Right Border"',
+    'borderImage.color = new Color(0.12f, 0.68f, 0.82f, 0.9f)',
+    'borderImage.raycastTarget = false'
+)) {
+    if (($pluginText + "`n" + $panelAdapterText) -notmatch [Regex]::Escape($requiredPanelText)) {
+        throw "S3-06 texture-free panel contract is missing: $requiredPanelText"
+    }
+}
+foreach ($prohibitedPanelText in @(
+    'backgroundSprite',
+    'BackgroundResourcePath',
+    'Resources.Load',
+    'Image.Type.Tiled'
+)) {
+    if (($pluginText + "`n" + $panelAdapterText) -match [Regex]::Escape($prohibitedPanelText)) {
+        throw "S3-06 panel retains prohibited texture dependency: $prohibitedPanelText"
+    }
+}
+
 foreach ($prohibitedProcedureText in @(
     'tracker navigation',
     '1080-by-1920',
