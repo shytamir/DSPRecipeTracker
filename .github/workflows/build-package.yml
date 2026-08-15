@@ -50,7 +50,7 @@ jobs:
           }
           $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $reference).Hash.ToLowerInvariant()
           if ($hash -ne 'dc1cb6b58b962bda5aaa1d6b5f9ae14ec174f61836a1a1f96c1a040c7e8381f7') {
-            throw "Downloaded BepInEx assembly hash does not match the conformance contract."
+            throw "Downloaded BepInEx assembly failed the pinned download-integrity checksum."
           }
           "reference=$reference" >> $env:GITHUB_OUTPUT
 

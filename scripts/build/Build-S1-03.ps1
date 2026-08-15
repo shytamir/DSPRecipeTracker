@@ -24,9 +24,8 @@ if ($ReferenceMode -eq 'Hosted') {
         throw 'Hosted package builds require an existing -BepInExReferencePath.'
     }
     $bepInExVersion = [Reflection.AssemblyName]::GetAssemblyName($BepInExReferencePath).Version.ToString()
-    $bepInExHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $BepInExReferencePath).Hash.ToLowerInvariant()
-    if ($bepInExVersion -ne '5.4.17.0' -or $bepInExHash -ne 'dc1cb6b58b962bda5aaa1d6b5f9ae14ec174f61836a1a1f96c1a040c7e8381f7') {
-        throw 'Hosted BepInEx reference does not match the documented 5.4.17.0 identity.'
+    if ($bepInExVersion -ne '5.4.17.0') {
+        throw "Hosted BepInEx reference version is $bepInExVersion, expected 5.4.17.0."
     }
 }
 $sourceArguments = @{

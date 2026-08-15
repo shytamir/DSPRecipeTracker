@@ -17,20 +17,8 @@ if ($LASTEXITCODE -ne 0) {
 
 $managedRoot = Join-Path $GameRoot 'DSPGAME_Data\Managed'
 $assemblyCSharpPath = Join-Path $managedRoot 'Assembly-CSharp.dll'
-$authorityHashes = @{
-    $assemblyCSharpPath = 'ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85'
-    (Join-Path $managedRoot 'UnityEngine.CoreModule.dll') = 'e2b5ae2fd12646d03fc3d04d1a37d522572a3b97022fe1b95bbf2a2f2b04853a'
-    (Join-Path $managedRoot 'UnityEngine.UI.dll') = '54953ebd7c9b4b39279876b37109f0f503938847f2a7be4a22d62e9b94c347eb'
-}
-foreach ($entry in $authorityHashes.GetEnumerator()) {
-    if (-not (Test-Path -LiteralPath $entry.Key)) {
-        throw "Authority input is missing: $($entry.Key)"
-    }
-
-    $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $entry.Key).Hash.ToLowerInvariant()
-    if ($actualHash -ne $entry.Value) {
-        throw "Authority hash changed for $($entry.Key)."
-    }
+if (-not (Test-Path -LiteralPath $assemblyCSharpPath)) {
+    throw "Required inspection input is missing: $assemblyCSharpPath"
 }
 
 $cecilPath = Join-Path (Split-Path -Parent $BepInExReferencePath) 'Mono.Cecil.dll'

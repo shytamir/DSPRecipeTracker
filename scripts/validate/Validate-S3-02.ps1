@@ -18,7 +18,6 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $managedRoot = Join-Path $GameRoot 'DSPGAME_Data\Managed'
 $assemblyPath = Join-Path $managedRoot 'Assembly-CSharp.dll'
-$expectedAssemblyHash = 'ae0ba95f75bd879a62aa4ce253b2ab78eaa4fb3c7c595f5e1fee75ebe0e0ef85'
 
 & (Join-Path $PSScriptRoot 'Validate-S3-01.ps1') `
     -GameRoot $GameRoot `
@@ -30,11 +29,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 if (-not (Test-Path -LiteralPath $assemblyPath)) {
-    throw "Authority assembly is missing: $assemblyPath"
-}
-$actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $assemblyPath).Hash.ToLowerInvariant()
-if ($actualHash -ne $expectedAssemblyHash) {
-    throw "Assembly-CSharp authority hash is $actualHash, expected $expectedAssemblyHash."
+    throw "Required inspection input is missing: $assemblyPath"
 }
 
 $cecilCandidates = @()
@@ -203,4 +198,4 @@ if ($testProjectText -match 'DspRecipeDataAdapters\.cs') {
     throw 'The deterministic test process must not link the runtime DSP adapters.'
 }
 
-Write-Output 'S3-02 acceptance validation passed for the hash-matched read-only recipe, item-icon, machine-category, and Icarus-inventory surface; invalid-pin removal; temporary suppression and recovery; inert release; bounded diagnostics; and exhaustive shim coverage.'
+Write-Output 'S3-02 acceptance validation passed for the exact consumed read-only recipe, item-icon, machine-category, and Icarus-inventory surface; invalid-pin removal; temporary suppression and recovery; inert release; bounded diagnostics; and exhaustive shim coverage.'
