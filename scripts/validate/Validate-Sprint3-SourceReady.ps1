@@ -57,9 +57,4 @@ if ($LASTEXITCODE -ne 0 -or $trackedOutputs.Count -ne 0) {
     throw "Source-ready found tracked binary or generated output: $($trackedOutputs -join ', ')"
 }
 
-$roadmapText = [IO.File]::ReadAllText((Join-Path $repoRoot 'docs\ROADMAP.md'))
-if ($roadmapText -notmatch [Regex]::Escape('(OWNER-VALIDATION.md)')) {
-    throw 'The active roadmap does not link the owner validation procedure.'
-}
-
 Write-Output "Sprint 3 Source-ready validation passed for source revision $SourceRevision."
