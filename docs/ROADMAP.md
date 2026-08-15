@@ -6,7 +6,10 @@
 
 **Active story:** S3-01 - Model direct requirements and inventory sufficiency
 
-**Implementation authorization:** S3-01 only - pending implementation
+**Active story state:** Implemented and technically validated; owner acceptance
+pending
+
+**Implementation authorization:** S3-01 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -120,7 +123,8 @@ deterministic checks first and human judgment only at the final gate.
 
 ### S3-01 - Model direct requirements and inventory sufficiency
 
-**Status:** Active - pending implementation
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want each pin converted into a stable row model
 that tells me which direct ingredients are required and whether Icarus carries
@@ -163,6 +167,49 @@ enough for one recipe operation.
 builds pass with zero errors. Source inspection confirms that product rules and
 sufficiency arithmetic are UI-independent and have no game-state mutation,
 persistence, or runtime dependency. Owner acceptance is recorded separately.
+
+**Implementation result:**
+
+- `RecipePresentationModel` converts ordered normalized inputs into immutable,
+  structurally comparable frames while preserving opaque product and ingredient
+  icon handles.
+- Each valid row carries one through six ordered direct ingredients with exact
+  required/current counts and `current >= required` sufficiency. Machine-only
+  rows carry the supplied normalized production category; hand-craftable rows
+  carry no warning.
+- Malformed, unsupported, or incomplete rows return an explicit recipe-scoped
+  failure and are omitted without changing the order or values of remaining
+  valid rows.
+- Changed frames emit one bounded Debug summary with at most three recipe IDs,
+  ingredient counts, and aggregate sufficiency counts. Repeated equal frames
+  are silent, and invalid identities emit one bounded reason.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S3-01.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 301 `
+  -SourceRevision $revision
+```
+
+The deterministic tests cover below, exact, and above threshold arithmetic;
+zero inventory; one through six ingredients including the exact six-input
+recipe-75 shape; row and ingredient order; machine-only and hand-craftable
+warning state; malformed parallel inputs; failure isolation; opaque icon pass-
+through; structural equality; and changed-only bounded diagnostics.
+
+Local and Hosted Release builds completed with zero warnings and zero errors.
+The hosted and local products passed exhaustive compile-reference surface
+coverage. Static inspection found no DSP, Unity, BepInEx, reflection, UI,
+persistence, file-system, or game-state mutation dependency in the model. No
+plugin was installed or executed, and no game or substitute runtime was
+started.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S3-02.
 
 ### S3-02 - Bind read-only DSP recipe and inventory data
 

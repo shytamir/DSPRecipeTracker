@@ -9,8 +9,9 @@ complete and owner accepted. Its three exit gates passed. Sprint 2, S2-01
 through S2-06, and its three exit gates are also complete and owner accepted.
 Its Source-ready and Package-inspected gates pass for commit
 `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. The Sprint 3 roadmap is owner
-authorized and implementation is underway. S3-01 is the only Active story and
-is pending implementation; no later Sprint 3 story is authorized. The source tree
+authorized and implementation is underway. S3-01 is implemented and technically
+validated and remains the only Active story pending owner acceptance; no later
+Sprint 3 story is authorized. The source tree
 contains the minimal BepInEx identity/lifecycle/logging skeleton, static package
 pipeline, UI-independent panel geometry and visibility policy, an inert
 compile-time Unity panel boundary, deterministic transient pin state, and an
@@ -18,7 +19,10 @@ isolated native Replicator input adapter, independent native recipe-grid
 treatment model and adapter, exact fail-closed major-interface visibility
 input, ordered native recipe-icon slot presentation, paired tracker-owned
 visibility controls, and plain orchestration connected through the plugin
-lifecycle. Installed and in-game behavior remains unvalidated.
+lifecycle, plus a UI-independent direct-ingredient, Icarus-count, sufficiency,
+and machine-warning presentation model. The model is not yet connected to live
+runtime adapters or Unity rows. Installed and in-game behavior remains
+unvalidated.
 
 **Owner review:** Accepted on 2026-08-14.
 

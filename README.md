@@ -9,8 +9,8 @@ The recovered product, implementation, and validation contracts are owner
 accepted. The complete bootstrap roadmap, S1-01 through S1-06, and its three
 exit gates are owner accepted. Sprint 2, S2-01 through S2-06, and all three of
 its exit gates are also complete and owner accepted. The Sprint 3 roadmap is
-owner authorized; implementation is underway with S3-01 as the only Active
-story, pending implementation. Runtime
+owner authorized; S3-01 is implemented and technically validated and remains
+Active pending owner acceptance. Runtime
 execution and runtime validation remain outside the current source-only
 authorization.
 Future in-game validation is performed only by the owner from testable builds,
@@ -193,8 +193,8 @@ Its Source-ready and Package-inspected gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its Source-ready, Package-
 inspected, and Owner-reviewed gates are complete and owner accepted. Sprint 3
-is owner authorized and implementation is underway with S3-01 as the only
-Active story, pending implementation.
+is owner authorized; S3-01 is implemented and technically validated and remains
+Active pending owner acceptance.
 Historical assembly and isolated-runtime feasibility conclusions identify the
 Replicator input surface, recipe and inventory APIs, native HUD host, exact
 major-interface visibility signals, and reusable presentation resources. Those
@@ -208,8 +208,12 @@ The source now contains deterministic transient pin ordering, unpinning,
 three-entry capacity, bottom eviction, unavailable-recipe removal, independent
 native recipe-grid treatment, and exact fail-closed six-interface visibility
 collection, plus three ordered native recipe-icon panel slots, with bounded
-Debug transition diagnostics. These integrations are connected through the
-plugin startup orchestration; installed behavior remains unvalidated.
+Debug transition diagnostics. The source also contains the UI-independent
+ordered direct-ingredient, Icarus-count, sufficiency, and machine-warning
+presentation model. Existing integrations remain connected through plugin
+startup orchestration; the new presentation model is not connected to runtime
+adapters or Unity rows until later Sprint 3 stories. Installed behavior remains
+unvalidated.
 
 ## Repository layout
 
@@ -266,7 +270,9 @@ plugin startup orchestration; installed behavior remains unvalidated.
 |       |-- Validate-S2-02.ps1
 |       |-- Validate-S2-03.ps1
 |       |-- Validate-S2-04.ps1
-|       `-- Validate-S2-05.ps1
+|       |-- Validate-S2-05.ps1
+|       |-- Validate-S2-06.ps1
+|       `-- Validate-S3-01.ps1
 |-- packaging/
 |   |-- icon.png
 |   |-- manifest.json

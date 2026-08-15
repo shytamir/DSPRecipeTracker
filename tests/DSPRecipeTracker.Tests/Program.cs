@@ -604,6 +604,204 @@ Check(partialInputAdapter.ReleaseCalls == 1, "partial input cleanup is bounded")
 Check(partialTreatmentAdapter.ReleaseCalls == 1, "partial treatment cleanup is bounded");
 Check(partialControlsAdapter.ReleaseCalls == 1, "partial control cleanup is bounded");
 
+var presentationDiagnostics = new RecordingDiagnosticSink();
+var presentation = new RecipePresentationModel(presentationDiagnostics);
+var recipeIcon = new object();
+var ingredientIcons = new[] { new object(), new object(), new object(), new object() };
+var presentationInput = CreateRecipePresentationInput(
+    501,
+    recipeIcon,
+    new[] { 1101, 1102, 1103, 1104 },
+    ingredientIcons,
+    new[] { 2, 3, 4, 1 },
+    new[] { 1, 3, 5, 0 },
+    true,
+    null);
+var presentationResult = presentation.Build(new[] { presentationInput });
+Check(presentationResult.Changed, "initial recipe presentation frame changes");
+Check(presentationResult.Failures.Count == 0, "valid recipe presentation has no failures");
+Check(presentationResult.Frame.Rows.Count == 1, "valid recipe presentation creates one row");
+var presentationRow = presentationResult.Frame.Rows[0];
+Check(presentationRow.RecipeId == 501, "presentation preserves recipe identity");
+Check(ReferenceEquals(presentationRow.RecipeIcon.Value, recipeIcon), "presentation passes recipe icon through opaquely");
+Check(presentationRow.MachineWarning == null, "hand-craftable recipe has no machine warning");
+Check(presentationRow.Ingredients.Count == 4, "presentation keeps every direct ingredient");
+Check(presentationRow.Ingredients[0].ItemId == 1101, "presentation preserves first ingredient identity");
+Check(presentationRow.Ingredients[1].ItemId == 1102, "presentation preserves ingredient order");
+Check(ReferenceEquals(presentationRow.Ingredients[2].Icon.Value, ingredientIcons[2]), "presentation passes ingredient icon through opaquely");
+Check(!presentationRow.Ingredients[0].IsSufficient, "below-threshold ingredient is insufficient");
+Check(presentationRow.Ingredients[1].IsSufficient, "exact-threshold ingredient is sufficient");
+Check(presentationRow.Ingredients[2].IsSufficient, "above-threshold ingredient is sufficient");
+Check(!presentationRow.Ingredients[3].IsSufficient, "zero inventory is insufficient for a positive requirement");
+Check(presentationRow.Ingredients[2].RequiredCount == 4, "presentation preserves required count");
+Check(presentationRow.Ingredients[2].CurrentCount == 5, "presentation preserves current Icarus count");
+
+var initialPresentationDiagnostics = presentationDiagnostics.Records.Count;
+var unchangedPresentationResult = presentation.Build(new[] { presentationInput });
+Check(!unchangedPresentationResult.Changed, "equal recipe presentation frame is unchanged");
+Check(unchangedPresentationResult.Frame.Equals(presentationResult.Frame), "unchanged recipe presentation uses structural equality");
+Check(presentationDiagnostics.Records.Count == initialPresentationDiagnostics, "unchanged recipe presentation is diagnostically silent");
+
+var changedInventoryInput = CreateRecipePresentationInput(
+    501,
+    recipeIcon,
+    new[] { 1101, 1102, 1103, 1104 },
+    ingredientIcons,
+    new[] { 2, 3, 4, 1 },
+    new[] { 2, 3, 5, 1 },
+    true,
+    null);
+var changedInventoryResult = presentation.Build(new[] { changedInventoryInput });
+Check(changedInventoryResult.Changed, "inventory count change changes presentation frame");
+Check(changedInventoryResult.Frame.Rows[0].Ingredients.All(ingredient => ingredient.IsSufficient), "updated inventory recomputes sufficiency");
+
+var ingredientCountDiagnostics = new RecordingDiagnosticSink();
+var ingredientCountModel = new RecipePresentationModel(ingredientCountDiagnostics);
+for (var count = RecipePresentationModel.MinimumIngredientCount; count <= RecipePresentationModel.MaximumIngredientCount; count++)
+{
+    var ids = Enumerable.Range(1, count).Select(index => 2000 + index).ToArray();
+    var icons = Enumerable.Range(1, count).Select(_ => new object()).ToArray();
+    var required = Enumerable.Repeat(1, count).ToArray();
+    var current = Enumerable.Repeat(1, count).ToArray();
+    var countResult = ingredientCountModel.Build(new[]
+    {
+        CreateRecipePresentationInput(600 + count, new object(), ids, icons, required, current, true, null)
+    });
+    Check(countResult.Failures.Count == 0, "supported ingredient count " + count + " succeeds");
+    Check(countResult.Frame.Rows.Single().Ingredients.Count == count, "supported ingredient count " + count + " is complete");
+}
+
+var universeMatrixIds = new[] { 6001, 6002, 6003, 6004, 6005, 1122 };
+var universeMatrix = ingredientCountModel.Build(new[]
+{
+    CreateRecipePresentationInput(
+        75,
+        new object(),
+        universeMatrixIds,
+        universeMatrixIds.Select(_ => new object()).ToArray(),
+        Enumerable.Repeat(1, 6).ToArray(),
+        Enumerable.Repeat(0, 6).ToArray(),
+        false,
+        "Research")
+});
+Check(universeMatrix.Failures.Count == 0, "exact six-input Phase 1 maximum succeeds");
+Check(universeMatrix.Frame.Rows.Single().Ingredients.Select(ingredient => ingredient.ItemId).SequenceEqual(universeMatrixIds), "six-input maximum preserves exact ingredient order");
+Check(universeMatrix.Frame.Rows.Single().MachineWarning == "Research", "machine-only recipe carries normalized production category");
+
+var handCraftableCategory = ingredientCountModel.Build(new[]
+{
+    CreateRecipePresentationInput(702, new object(), new[] { 2201 }, new[] { new object() }, new[] { 1 }, new[] { 1 }, true, "Ignored")
+});
+Check(handCraftableCategory.Frame.Rows.Single().MachineWarning == null, "hand-craftable recipe suppresses supplied machine category");
+
+var orderModel = new RecipePresentationModel(new RecordingDiagnosticSink());
+var orderedInputs = new[]
+{
+    CreateRecipePresentationInput(303, new object(), new[] { 3302, 3301 }, new[] { new object(), new object() }, new[] { 2, 1 }, new[] { 0, 1 }, true, null),
+    CreateRecipePresentationInput(202, new object(), new[] { 2201 }, new[] { new object() }, new[] { 3 }, new[] { 3 }, false, "Assemble"),
+    CreateRecipePresentationInput(101, new object(), new[] { 1101 }, new[] { new object() }, new[] { 4 }, new[] { 5 }, true, null)
+};
+var orderedFrame = orderModel.Build(orderedInputs).Frame;
+Check(orderedFrame.Rows.Select(row => row.RecipeId).SequenceEqual(new[] { 303, 202, 101 }), "presentation preserves row order");
+Check(orderedFrame.Rows[0].Ingredients.Select(ingredient => ingredient.ItemId).SequenceEqual(new[] { 3302, 3301 }), "presentation preserves independent ingredient order");
+
+var invalidPresentationDiagnostics = new RecordingDiagnosticSink();
+var invalidPresentationModel = new RecipePresentationModel(invalidPresentationDiagnostics);
+var validBeforeMalformed = CreateRecipePresentationInput(801, new object(), new[] { 8101 }, new[] { new object() }, new[] { 1 }, new[] { 1 }, true, null);
+var malformedParallelInput = new RecipePresentationInput(
+    802,
+    new PresentationIconHandle(new object()),
+    new[] { 8201, 8202 },
+    new[] { new PresentationIconHandle(new object()) },
+    new[] { 1, 1 },
+    new[] { 1, 1 },
+    true,
+    null!);
+var validAfterMalformed = CreateRecipePresentationInput(803, new object(), new[] { 8301 }, new[] { new object() }, new[] { 2 }, new[] { 0 }, false, "Smelt");
+var isolatedFailure = invalidPresentationModel.Build(new[] { validBeforeMalformed, malformedParallelInput, validAfterMalformed });
+Check(isolatedFailure.Changed, "mixed valid and malformed input changes presentation frame");
+Check(isolatedFailure.Failures.Count == 1, "malformed parallel input produces one explicit failure");
+Check(isolatedFailure.Failures[0].RecipeId == 802, "malformed failure identifies recipe");
+Check(isolatedFailure.Failures[0].Reason == RecipePresentationFailureReason.InvalidIngredientShape, "malformed parallel input identifies shape reason");
+Check(isolatedFailure.Frame.Rows.Select(row => row.RecipeId).SequenceEqual(new[] { 801, 803 }), "malformed row cannot corrupt remaining row order");
+
+var invalidRecordCount = invalidPresentationDiagnostics.Records.Count;
+var repeatedIsolatedFailure = invalidPresentationModel.Build(new[] { validBeforeMalformed, malformedParallelInput, validAfterMalformed });
+Check(!repeatedIsolatedFailure.Changed, "repeated malformed input leaves valid frame unchanged");
+Check(invalidPresentationDiagnostics.Records.Count == invalidRecordCount, "repeated malformed identity is diagnostically silent");
+
+var missingFrameInput = new RecipePresentationModel(new RecordingDiagnosticSink()).Build(null!);
+Check(missingFrameInput.Failures.Count == 1, "missing frame input produces explicit failure");
+Check(missingFrameInput.Failures[0].Reason == RecipePresentationFailureReason.MissingInput, "missing frame input identifies reason");
+
+var unsupportedIngredientCounts = new[]
+{
+    CreateRecipePresentationInput(901, new object(), Array.Empty<int>(), Array.Empty<object>(), Array.Empty<int>(), Array.Empty<int>(), true, null),
+    CreateRecipePresentationInput(902, new object(), Enumerable.Range(1, 7).ToArray(), Enumerable.Range(1, 7).Select(_ => new object()).ToArray(), Enumerable.Repeat(1, 7).ToArray(), Enumerable.Repeat(1, 7).ToArray(), true, null)
+};
+var unsupportedResult = new RecipePresentationModel(new RecordingDiagnosticSink()).Build(unsupportedIngredientCounts);
+Check(unsupportedResult.Frame.Rows.Count == 0, "unsupported ingredient counts produce no partial rows");
+Check(unsupportedResult.Failures.All(failure => failure.Reason == RecipePresentationFailureReason.UnsupportedIngredientCount), "unsupported ingredient counts identify bounded reason");
+
+var missingMachineCategory = new RecipePresentationModel(new RecordingDiagnosticSink()).Build(new[]
+{
+    CreateRecipePresentationInput(903, new object(), new[] { 9301 }, new[] { new object() }, new[] { 1 }, new[] { 1 }, false, null)
+});
+Check(missingMachineCategory.Frame.Rows.Count == 0, "machine-only row without category is absent");
+Check(missingMachineCategory.Failures.Single().Reason == RecipePresentationFailureReason.MissingProductionCategory, "machine-only row reports missing category");
+
+var duplicateIngredient = new RecipePresentationModel(new RecordingDiagnosticSink()).Build(new[]
+{
+    CreateRecipePresentationInput(904, new object(), new[] { 9401, 9401 }, new[] { new object(), new object() }, new[] { 1, 1 }, new[] { 1, 1 }, true, null)
+});
+Check(duplicateIngredient.Frame.Rows.Count == 0, "duplicate ingredient row is absent");
+Check(duplicateIngredient.Failures.Single().Reason == RecipePresentationFailureReason.DuplicateIngredientId, "duplicate ingredient reports explicit reason");
+
+var invalidRowCases = new[]
+{
+    (
+        Input: new RecipePresentationInput(905, default, new[] { 9501 }, new[] { new PresentationIconHandle(new object()) }, new[] { 1 }, new[] { 1 }, true, null!),
+        Reason: RecipePresentationFailureReason.MissingRecipeIcon,
+        Name: "missing recipe icon"),
+    (
+        Input: CreateRecipePresentationInput(906, new object(), new[] { 9601 }, new object[] { null! }, new[] { 1 }, new[] { 1 }, true, null),
+        Reason: RecipePresentationFailureReason.MissingIngredientIcon,
+        Name: "missing ingredient icon"),
+    (
+        Input: CreateRecipePresentationInput(907, new object(), new[] { 0 }, new[] { new object() }, new[] { 1 }, new[] { 1 }, true, null),
+        Reason: RecipePresentationFailureReason.InvalidIngredientId,
+        Name: "invalid ingredient identity"),
+    (
+        Input: CreateRecipePresentationInput(908, new object(), new[] { 9801 }, new[] { new object() }, new[] { 0 }, new[] { 1 }, true, null),
+        Reason: RecipePresentationFailureReason.InvalidRequiredCount,
+        Name: "invalid required count"),
+    (
+        Input: CreateRecipePresentationInput(909, new object(), new[] { 9901 }, new[] { new object() }, new[] { 1 }, new[] { -1 }, true, null),
+        Reason: RecipePresentationFailureReason.InvalidCurrentCount,
+        Name: "invalid current count")
+};
+foreach (var invalidRowCase in invalidRowCases)
+{
+    var invalidRowResult = new RecipePresentationModel(new RecordingDiagnosticSink()).Build(new[] { invalidRowCase.Input });
+    Check(invalidRowResult.Frame.Rows.Count == 0, invalidRowCase.Name + " produces no partial row");
+    Check(invalidRowResult.Failures.Single().Reason == invalidRowCase.Reason, invalidRowCase.Name + " reports explicit reason");
+}
+
+var presentationRecords = presentationDiagnostics.Records
+    .Where(record => record.Message.StartsWith("recipe-presentation action=", StringComparison.Ordinal))
+    .ToList();
+Check(presentationRecords.Count == 2, "presentation diagnostics emit only for changed frames");
+Check(presentationRecords[0].Message == "recipe-presentation action=refresh rows=1 recipes=[501:4] sufficient=2 insufficient=2", "presentation diagnostic summarizes initial frame");
+Check(presentationRecords[1].Message == "recipe-presentation action=refresh rows=1 recipes=[501:4] sufficient=4 insufficient=0", "presentation diagnostic summarizes inventory change");
+Check(presentationRecords.All(record => record.Level == TrackerDiagnosticLevel.Debug), "presentation diagnostics use Debug level");
+Check(presentationRecords.All(record => record.Message.Length < 160), "presentation diagnostics remain bounded");
+var invalidPresentationRecords = invalidPresentationDiagnostics.Records
+    .Where(record => record.Message.StartsWith("recipe-presentation action=invalid", StringComparison.Ordinal))
+    .ToList();
+Check(invalidPresentationRecords.Count == 1, "invalid presentation emits one reason per recipe identity");
+Check(invalidPresentationRecords[0].Message == "recipe-presentation action=invalid recipeId=802 reason=invalid-ingredient-shape", "invalid presentation diagnostic is bounded and specific");
+Check(invalidPresentationRecords[0].Level == TrackerDiagnosticLevel.Debug, "invalid presentation diagnostic uses Debug level");
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -614,7 +812,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe presentation, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)
@@ -649,6 +847,27 @@ void CheckTreatmentState(IReadOnlyList<uint> actual, string name, int index, uin
     {
         Check(actual[index] == expected, name + " state");
     }
+}
+
+RecipePresentationInput CreateRecipePresentationInput(
+    int recipeId,
+    object recipeIcon,
+    int[] ingredientIds,
+    object[] ingredientIcons,
+    int[] requiredCounts,
+    int[] currentCounts,
+    bool isHandCraftable,
+    string? productionCategory)
+{
+    return new RecipePresentationInput(
+        recipeId,
+        new PresentationIconHandle(recipeIcon),
+        ingredientIds,
+        ingredientIcons.Select(icon => new PresentationIconHandle(icon)).ToArray(),
+        requiredCounts,
+        currentCounts,
+        isHandCraftable,
+        productionCategory!);
 }
 
 internal readonly record struct DiagnosticRecord(TrackerDiagnosticLevel Level, string Message);

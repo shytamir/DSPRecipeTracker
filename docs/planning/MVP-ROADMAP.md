@@ -7,7 +7,7 @@
 **Planning horizon:** Concept to working MVP prototype
 
 **Current delivery state:**
-[`Sprint 3 - implementation underway; S3-01 active`](../ROADMAP.md)
+[`Sprint 3 - S3-01 technically validated; owner acceptance pending`](../ROADMAP.md)
 
 **Completed Sprint 2 roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](../archive/UI_INTEGRATION_ROADMAP.md)
@@ -20,10 +20,10 @@ Its Source-ready and Package-inspected exit gates pass for commit
 `06d6f1a38dd0a3eba36a8dc38b416d8d99117c98`, and its Owner-reviewed gate is
 accepted. Sprint 2, S2-01 through S2-06, and its three exit gates are complete
 and owner accepted. Its Source-ready and Package-inspected gates pass for
-commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3 is owner authorized
-and implementation is underway with S3-01 as the only Active story, pending
-implementation. No later Sprint 3 story or broader runtime authorization
-exists.
+commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3 is owner authorized;
+S3-01 is implemented and technically validated and remains the only Active
+story pending owner acceptance. No later Sprint 3 story or broader runtime
+authorization exists.
 
 Agents do not perform installed, loaded-game, visual, or interaction
 validation. The owner performs only bounded human checks supplied at later
