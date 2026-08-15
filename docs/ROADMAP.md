@@ -4,12 +4,12 @@
 
 **Status:** Authorized - implementation underway
 
-**Active story:** S3-01 - Model direct requirements and inventory sufficiency
+**Active story:** S3-02 - Bind read-only DSP recipe and inventory data
 
 **Active story state:** Implemented and technically validated; owner acceptance
 pending
 
-**Implementation authorization:** S3-01 only
+**Implementation authorization:** S3-02 only
 
 **Parent roadmap:**
 [`DSP Recipe Tracker - MVP Roadmap`](planning/MVP-ROADMAP.md)
@@ -17,9 +17,9 @@ pending
 **Previous roadmap:**
 [`Sprint 2 - Native Integration and Tracker State`](archive/UI_INTEGRATION_ROADMAP.md)
 
-The owner authorized this Sprint 3 roadmap on 2026-08-15. Implementation is
-underway with S3-01 as the only Active story; later stories remain blocked
-until separately activated.
+The owner authorized this Sprint 3 roadmap on 2026-08-15. S3-01 is owner
+accepted. Implementation is underway with S3-02 as the only Active story;
+later stories remain blocked until separately activated.
 
 **Goal:** Complete live direct-ingredient and inventory presentation, harden
 the integrated tracker, and prepare the working MVP prototype for one bounded
@@ -123,8 +123,7 @@ deterministic checks first and human judgment only at the final gate.
 
 ### S3-01 - Model direct requirements and inventory sufficiency
 
-**Status:** Active - implemented and technically validated; owner acceptance
-pending
+**Status:** Complete - owner accepted on 2026-08-15
 
 **User story:** As a player, I want each pin converted into a stable row model
 that tells me which direct ingredients are required and whether Icarus carries
@@ -208,12 +207,13 @@ persistence, file-system, or game-state mutation dependency in the model. No
 plugin was installed or executed, and no game or substitute runtime was
 started.
 
-**Owner acceptance:** Pending. Technical validation does not infer acceptance
-or activate S3-02.
+**Owner acceptance:** Accepted explicitly on 2026-08-15. This acceptance
+activated S3-02; it does not activate any later story.
 
 ### S3-02 - Bind read-only DSP recipe and inventory data
 
-**Status:** Proposed - blocked by S3-01
+**Status:** Active - implemented and technically validated; owner acceptance
+pending
 
 **User story:** As a player, I want tracker values to come from the current DSP
 recipe and Icarus inventory state without the mod changing either.
@@ -263,6 +263,57 @@ recipe and Icarus inventory state without the mod changing either.
 shim validation, and static source review pass. Review confirms the exact
 read-only member boundary and separation between runtime collection,
 presentation rules, and Unity ownership. No runtime behavior is claimed.
+
+**Implementation result:**
+
+- `DspRecipeDataAdapter` refreshes the public `LDB.recipes` and `LDB.items`
+  bindings once per collection, resolves only the pinned recipe and its direct
+  items, and passes through live native product and ingredient icon references.
+- `DspInventoryDataAdapter` resolves the current
+  `GameMain.mainPlayer.package` once per collection and reads only
+  `GetItemCount(itemId)` for the resolved direct ingredients.
+- `RecipePresentationInputSource` converts successful reads into ordered S3-01
+  inputs. It safely removes missing or structurally invalid recipe/item
+  identities, retains and suppresses temporarily unavailable rows, never emits
+  partial counts, and recovers without changing valid pin order.
+- The adapters cache only collection-scoped runtime bindings, perform no
+  reflection or mutation, and become inert after one failure-isolated release.
+- Changed adapter availability and the first failure for each bounded recipe
+  or item identity emit concise Debug diagnostics without runtime objects,
+  item names, inventory dumps, paths, or save-derived data.
+- Declaration-only shims and the consumed-surface inventory now cover every
+  newly consumed public recipe, item, player, and storage member and no extra
+  runtime behavior.
+
+**Technical validation:** Passed on 2026-08-15 with:
+
+```powershell
+$revision = git rev-parse HEAD
+.\scripts\validate\Validate-S3-02.ps1 `
+  -GameRoot '<DSP installation>' `
+  -BepInExReferencePath '<documented BepInEx compile reference>' `
+  -BuildNumber 302 `
+  -SourceRevision $revision
+```
+
+The deterministic suite covers complete ordered collection, the exact six-
+input recipe-75 shape, all seven Phase 1 machine-only category classes,
+unavailable recipe and inventory bindings, missing recipes/items/icons,
+inconsistent inputs, accepted safe removal, suppression and recovery, partial-
+inventory-read rejection, exception isolation, bounded diagnostics, and inert
+failure-isolated release.
+
+The installed `Assembly-CSharp.dll` matched the accepted SHA-256 before exact
+public signatures were checked. Local and Hosted Release builds completed with
+zero warnings and zero errors; both products passed exhaustive compile-
+reference coverage. Static review confirmed the exact read-only member surface
+and found no recipe-output selection, navigation, reflection, crafting,
+inventory mutation, persistence, Unity layout, or visibility ownership. No
+plugin was installed or executed, and no game or substitute runtime was
+started.
+
+**Owner acceptance:** Pending. Technical validation does not infer acceptance
+or activate S3-03.
 
 ## Epic 2 - Native-composed tracker rows
 

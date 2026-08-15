@@ -335,7 +335,19 @@
         {
           "name": "RecipeProto",
           "baseType": "Proto",
-          "usage": "native-populated-recipe-and-icon-source",
+          "usage": "native-recipe-input-category-and-icon-source",
+          "members": [
+            { "kind": "method", "name": "get_iconSprite", "signature": "UnityEngine.Sprite()" },
+            { "kind": "method", "name": "get_madeFromString", "signature": "System.String()" },
+            { "kind": "field", "name": "Handcraft", "signature": "System.Boolean" },
+            { "kind": "field", "name": "Items", "signature": "System.Int32[]" },
+            { "kind": "field", "name": "ItemCounts", "signature": "System.Int32[]" }
+          ]
+        },
+        {
+          "name": "ItemProto",
+          "baseType": "Proto",
+          "usage": "native-direct-ingredient-icon-source",
           "members": [
             { "kind": "method", "name": "get_iconSprite", "signature": "UnityEngine.Sprite()" }
           ]
@@ -361,11 +373,42 @@
           "members": []
         },
         {
+          "name": "ItemProtoSet",
+          "baseType": "ProtoSet`1<ItemProto>",
+          "usage": "direct-ingredient-identity-lookup",
+          "members": []
+        },
+        {
           "name": "LDB",
           "baseType": "System.Object",
           "usage": "recipe-proto-set-access",
           "members": [
-            { "kind": "method", "name": "get_recipes", "signature": "RecipeProtoSet()", "isStatic": true }
+            { "kind": "method", "name": "get_recipes", "signature": "RecipeProtoSet()", "isStatic": true },
+            { "kind": "method", "name": "get_items", "signature": "ItemProtoSet()", "isStatic": true }
+          ]
+        },
+        {
+          "name": "GameMain",
+          "baseType": "UnityEngine.MonoBehaviour",
+          "usage": "current-Icarus-player-access",
+          "members": [
+            { "kind": "method", "name": "get_mainPlayer", "signature": "Player()", "isStatic": true }
+          ]
+        },
+        {
+          "name": "Player",
+          "baseType": "System.Object",
+          "usage": "current-Icarus-inventory-access",
+          "members": [
+            { "kind": "method", "name": "get_package", "signature": "StorageComponent()" }
+          ]
+        },
+        {
+          "name": "StorageComponent",
+          "baseType": "System.Object",
+          "usage": "read-only-Icarus-item-counts",
+          "members": [
+            { "kind": "method", "name": "GetItemCount", "signature": "System.Int32(System.Int32)" }
           ]
         },
         {

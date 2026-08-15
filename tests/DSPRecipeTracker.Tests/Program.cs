@@ -802,6 +802,8 @@ Check(invalidPresentationRecords.Count == 1, "invalid presentation emits one rea
 Check(invalidPresentationRecords[0].Message == "recipe-presentation action=invalid recipeId=802 reason=invalid-ingredient-shape", "invalid presentation diagnostic is bounded and specific");
 Check(invalidPresentationRecords[0].Level == TrackerDiagnosticLevel.Debug, "invalid presentation diagnostic uses Debug level");
 
+RecipeDataSourceTests.Run(Check);
+
 if (failures.Count != 0)
 {
     foreach (var failure in failures)
@@ -812,7 +814,7 @@ if (failures.Count != 0)
     return 1;
 }
 
-Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe presentation, panel geometry, visibility, and UI boundary tests passed.");
+Console.WriteLine("DSPRecipeTracker deterministic identity, pin input, recipe-grid treatment, major-interface visibility, recipe-icon slots, orchestration, recipe data, recipe presentation, panel geometry, visibility, and UI boundary tests passed.");
 return 0;
 
 void Check(bool condition, string name)

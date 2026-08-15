@@ -281,10 +281,12 @@ authorities. Inspection confirmed this exact lookup chain:
 | `ProtoTable` | base type | `UnityEngine.ScriptableObject` |
 | `UnityEngine.ScriptableObject` | base type | `UnityEngine.Object` |
 
-Production performs `LDB.recipes.Select(recipeId)` and then reads the returned
-recipe's `iconSprite`. It does not consume `RecipeProto.Results`,
-`ResultCounts`, `Items`, or `ItemCounts`; does not select an `ItemProto`; and
-does not attach navigation or pinning behavior to the panel icon.
+Through S2-05, production performed `LDB.recipes.Select(recipeId)` and then
+read the returned recipe's `iconSprite`. S3-02 extends that read-only surface
+to the exact recipe, item, player, and storage members recorded in the Sprint 3
+authority refresh below. Production still does not consume
+`RecipeProto.Results` or `ResultCounts`, use `ItemProto.maincraft`, or attach
+navigation or pinning behavior to tracker icons.
 
 The Unity slot layer reuses the already recorded `GameObject`, `RectTransform`,
 `Image`, `Image.sprite`, `Graphic.raycastTarget`, and object-destruction
@@ -359,7 +361,8 @@ with exact quantity-one inputs `6001`, `6002`, `6003`, `6004`, `6005`, and
 Sprint 3 row modeling and layout must therefore cover one through six inputs;
 four is not the supported maximum.
 
-Read-only metadata inspection confirmed the proposed presentation-data surface:
+Read-only metadata inspection confirmed the presentation-data surface used by
+S3-02:
 
 | Declaring type | Exact public member |
 | --- | --- |

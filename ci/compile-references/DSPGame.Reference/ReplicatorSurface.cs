@@ -17,6 +17,27 @@ public class RecipeProto : Proto
     {
         get { return null; }
     }
+
+    public bool Handcraft;
+    public int[] Items;
+    public int[] ItemCounts;
+
+    public string madeFromString
+    {
+        get { return null; }
+    }
+}
+
+public class ItemProto : Proto
+{
+    private ItemProto()
+    {
+    }
+
+    public UnityEngine.Sprite iconSprite
+    {
+        get { return null; }
+    }
 }
 
 public class ProtoTable : UnityEngine.ScriptableObject
@@ -45,11 +66,59 @@ public class RecipeProtoSet : ProtoSet<RecipeProto>
     }
 }
 
+public class ItemProtoSet : ProtoSet<ItemProto>
+{
+    private ItemProtoSet()
+    {
+    }
+}
+
 public static class LDB
 {
     public static RecipeProtoSet recipes
     {
         get { return null; }
+    }
+
+    public static ItemProtoSet items
+    {
+        get { return null; }
+    }
+}
+
+public class GameMain : UnityEngine.MonoBehaviour
+{
+    private GameMain()
+    {
+    }
+
+    public static Player mainPlayer
+    {
+        get { return null; }
+    }
+}
+
+public class Player
+{
+    private Player()
+    {
+    }
+
+    public StorageComponent package
+    {
+        get { return null; }
+    }
+}
+
+public class StorageComponent
+{
+    private StorageComponent()
+    {
+    }
+
+    public int GetItemCount(int itemId)
+    {
+        return 0;
     }
 }
 
