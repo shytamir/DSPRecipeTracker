@@ -80,7 +80,8 @@ function New-MutatedPackage {
         [Alias('TargetEntry')]
         [string]$EntryName,
         [byte[]]$ReplacementBytes,
-        [switch]$AddEntry
+        [switch]$AddEntry,
+        [switch]$ResetPluginTimestamp
     )
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -93,6 +94,10 @@ function New-MutatedPackage {
     try {
         foreach ($sourceEntry in $sourceArchive.Entries) {
             $createdEntry = $targetArchive.CreateEntry($sourceEntry.FullName)
+            $createdEntry.LastWriteTime = $sourceEntry.LastWriteTime
+            if ($ResetPluginTimestamp -and $sourceEntry.FullName -eq 'BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll') {
+                $createdEntry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+            }
             $targetStream = $createdEntry.Open()
             try {
                 if ($sourceEntry.FullName -eq $EntryName -and -not $AddEntry) {
@@ -128,6 +133,13 @@ $alternateManifest.website_url = ''
 $alternateManifestBytes = [Text.Encoding]::UTF8.GetBytes(($alternateManifest | ConvertTo-Json -Depth 5))
 $alternateManifestPackage = New-MutatedPackage -Name 'alternate-manifest-copy' -TargetEntry 'manifest.json' -ReplacementBytes $alternateManifestBytes
 Confirm-Accepted -Name 'alternate manifest copy within package limits' -PackagePath $alternateManifestPackage
+
+$fixedTimestampPackage = New-MutatedPackage -Name 'fixed-dll-timestamp' -ResetPluginTimestamp
+Confirm-Rejected -Name 'fixed DLL timestamp' -PackagePath $fixedTimestampPackage -ExpectedVersion $buildInfo.semanticVersion -ExpectedAssemblyVersion $buildInfo.assemblyVersion -ExpectedDiagnostic $buildInfo.diagnosticLabel -ExpectedGuid 'dsprecipetracker' -ExpectedDisplayName 'DSP-Recipe-Tracker'
+$fixedTimestampReport = Get-Content -LiteralPath (Join-Path $caseRoot 'fixed DLL timestamp.json') -Raw | ConvertFrom-Json
+if ($fixedTimestampReport.failures -notcontains 'Packaged DLL must not use the fixed 1980 timestamp; BepInEx caches plugin metadata by modification time.') {
+    throw 'Fixed-timestamp regression case failed for an unrelated reason.'
+}
 
 $overlongManifest = Get-Content -LiteralPath (Join-Path $repoRoot 'packaging\manifest.json') -Raw | ConvertFrom-Json
 $overlongManifest.version_number = $buildInfo.semanticVersion

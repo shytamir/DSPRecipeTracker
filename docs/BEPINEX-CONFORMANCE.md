@@ -70,6 +70,16 @@ Cecil, MonoMod detours, HarmonyXInterop, legacy `0Harmony20.dll`, or unrelated
 plugin-manager services. Those files are part of the installed loader closure,
 not the project's supported consumption surface.
 
+## Plugin metadata cache
+
+In the pinned [`v5.4.17` TypeLoader source](https://github.com/BepInEx/BepInEx/blob/v5.4.17/BepInEx/Bootstrap/TypeLoader.cs),
+plugin metadata is cached by DLL path and `File.GetLastWriteTimeUtc` ticks.
+An unchanged timestamp reuses the cached identity before the chainloader loads
+the current DLL. Package construction therefore preserves the compiled DLL's
+modification time instead of assigning the same fixed timestamp to every
+version. This uses native cache invalidation; the plugin does not inspect,
+delete, or modify BepInEx's cache.
+
 ## Fixed-version policy
 
 - Support exactly the installed BepInEx `5.4.17.0` contract.

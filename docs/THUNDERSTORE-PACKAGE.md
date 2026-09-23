@@ -44,6 +44,15 @@ The archive excludes:
 
 No placeholder, zero-byte, or installable-looking dummy package is permitted.
 
+The plugin DLL's ZIP entry preserves the compiled DLL's modification time at
+ZIP's two-second precision. It must not use the fixed 1980 timestamp retained
+for the metadata assets. BepInEx `5.4.17.0` uses the installed DLL's timestamp
+to invalidate its plugin-metadata cache; reusing the fixed timestamp across
+upgrades can make the chainloader announce an old version while executing the
+new DLL. Static package validation rejects that timestamp, and the package
+regression cases cover the rejection. See
+[`BEPINEX-CONFORMANCE.md`](BEPINEX-CONFORMANCE.md#plugin-metadata-cache).
+
 ## 2. Version mapping
 
 `VERSION` supplies the manually selected major (`M`) and minor (`m`) values.

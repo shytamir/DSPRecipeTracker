@@ -68,6 +68,11 @@ else
     ValidateManifest(ReadEntry(archive, "manifest.json", failures), semanticVersion, failures);
     ValidateReadme(ReadEntry(archive, "README.md", failures), failures);
     ValidatePng(ReadEntry(archive, "icon.png", failures), failures);
+    var pluginEntry = archive.GetEntry("BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll");
+    if (pluginEntry?.LastWriteTime.DateTime == new DateTime(1980, 1, 1))
+    {
+        failures.Add("Packaged DLL must not use the fixed 1980 timestamp; BepInEx caches plugin metadata by modification time.");
+    }
     ValidatePlugin(
         ReadEntry(archive, "BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll", failures),
         sourceDllPath,

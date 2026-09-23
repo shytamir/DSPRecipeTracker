@@ -103,6 +103,10 @@ try {
     foreach ($entryName in $entries.Keys) {
         $entry = $archive.CreateEntry($entryName, [IO.Compression.CompressionLevel]::Optimal)
         $entry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+        if ($entryName -eq 'BepInEx/plugins/DSPRecipeTracker/DSPRecipeTracker.dll') {
+            # BepInEx invalidates plugin metadata by the installed DLL's modification time.
+            $entry.LastWriteTime = [DateTimeOffset]::new([IO.File]::GetLastWriteTime($pluginSource))
+        }
         $input = [IO.File]::OpenRead($entries[$entryName])
         $output = $entry.Open()
         try {
