@@ -20,10 +20,12 @@ contains the complete right-click pinning, transient three-entry state,
 pinned-corner treatment, direct-ingredient and Icarus-inventory presentation,
 live refresh, exact six-interface visibility, paired controls, borderless
 fixed panel, scale-aware dragging and clamping, and game-session cleanup path.
-The repository is planning-pending for publication refinement. No supported or
-published release exists.
+Release `0.10.33` is tagged and published. The repository is in maintenance
+mode with no active story. The [completion record](archive/RELEASE-0.10.md)
+identifies the published package, tagged source, and completed validation.
 
-**Owner review:** Accepted through 2026-08-15.
+**Owner review:** MVP accepted on 2026-08-15; release `0.10.33` publication and
+maintenance closeout confirmed by the owner on 2026-09-24.
 
 **Current game support:** Dyson Sphere Program `0.10.35.29057` is fully
 supported. The owner confirmed on 2026-09-23 that all existing validations
@@ -179,7 +181,7 @@ several direct-build attempts could not make native multiline facility text
 wrap reliably. A dedicated single-line footer ended that unproductive cycle
 while preserving complete facility names and three contained rows. The owner
 accepted this bounded presentation compromise; panel height may be reviewed in
-future publication refinement, while interactive resizing remains outside the
+future refinement, while interactive resizing remains outside the
 MVP.
 
 ### 2.8 Visibility and player control

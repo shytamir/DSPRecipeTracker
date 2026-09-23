@@ -1,6 +1,6 @@
 # DSP Recipe Tracker
 
-DSP Recipe Tracker is a working validated MVP prototype for
+DSP Recipe Tracker is a published recipe-tracking mod for
 [Dyson Sphere Program](https://store.steampowered.com/app/1366540/Dyson_Sphere_Program/).
 It lets players pin recipes from the Replicator and compare each recipe's
 direct material requirements with the contents of Icarus's inventory.
@@ -9,10 +9,13 @@ The product, implementation, and validation contracts and Sprints 1 through 3
 are owner accepted. The final workshop behavior passed owner validation and
 acceptance on 2026-08-15. Source-ready and Package-inspected passed for clean
 commit `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318.
-The repository is planning-pending for publication refinement; no supported or
-published release exists.
+Release `0.10.33` is tagged and published on
+[Thunderstore](https://thunderstore.io/c/dyson-sphere-program/p/DSPRecipeTracker/DSPRecipeTracker/).
+The repository is in maintenance mode. The
+[0.10 completion record](docs/archive/RELEASE-0.10.md) identifies the published
+package, tagged source, completed checks, and distribution status.
 
-## Validated MVP prototype
+## Features
 
 - Pin and unpin recipes by right-clicking the Replicator's existing recipe
   grid. Left-click remains selection-only, while right-click preserves native
@@ -56,7 +59,7 @@ The authoritative product scope is maintained in
 [docs/PROJECT.md](docs/PROJECT.md). Readiness and acceptance criteria are
 maintained in [docs/VALIDATION-CONTRACT.md](docs/VALIDATION-CONTRACT.md).
 
-The current planning-pending state is recorded in
+The current maintenance state is recorded in
 [docs/ROADMAP.md](docs/ROADMAP.md). Completed Sprint records are archived as
 [Sprint 3](docs/archive/PROTOTYPE-ROADMAP.md),
 [Sprint 2](docs/archive/UI_INTEGRATION_ROADMAP.md), and
@@ -178,7 +181,7 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current pre-release line is `0.10`. Pushes to `main` and manual dispatches
+The current release line is `0.10`. Pushes to `main` and manual dispatches
 run the same hosted build, shim-coverage check, package construction, and static
 inspection in GitHub Actions. The resulting development artifact is retained
 for 30 days; the workflow does not publish it.
@@ -192,10 +195,11 @@ loop with bounded Debug diagnostics. The owner passed the formal four-group
 procedure and accepted the refined workshop build. The clean committed result
 then passed Source-ready and Package-inspected as build 318.
 
-The repository has no active story. Its next state is publication refinement,
-which requires a new owner-authorized roadmap. The validated prototype does
-not imply publication approval, compatibility beyond the recorded baseline,
-or a supported release.
+The owner confirmed publication of release `0.10.33` and requested
+maintenance closeout on 2026-09-24. No story or validation gate is active.
+Future implementation requires a new owner-authorized task or roadmap.
+The [completion record](docs/archive/RELEASE-0.10.md) preserves the release
+evidence and the matching GitHub and Thunderstore packages.
 
 ## Repository layout
 

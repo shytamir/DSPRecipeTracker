@@ -7,7 +7,7 @@
 **Planning horizon:** Concept to working MVP prototype
 
 **Current delivery state:**
-[`Planning pending - publication refinement`](../ROADMAP.md)
+[`Maintenance mode`](../ROADMAP.md)
 
 **Completed Sprint 3 roadmap:**
 [`Sprint 3 - Recipe Presentation and Prototype Hardening`](../archive/PROTOTYPE-ROADMAP.md)
@@ -27,8 +27,9 @@ commit `b5ca0c3d9b51e586f08cc0347d95649bc4edcb62`. Sprint 3, S3-01
 through S3-06, and all four exit gates are complete and owner accepted. Its
 final Source-ready and Package-inspected gates pass for clean commit
 `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318. The MVP
-prototype is working and validated; publication readiness remains unassessed
-and requires a future owner-authorized roadmap.
+prototype was working and validated at sprint closure; publication readiness
+was then unassessed. The later release `0.10` closeout is recorded in
+[`RELEASE-0.10.md`](../archive/RELEASE-0.10.md).
 
 Agents do not perform installed, loaded-game, visual, or interaction
 validation. The owner performs only bounded human checks supplied at later

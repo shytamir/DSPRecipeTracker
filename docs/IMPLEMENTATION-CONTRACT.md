@@ -9,8 +9,10 @@ are complete and owner accepted. Sprint 3 produced a working MVP prototype.
 The owner passed the bounded Behavioral-ready procedure and accepted direct
 workshop build `0.1.318`; Source-ready and Package-inspected then passed for
 clean source revision `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build
-number 318. The repository is planning-pending for publication refinement; no
-supported or published release exists.
+number 318. Release `0.10.33` is tagged and published, and the repository is
+in maintenance mode with no active story. The
+[completion record](archive/RELEASE-0.10.md) preserves the release and package
+fix evidence.
 The source tree contains the minimal BepInEx identity/lifecycle/logging
 skeleton, static package pipeline, UI-independent panel geometry and visibility
 policy, an inert compile-time Unity panel boundary, deterministic transient pin
@@ -26,7 +28,8 @@ reclamping connected through plugin orchestration. Game-session shutdown
 releases the orchestrator so transient pins and owned UI cannot cross a same-
 or different-save load.
 
-**Owner review:** Accepted through 2026-08-15.
+**Owner review:** MVP accepted on 2026-08-15; release `0.10.33` publication and
+maintenance closeout confirmed by the owner on 2026-09-24.
 
 This file governs implementation structure, runtime integration mechanics,
 lifecycle ownership, failure handling, and the source toolchain. It implements
@@ -186,7 +189,7 @@ icons or asking the player to decode another state.
   normalized machine/facility name.
 - The increased height is an owner-accepted compromise after native multiline
   text repeatedly clipped or disappeared. It may be reviewed during future
-  publication refinement, but interactive resizing remains outside the MVP.
+  refinement, but interactive resizing remains outside the MVP.
 - Initial placement derives true left-middle top position from the live parent
   height. The global control uses the native screenshot button as its reference
   and is offset by `(0, 38)` to avoid the large Tech control.

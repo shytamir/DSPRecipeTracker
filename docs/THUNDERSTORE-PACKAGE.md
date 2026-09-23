@@ -8,8 +8,10 @@
 technically validated, and owner accepted. It creates an inspected development
 artifact only. The completed MVP prototype passed Package-inspected for clean
 commit `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` as build `0.1.318`.
-Publication refinement is planning-pending; no supported or published release
-exists.
+Release `0.10.33` is tagged and published, and the repository is in
+maintenance mode. The [completion record](archive/RELEASE-0.10.md) identifies
+the matching published packages and their timestamp-fix validation. The
+workflow continues to create inspected artifacts; publication is owner managed.
 
 This contract defines package layout, version mapping, build inputs, static
 validation, and artifact retention for DSP Recipe Tracker. It does not publish,
@@ -66,7 +68,7 @@ Assembly/file version:  M.m.N.0
 Diagnostic label:       M.m.N.<short-commit>
 ```
 
-The current pre-release line is `0.10`. The same generated semantic version is
+The current release line is `0.10`. The same generated semantic version is
 used by `manifest.json` and the BepInEx plugin attribute. The recipe-tracker
 assembly uses the generated four-part assembly and file version. The diagnostic
 commit suffix is retained in build information and product diagnostics without

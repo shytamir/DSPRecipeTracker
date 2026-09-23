@@ -1,19 +1,25 @@
-# DSP Recipe Tracker - Planning Pending
+# DSP Recipe Tracker - Maintenance
 
 ## Status
 
-**State:** Planning pending - publication refinement
+**State:** Maintenance mode
 
-DSP Recipe Tracker has a working validated MVP prototype. Sprints 1 through 3,
-their owner checkpoints, and their required exit gates are complete and owner
-accepted. The final workshop behavior was owner accepted on 2026-08-15;
-Source-ready and Package-inspected passed for clean commit
-`14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318.
+**Active story:** None
 
-No story is active and no implementation is authorized. Publication
-refinement requires a future owner-authorized roadmap. The prototype is not a
-published, supported, or Publication-ready release.
+**Active validation gate:** None
 
-The completed Sprint 3 implementation record is archived as
-[`PROTOTYPE-ROADMAP.md`](archive/PROTOTYPE-ROADMAP.md). The larger historical
-MVP structure remains in [`planning/MVP-ROADMAP.md`](planning/MVP-ROADMAP.md).
+**Implementation authorization:** None
+
+The owner confirmed that release `0.10.33` is tagged and published and
+requested maintenance closeout on 2026-09-24. The game-update compatibility
+documentation, minor promotion, and BepInEx package-timestamp correction are
+complete. Their validation and publication evidence is archived in the
+[`0.10 completion record`](archive/RELEASE-0.10.md), including verification that
+the GitHub and Thunderstore packages match the validated corrected artifact.
+
+No follow-up is activated by this record. Future implementation requires a
+new owner-authorized task or roadmap; archived plans do not authorize work.
+
+Sprints 1 through 3 remain complete and owner accepted. Their records remain
+under `docs/archive/`; the historical MVP structure remains in
+[`planning/MVP-ROADMAP.md`](planning/MVP-ROADMAP.md).

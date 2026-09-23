@@ -10,10 +10,13 @@ complete and owner accepted. The formal owner procedure passed for build
 `0.1.310`; the owner then accepted refined direct build `0.1.318`. Source-ready
 and Package-inspected passed again for clean commit
 `14bbe8e046e32333bd7cf68f35b8f22bc04dd47f` using build number 318. The
-repository is planning-pending for publication refinement. Publication-ready
-and supported-release status remain unavailable.
+owner confirmed publication of release `0.10.33` and requested maintenance
+closeout on 2026-09-24. The repository has no active validation gate. The
+[completion record](archive/RELEASE-0.10.md) records the published package,
+tagged source, and package-fix validation.
 
-**Owner review:** Accepted through 2026-08-15.
+**Owner review:** MVP accepted on 2026-08-15; release `0.10.33` publication and
+maintenance closeout confirmed by the owner on 2026-09-24.
 
 This file governs readiness states, validation evidence, runtime authorization,
 owner acceptance, and publication claims. Product behavior comes from
@@ -33,8 +36,8 @@ implementation changes were required.
 
 This owner-reported compatibility result supplements the original sprint
 evidence. The historical game versions, artifact identities, validation dates,
-and display-validation boundaries remain unchanged. Publication-ready and
-supported-release status remain unavailable.
+and display-validation boundaries remain unchanged. Release `0.10.33`
+publication is recorded separately in the linked completion record.
 
 ## 1. Readiness states
 
