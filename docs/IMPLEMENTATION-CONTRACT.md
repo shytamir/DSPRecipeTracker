@@ -224,6 +224,11 @@ icons or asking the player to decode another state.
 
 ## 7. Source and dependency baseline
 
+The currently supported game version is Dyson Sphere Program
+`0.10.35.29057`. The owner confirmed on 2026-09-23 that all existing
+validations passed and the mod works unchanged after the update; see the
+[compatibility record](VALIDATION-CONTRACT.md#current-game-compatibility).
+
 The initial source baseline is:
 
 - C# compatible with BepInEx 5;
@@ -232,9 +237,10 @@ The initial source baseline is:
 - Dyson Sphere Program `0.10.34.28529`, Steam build `23109513`; and
 - Unity `2022.3.62f3c1`.
 
-These versions identify the recovered source baseline. They do not promise
-compatibility with later game, Unity, BepInEx, Harmony, or third-party mod
-versions.
+These versions identify the original recovered source baseline. Current game
+support includes the owner-validated update above. Compatibility with other
+untested game, Unity, BepInEx, Harmony, or third-party mod versions is not
+implied.
 
 Game, Unity, and BepInEx assemblies remain external dependencies. Local build
 configuration receives game and Unity inputs through the explicit

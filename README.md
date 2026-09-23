@@ -75,6 +75,11 @@ The prototype runtime requires:
 - Dyson Sphere Program;
 - BepInEx 5 installed in the game directory.
 
+Dyson Sphere Program `0.10.35.29057` is fully supported. On 2026-09-23, the
+owner confirmed that all existing validations passed after the game update
+and the mod works unchanged. See the
+[compatibility record](docs/VALIDATION-CONTRACT.md#current-game-compatibility).
+
 The initial feasibility baseline is DSP `0.10.34.28529`, Steam build
 `23109513`, and Unity `2022.3.62f3c1`. Automated geometry validation covers
 1920-by-1080/Auto at UI layout height 1080 and 2560-by-1440/Auto at UI layout

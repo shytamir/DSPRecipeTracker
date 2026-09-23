@@ -24,6 +24,18 @@ operational authorization come from [`ROADMAP.md`](ROADMAP.md).
 This contract does not authorize runtime execution or mark any readiness state
 as achieved.
 
+### Current game compatibility
+
+Dyson Sphere Program `0.10.35.29057` is fully supported. On 2026-09-23, the
+owner reported rerunning all existing validations after the game update and
+confirmed that everything passed and the mod works unchanged. No
+implementation changes were required.
+
+This owner-reported compatibility result supplements the original sprint
+evidence. The historical game versions, artifact identities, validation dates,
+and display-validation boundaries remain unchanged. Publication-ready and
+supported-release status remain unavailable.
+
 ## 1. Readiness states
 
 | State | Meaning |

@@ -25,6 +25,12 @@ published release exists.
 
 **Owner review:** Accepted through 2026-08-15.
 
+**Current game support:** Dyson Sphere Program `0.10.35.29057` is fully
+supported. The owner confirmed on 2026-09-23 that all existing validations
+passed after the game update and the mod works unchanged. The
+[compatibility record](VALIDATION-CONTRACT.md#current-game-compatibility)
+preserves this result separately from the original sprint acceptance.
+
 This file is the normative authority for settled product behavior and scope.
 It consolidates the product direction in
 [`PRODUCT-PRINCIPLES.md`](PRODUCT-PRINCIPLES.md), the confirmed integration

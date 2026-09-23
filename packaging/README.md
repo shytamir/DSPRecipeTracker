@@ -5,6 +5,9 @@ requirements against the materials in Icarus's inventory.
 
 ## Installation
 
+Dyson Sphere Program `0.10.35.29057` is fully supported; the owner reran all
+existing validations after the update and confirmed the mod works unchanged.
+
 Install with a Thunderstore-compatible mod manager, or extract the package into
 the Dyson Sphere Program game directory with BepInEx 5.4.17 installed. The DLL
 should end up at:
